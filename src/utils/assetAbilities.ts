@@ -1,6 +1,6 @@
 import type { Faction, FactionAsset } from '../types/faction';
 import { getAssetById } from '../data/assetLibrary';
-import { rollD10, rollDiceExpression, performCombatRoll } from './combatResolver';
+import { rollDiceExpression } from './combatResolver';
 import type { RootState } from '../store/store';
 
 /**
@@ -37,7 +37,7 @@ export type AbilityExecutor = (context: AbilityContext) => AbilityResult;
  */
 const abilityRegistry: Record<string, AbilityExecutor> = {
   // CUNNING ASSETS
-  'cunning_1_smugglers': (context) => {
+  'cunning_1_smugglers': (_context) => {
     // Smugglers: For one FacCred, transport itself and/or any one Special Forces unit
     // to a planet up to two hexes away.
     // This is a movement ability - handled separately in movement system
@@ -48,7 +48,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'cunning_3_covert_shipping': (context) => {
+  'cunning_3_covert_shipping': (_context) => {
     // Covert Shipping: Any one Special Forces unit can be moved between any worlds
     // within three hexes at the cost of one FacCred.
     // This is a movement ability - handled separately
@@ -59,7 +59,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'cunning_6_covert_transit_net': (context) => {
+  'cunning_6_covert_transit_net': (_context) => {
     // Covert Transit Net: As an action, any Special Forces assets can be moved
     // between any worlds within three hexes.
     // This is a movement ability - handled separately
@@ -70,7 +70,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'cunning_4_party_machine': (context) => {
+  'cunning_4_party_machine': (_context) => {
     // Party Machine: Each turn, provides 1 FacCred to its owning faction.
     // This is passive income, not an action ability
     return {
@@ -81,7 +81,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   },
 
   // FORCE ASSETS
-  'force_2_heavy_drop_assets': (context) => {
+  'force_2_heavy_drop_assets': (_context) => {
     // Heavy Drop Assets: As an action, may move any number of assets on the planet,
     // including itself, to any world within one hex at a cost of one FacCred per asset moved.
     // This is a movement ability - handled separately
@@ -92,7 +92,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_4_beachhead_landers': (context) => {
+  'force_4_beachhead_landers': (_context) => {
     // Beachhead Landers: As an action, may move any number of assets on the planet,
     // including itself, to any world within one hex at a cost of one FacCred per asset moved.
     return {
@@ -102,7 +102,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_4_extended_theater': (context) => {
+  'force_4_extended_theater': (_context) => {
     // Extended Theater: As an action, any one non-Starship asset, including itself,
     // can be moved between any two worlds within two hexes at a cost of 1 FacCred.
     return {
@@ -112,7 +112,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_5_pretech_logistics': (context) => {
+  'force_5_pretech_logistics': (_context) => {
     // Pretech Logistics: As an action, allows the owner to buy one Force asset on that world
     // that requires up to tech level 5 to purchase. This asset costs half again as many
     // FacCreds as usual, rounded up. Only one asset can be purchased per turn.
@@ -123,7 +123,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_7_deep_strike_landers': (context) => {
+  'force_7_deep_strike_landers': (_context) => {
     // Deep Strike Landers: As an action, any one non-Starship asset, including itself,
     // can be moved between any two worlds within three hexes at a cost of 2 FacCreds.
     return {
@@ -133,7 +133,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_4_strike_fleet': (context) => {
+  'force_4_strike_fleet': (_context) => {
     // Strike Fleet: As an action, can move to any world within one hex.
     return {
       success: false,
@@ -142,7 +142,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_5_blockade_fleet': (context) => {
+  'force_5_blockade_fleet': (_context) => {
     // Blockade Fleet: As an action, may move itself to a world within one hex.
     return {
       success: false,
@@ -151,7 +151,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_7_space_marines': (context) => {
+  'force_7_space_marines': (_context) => {
     // Space Marines: As an action, can move to any world within one hex.
     return {
       success: false,
@@ -160,7 +160,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'force_8_capital_fleet': (context) => {
+  'force_8_capital_fleet': (_context) => {
     // Capital Fleet: As an action, may move to any world within three hexes.
     return {
       success: false,
@@ -170,7 +170,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   },
 
   // WEALTH ASSETS
-  'wealth_1_harvesters': (context) => {
+  'wealth_1_harvesters': (_context) => {
     // Harvesters: As an action, the owning faction may roll 1d6. On 3+, gain one FacCred.
     const roll = rollDiceExpression('1d6');
     const success = roll >= 3;
@@ -186,7 +186,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_2_freighter_contract': (context) => {
+  'wealth_2_freighter_contract': (_context) => {
     // Freighter Contract: As an action, may move any one non-Force asset, including this one,
     // to any world within two hexes at a cost of one FacCred.
     return {
@@ -229,7 +229,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_4_shipping_combine': (context) => {
+  'wealth_4_shipping_combine': (_context) => {
     // Shipping Combine: As an action, may move any number of non-Force assets, including itself,
     // to any world within two hexes at a cost of one FacCred per asset.
     return {
@@ -239,7 +239,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_4_monopoly': (context) => {
+  'wealth_4_monopoly': (_context) => {
     // Monopoly: As an action, owners may force one other faction with unstealthed assets
     // on that world to pay them one FacCred. If the target faction can't pay, they lose
     // one asset of their choice on the world.
@@ -251,7 +251,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_5_marketers': (context) => {
+  'wealth_5_marketers': (_context) => {
     // Marketers: As an action, may test Cunning vs. Wealth against a rival faction's asset.
     // If successful, the target faction must immediately pay half the asset's purchase cost,
     // rounded down, or have it become disabled and useless until this price is paid.
@@ -263,7 +263,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_5_blockade_runners': (context) => {
+  'wealth_5_blockade_runners': (_context) => {
     // Blockade Runners: As an action, can transfer itself or any one Military Unit or
     // Special Forces to a world within three hexes for a cost of two FacCreds.
     return {
@@ -273,7 +273,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_5_commodities_broker': (context) => {
+  'wealth_5_commodities_broker': (_context) => {
     // Commodities Brokers: As an action, roll 1d8; that many FacCreds are subtracted
     // from the cost of their next asset purchase, down to a minimum of half normal price,
     // rounded down.
@@ -286,7 +286,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_6_venture_capital': (context) => {
+  'wealth_6_venture_capital': (_context) => {
     // Venture Capital: As an action, 1d8 is rolled; on a 1, the asset is destroyed,
     // while on a 2-3 one FacCred is gained, 4-7 yields two FacCreds and 8 grants three FacCreds.
     const roll = rollDiceExpression('1d8');
@@ -317,7 +317,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_7_pretech_manufactory': (context) => {
+  'wealth_7_pretech_manufactory': (_context) => {
     // Pretech Manufactory: As an action, roll 1d8 for a Pretech Manufactory, and gain
     // half that many FacCreds, rounded up.
     const roll = rollDiceExpression('1d8');
@@ -331,7 +331,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_7_transit_web': (context) => {
+  'wealth_7_transit_web': (_context) => {
     // Transit Web: For one FacCred, any number of non-starship Cunning or Wealth assets
     // may be moved between any two worlds within three hexes. This may be done freely
     // on the owner's turn so long as the fee can be paid, and using the ability doesn't
@@ -343,7 +343,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_8_scavenger_fleet': (context) => {
+  'wealth_8_scavenger_fleet': (_context) => {
     // Scavenger Fleet: As an action, can be moved to any world within three hexes.
     return {
       success: false,
@@ -352,7 +352,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_3_mercenaries': (context) => {
+  'wealth_3_mercenaries': (_context) => {
     // Mercenaries: As an action, can move to any world within one hex.
     return {
       success: false,
@@ -361,7 +361,7 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     };
   },
 
-  'wealth_4_surveyors': (context) => {
+  'wealth_4_surveyors': (_context) => {
     // Surveyors: As an action, can be moved to any world within two hexes.
     return {
       success: false,
@@ -459,6 +459,12 @@ export function getAbilityDescription(assetDefinitionId: string): string | null 
 
   return null;
 }
+
+
+
+
+
+
 
 
 

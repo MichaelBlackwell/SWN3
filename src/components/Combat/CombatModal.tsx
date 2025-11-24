@@ -13,6 +13,8 @@ import {
 import { inflictDamage } from '../../store/slices/factionsSlice';
 import { stageAction, commitAction, selectCurrentPhase } from '../../store/slices/turnSlice';
 import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromTargetFaction, createNarrativeContextFromSystem } from '../../utils/narrativeHelpers';
+import type { Faction, FactionAsset } from '../../types/faction';
+import type { StarSystem } from '../../types/sector';
 import CombatAnimation from './CombatAnimation';
 import './CombatModal.css';
 
@@ -88,13 +90,13 @@ export default function CombatModal({
 
   // Get selected attacker faction
   const attackerFaction = useMemo(() => {
-    return factions.find((f) => f.id === selectedAttackerFactionId);
+    return factions.find((f: Faction) => f.id === selectedAttackerFactionId);
   }, [factions, selectedAttackerFactionId]);
 
   // Get selected attacker asset
   const attackerAsset = useMemo(() => {
     if (!attackerFaction || !selectedAttackerAssetId) return null;
-    return attackerFaction.assets.find((a) => a.id === selectedAttackerAssetId) || null;
+    return attackerFaction.assets.find((a: FactionAsset) => a.id === selectedAttackerAssetId) || null;
   }, [attackerFaction, selectedAttackerAssetId]);
 
   // Get attacker asset definition
@@ -106,7 +108,7 @@ export default function CombatModal({
   // Get available attacking assets (must have attack pattern and be at same location)
   const availableAttackerAssets = useMemo(() => {
     if (!attackerFaction) return [];
-    return attackerFaction.assets.filter((asset) => {
+    return attackerFaction.assets.filter((asset: FactionAsset) => {
       const assetDef = getAssetById(asset.definitionId);
       return assetDef && assetDef.attack !== null; // Must be able to attack
     });
@@ -119,22 +121,22 @@ export default function CombatModal({
 
   const targetSystem = useMemo(() => {
     if (!targetSystemId) return null;
-    return systems.find((s) => s.id === targetSystemId) || null;
+    return systems.find((s: StarSystem) => s.id === targetSystemId) || null;
   }, [systems, targetSystemId]);
 
   // Get target faction
   const targetFaction = useMemo(() => {
-    return factions.find((f) => f.id === selectedTargetFactionId);
+    return factions.find((f: Faction) => f.id === selectedTargetFactionId);
   }, [factions, selectedTargetFactionId]);
 
   // Get available target factions (must have assets in target system, excluding attacker faction)
   const availableTargetFactions = useMemo(() => {
     if (!targetSystemId) return [];
-    return factions.filter((faction) => {
+    return factions.filter((faction: Faction) => {
       if (faction.id === selectedAttackerFactionId) return false; // Can't attack own faction
       // Must have at least one non-stealthed asset in the target system
       return faction.assets.some(
-        (asset) => asset.location === targetSystemId && !asset.stealthed
+        (asset: FactionAsset) => asset.location === targetSystemId && !asset.stealthed
       );
     });
   }, [factions, targetSystemId, selectedAttackerFactionId]);
@@ -143,14 +145,14 @@ export default function CombatModal({
   const availableTargetAssets = useMemo(() => {
     if (!targetFaction || !targetSystemId) return [];
     return targetFaction.assets.filter(
-      (asset) => asset.location === targetSystemId && !asset.stealthed
+      (asset: FactionAsset) => asset.location === targetSystemId && !asset.stealthed
     );
   }, [targetFaction, targetSystemId]);
 
   // Get target asset
   const targetAsset = useMemo(() => {
     if (!targetFaction || !selectedTargetAssetId) return null;
-    return targetFaction.assets.find((a) => a.id === selectedTargetAssetId) || null;
+    return targetFaction.assets.find((a: FactionAsset) => a.id === selectedTargetAssetId) || null;
   }, [targetFaction, selectedTargetAssetId]);
 
   // Get target asset definition
@@ -291,9 +293,9 @@ export default function CombatModal({
   const handleAnimationComplete = () => {
     if (!combatResult || !hpBefore) return;
 
-    const attackerFaction = factions.find((f) => f.id === selectedAttackerFactionId);
-    const targetFaction = factions.find((f) => f.id === selectedTargetFactionId);
-    const targetSystem = systems.find((s) => s.id === targetSystemId);
+    const attackerFaction = factions.find((f: Faction) => f.id === selectedAttackerFactionId);
+    const targetFaction = factions.find((f: Faction) => f.id === selectedTargetFactionId);
+    const targetSystem = systems.find((s: StarSystem) => s.id === targetSystemId);
     const attackerAssetDef = attackerAsset ? getAssetById(attackerAsset.definitionId) : null;
     const targetAssetDef = targetAsset ? getAssetById(targetAsset.definitionId) : null;
 
@@ -331,11 +333,11 @@ export default function CombatModal({
 
     // Generate narrative for the attack
     const getSystemName = (systemId: string): string => {
-      const system = systems.find((s) => s.id === systemId);
+      const system = systems.find((s: StarSystem) => s.id === systemId);
       return system?.name || 'Unknown System';
     };
 
-    const getSystem = (systemId: string) => systems.find((s) => s.id === systemId);
+    const getSystem = (systemId: string) => systems.find((s: StarSystem) => s.id === systemId);
 
     const actorContext = createNarrativeContextFromFaction(attackerFaction, getSystemName, getSystem);
     const targetContext = createNarrativeContextFromTargetFaction(targetFaction, getSystemName, getSystem);
@@ -494,7 +496,7 @@ export default function CombatModal({
                 onChange={(e) => setSelectedAttackerFactionId(e.target.value)}
               >
                 <option value="">Select faction...</option>
-                {factions.map((faction) => (
+                {factions.map((faction: Faction) => (
                   <option key={faction.id} value={faction.id}>
                     {faction.name}
                   </option>
@@ -516,7 +518,7 @@ export default function CombatModal({
                       ? 'No assets with attack capability'
                       : 'Select asset...'}
                   </option>
-                  {availableAttackerAssets.map((asset) => {
+                  {availableAttackerAssets.map((asset: FactionAsset) => {
                     const assetDef = getAssetById(asset.definitionId);
                     return (
                       <option key={asset.id} value={asset.id}>
@@ -556,7 +558,7 @@ export default function CombatModal({
                         ? 'No enemy factions in system'
                         : 'Select faction...'}
                     </option>
-                    {availableTargetFactions.map((faction) => (
+                    {availableTargetFactions.map((faction: Faction) => (
                       <option key={faction.id} value={faction.id}>
                         {faction.name}
                       </option>
@@ -578,7 +580,7 @@ export default function CombatModal({
                           ? 'No visible assets to target'
                           : 'Select asset...'}
                       </option>
-                      {availableTargetAssets.map((asset) => {
+                      {availableTargetAssets.map((asset: FactionAsset) => {
                         const assetDef = getAssetById(asset.definitionId);
                         return (
                           <option key={asset.id} value={asset.id}>

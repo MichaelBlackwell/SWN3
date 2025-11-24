@@ -12,7 +12,7 @@ export const BASE_OF_INFLUENCE_ID = 'base_of_influence';
  * Check if a faction has a Base of Influence on a specific world
  */
 export function hasBaseOfInfluence(faction: Faction, systemId: string): boolean {
-  return faction.assets.some((asset) => {
+  return faction.assets.some((asset: FactionAsset) => {
     const assetDef = getAssetById(asset.definitionId);
     return (
       asset.location === systemId &&
@@ -25,7 +25,7 @@ export function hasBaseOfInfluence(faction: Faction, systemId: string): boolean 
  * Get the Base of Influence asset for a faction on a specific world
  */
 export function getBaseOfInfluence(faction: Faction, systemId: string): FactionAsset | null {
-  const base = faction.assets.find((asset) => {
+  const base = faction.assets.find((asset: FactionAsset) => {
     const assetDef = getAssetById(asset.definitionId);
     return (
       asset.location === systemId &&
@@ -40,7 +40,7 @@ export function getBaseOfInfluence(faction: Faction, systemId: string): FactionA
  * This is required to expand influence
  */
 export function hasAssetsOnWorld(faction: Faction, systemId: string): boolean {
-  return faction.assets.some((asset) => {
+  return faction.assets.some((asset: FactionAsset) => {
     const assetDef = getAssetById(asset.definitionId);
     const isBaseOfInfluence =
       assetDef?.name === 'Base of Influence' || asset.definitionId === BASE_OF_INFLUENCE_ID;
@@ -55,10 +55,10 @@ export function hasAssetsOnWorld(faction: Faction, systemId: string): boolean {
  * - The faction does not already have a Base of Influence on it
  * - The world is in the same system (for now, we'll check all systems)
  */
-export function getValidExpandTargets(
+export function getValidExpandTargets<T extends { id: string }>(
   faction: Faction,
-  systems: Array<{ id: string; name: string }>
-): Array<{ id: string; name: string }> {
+  systems: T[]
+): T[] {
   return systems.filter((system) => {
     // Must have assets on the world
     if (!hasAssetsOnWorld(faction, system.id)) {
@@ -106,13 +106,13 @@ export function resolveExpandInfluenceRoll(
   const expandingTotal = expandingRoll + expandingFaction.attributes.cunning;
 
   // Find all other factions with assets on this world
-  const opposingFactions = state.factions.factions.filter((faction) => {
+  const opposingFactions = state.factions.factions.filter((faction: { id: string; assets: Array<{ location: string }> }) => {
     if (faction.id === expandingFaction.id) return false;
     // Check if faction has any assets on this world
-    return faction.assets.some((asset) => asset.location === targetSystemId);
+    return faction.assets.some((asset: { location: string }) => asset.location === targetSystemId);
   });
 
-  const opposingRolls = opposingFactions.map((faction) => {
+  const opposingRolls = opposingFactions.map((faction: { id: string; name: string; attributes: { cunning: number } }) => {
     const roll = rollD10();
     const total = roll + faction.attributes.cunning;
     const canAttack = total >= expandingTotal; // Equal or beat means can attack
@@ -127,7 +127,7 @@ export function resolveExpandInfluenceRoll(
   });
 
   // Success if no opposing faction can attack (all rolls were lower)
-  const success = !opposingRolls.some((result) => result.canAttack);
+  const success = !opposingRolls.some((result: { canAttack: boolean }) => result.canAttack);
 
   const message = success
     ? `Successfully expanded influence! Rolled ${expandingRoll} + ${expandingFaction.attributes.cunning} Cunning = ${expandingTotal}.`
@@ -157,6 +157,9 @@ export function calculateBaseOfInfluenceCost(
     actualHp: maxHp,
   };
 }
+
+
+
 
 
 

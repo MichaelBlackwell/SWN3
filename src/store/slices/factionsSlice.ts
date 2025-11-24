@@ -114,16 +114,19 @@ const factionsSlice = createSlice({
       // Assets over the limit cost +1 FacCred maintenance per turn (enforced elsewhere)
       // For now, we allow purchase but the limit will be enforced during maintenance phase
       // Count current assets of this category by looking up their definitions
-      const currentAssetsOfCategory = faction.assets.filter((asset) => {
+      /* 
+      // Logic commented out but kept for reference if we want to enforce hard limits later
+      const _currentAssetsOfCategory = faction.assets.filter((asset: FactionAsset) => {
         const existingAssetDef = getAssetById(asset.definitionId);
         return existingAssetDef?.category === assetDef.category;
       }).length;
 
-      const maxAssets = assetDef.category === 'Force'
+      const _maxAssets = assetDef.category === 'Force'
         ? faction.attributes.force
         : assetDef.category === 'Cunning'
           ? faction.attributes.cunning
           : faction.attributes.wealth;
+      */
 
       // Note: We allow exceeding the limit - excess assets will cost extra maintenance
       // This is per SWN rules where you can exceed but pay +1 FacCred per asset over limit

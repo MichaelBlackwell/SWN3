@@ -4,6 +4,7 @@ import { defineHex, Grid, rectangle, Hex } from 'honeycomb-grid';
 import * as d3 from 'd3';
 import type { RootState } from '../../store/store';
 import type { StarSystem, Route } from '../../types/sector';
+import type { Faction, FactionAsset } from '../../types/faction';
 import { selectSystem } from '../../store/slices/sectorSlice';
 import { addAsset } from '../../store/slices/factionsSlice';
 import { validateAssetPurchase } from '../../utils/assetValidation';
@@ -63,13 +64,13 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
     }
 
     // Validate system exists
-    if (!sector || !sector.systems.find((s) => s.id === systemId)) {
+    if (!sector || !sector.systems.find((s: StarSystem) => s.id === systemId)) {
       showNotification('Invalid system location', 'error');
       return;
     }
 
     // Get faction
-    const faction = factions.find((f) => f.id === selectedFactionId);
+    const faction = factions.find((f: Faction) => f.id === selectedFactionId);
     if (!faction) {
       showNotification('Faction not found', 'error');
       return;
@@ -84,7 +85,7 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
 
     // Get asset definition for success message
     const assetDef = getAssetById(assetDefinitionId);
-    const system = sector.systems.find((s) => s.id === systemId);
+    const system = sector.systems.find((s: StarSystem) => s.id === systemId);
     const systemName = system?.name || 'Unknown System';
     
     // Dispatch the purchase
@@ -97,8 +98,8 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
     );
 
     // Generate narrative for the purchase
-    const getSystemName = (id: string) => sector.systems.find((s) => s.id === id)?.name || 'Unknown System';
-    const getSystem = (id: string) => sector.systems.find((s) => s.id === id);
+    const getSystemName = (id: string) => sector.systems.find((s: StarSystem) => s.id === id)?.name || 'Unknown System';
+    const getSystem = (id: string) => sector.systems.find((s: StarSystem) => s.id === id);
 
     const actorContext = createNarrativeContextFromFaction(faction, getSystemName, getSystem);
     const systemContext = createNarrativeContextFromSystem(system);
@@ -205,7 +206,7 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
 
     // Create system map for quick lookup
     const systemMap = new Map<string, StarSystem>();
-    sector.systems.forEach((system) => {
+    sector.systems.forEach((system: StarSystem) => {
       systemMap.set(system.id, system);
     });
 
@@ -245,7 +246,7 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
       isTradeRoute: boolean;
     }> = [];
 
-    sector.systems.forEach((system) => {
+    sector.systems.forEach((system: StarSystem) => {
       system.routes.forEach((route: Route) => {
         const pair = [system.id, route.systemId].sort().join('-');
         if (!routePairs.has(pair)) {
@@ -278,9 +279,9 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
     // Calculate valid movement destinations if in movement mode
     let validDestinations: string[] = [];
     if (movementMode.active && movementMode.assetId && movementMode.factionId) {
-      const faction = factions.find((f) => f.id === movementMode.factionId);
+      const faction = factions.find((f: Faction) => f.id === movementMode.factionId);
       if (faction) {
-        const asset = faction.assets.find((a) => a.id === movementMode.assetId);
+        const asset = faction.assets.find((a: FactionAsset) => a.id === movementMode.assetId);
         if (asset) {
           validDestinations = getValidMovementDestinations(asset.location, sector.systems);
         }
@@ -325,7 +326,7 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
 
     // Render system markers
     const systemsGroup = container.append('g').attr('class', 'systems');
-    sector.systems.forEach((system) => {
+    sector.systems.forEach((system: StarSystem) => {
       const coordKey = `${system.coordinates.x},${system.coordinates.y}`;
       const hex = coordToHex.get(coordKey);
       if (!hex) return;
@@ -347,9 +348,9 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
       const isValidDestination = validDestinations.includes(system.id);
       const isCurrentLocation = movementMode.active && movementMode.assetId && movementMode.factionId && 
         (() => {
-          const faction = factions.find((f) => f.id === movementMode.factionId);
+          const faction = factions.find((f: Faction) => f.id === movementMode.factionId);
           if (faction) {
-            const asset = faction.assets.find((a) => a.id === movementMode.assetId);
+            const asset = faction.assets.find((a: FactionAsset) => a.id === movementMode.assetId);
             return asset?.location === system.id;
           }
           return false;
@@ -496,7 +497,6 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
         })
         .on('mouseleave', function (this: SVGCircleElement) {
           setTooltipState({ system: null, position: null });
-          const currentIsValid = validDestinations.includes(system.id);
           markerGroup.select('.system-marker-base')
             .attr('r', baseRadius)
             .attr('stroke-width', isValidDestination ? 3 : 2);
@@ -506,14 +506,14 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
           
           // Handle movement mode
           if (movementMode.active && movementMode.assetId && movementMode.factionId) {
-            const faction = factions.find((f) => f.id === movementMode.factionId);
+            const faction = factions.find((f: Faction) => f.id === movementMode.factionId);
             if (!faction) {
               showNotification('Faction not found', 'error');
               dispatch(cancelMovementMode());
               return;
             }
 
-            const asset = faction.assets.find((a) => a.id === movementMode.assetId);
+            const asset = faction.assets.find((a: FactionAsset) => a.id === movementMode.assetId);
             if (!asset) {
               showNotification('Asset not found', 'error');
               dispatch(cancelMovementMode());
@@ -618,7 +618,7 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
       
       const positions = new Map<string, { x: number; y: number }>();
       
-      sector.systems.forEach((system) => {
+      sector.systems.forEach((system: StarSystem) => {
         const coordKey = `${system.coordinates.x},${system.coordinates.y}`;
         const hex = coordToHex.get(coordKey);
         if (!hex) return;
@@ -675,7 +675,7 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
       <SystemTooltip system={tooltipState.system} position={tooltipState.position} factions={factions} />
       <WorldDetails />
       {/* Render drop zones for each system */}
-      {selectedFactionId && sector.systems.map((system) => {
+      {selectedFactionId && sector.systems.map((system: StarSystem) => {
         const position = systemPositions.get(system.id);
         if (!position) return null;
         

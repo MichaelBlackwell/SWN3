@@ -20,7 +20,7 @@ export default function ExpandInfluenceButton({
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const faction = useSelector((state: RootState) =>
-    state.factions.factions.find((f) => f.id === factionId)
+    state.factions.factions.find((f: { id: string }) => f.id === factionId)
   );
   const canStageAction = useSelector(selectCanStageAction);
 
@@ -32,7 +32,7 @@ export default function ExpandInfluenceButton({
   const hasAssets = currentSystemId ? hasAssetsOnWorld(faction, currentSystemId) : true;
   const hasBase = currentSystemId ? hasBaseOfInfluence(faction, currentSystemId) : false;
   const isValidTarget = currentSystemId ? (hasAssets && !hasBase) : true; // If no system specified, allow opening modal
-  const isDisabled = disabled || !canStageAction || (currentSystemId && !isValidTarget);
+  const isDisabled = Boolean(disabled || !canStageAction || (currentSystemId && !isValidTarget));
 
   const handleClick = () => {
     if (isDisabled) {
@@ -73,7 +73,7 @@ export default function ExpandInfluenceButton({
     setShowModal(false);
     showNotification(
       `${expansion.rollResult.message} Action staged - commit to execute.`,
-      expansion.rollResult.success ? 'info' : 'warning'
+      expansion.rollResult.success ? 'info' : 'error'
     );
   };
 

@@ -2,11 +2,9 @@
 // Handles purchase-time effects, maintenance modifiers, and other runtime logic
 
 import type { FactionAsset } from '../types/faction';
-import { getAssetById } from '../data/assetLibrary';
 import {
   getAssetSpecialFeatures,
   getSpecialFeaturesByType,
-  type SpecialFeatureType,
 } from './assetSpecialFeatures';
 
 /**

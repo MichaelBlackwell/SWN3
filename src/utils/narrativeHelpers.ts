@@ -1,7 +1,6 @@
 // Helper utilities for generating and dispatching narrative entries from game actions
 
 import type { AppDispatch } from '../store/store';
-import type { RootState } from '../store/store';
 import { addLogEntry } from '../store/slices/narrativeSlice';
 import { generateLog, getNarrativeLogType, type ActionType, type NarrativeContext } from '../services/narrativeGenerator';
 import type { Faction } from '../types/faction';
@@ -52,8 +51,8 @@ export function createNarrativeContextFromFaction(
  */
 export function createNarrativeContextFromTargetFaction(
   faction: Faction | undefined,
-  getSystemName: (systemId: string) => string,
-  getSystem: (systemId: string) => StarSystem | undefined
+  _getSystemName: (systemId: string) => string,
+  _getSystem: (systemId: string) => StarSystem | undefined
 ): Partial<NarrativeContext> {
   if (!faction) {
     return {};

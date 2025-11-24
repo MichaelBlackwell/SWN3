@@ -71,11 +71,11 @@ export default narrativeSlice.reducer;
 export const selectAllLogs = (state: RootState) => state.narrative.logs;
 
 export const selectLogsByType = (type: NarrativeLogType) => (state: RootState) => {
-  return state.narrative.logs.filter((log) => log.type === type);
+  return state.narrative.logs.filter((log: NarrativeLogEntry) => log.type === type);
 };
 
 export const selectLogsByEntity = (entityId: string) => (state: RootState) => {
-  return state.narrative.logs.filter((log) => 
+  return state.narrative.logs.filter((log: NarrativeLogEntry) => 
     log.relatedEntityIds?.includes(entityId)
   );
 };
@@ -83,6 +83,12 @@ export const selectLogsByEntity = (entityId: string) => (state: RootState) => {
 export const selectRecentLogs = (count: number) => (state: RootState) => {
   return state.narrative.logs.slice(0, count);
 };
+
+
+
+
+
+
 
 
 

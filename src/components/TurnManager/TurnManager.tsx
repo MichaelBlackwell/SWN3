@@ -6,6 +6,7 @@ import { TurnManager as TurnManagerService } from '../../services/turnManager';
 import { calculateTurnIncome } from '../../utils/factionCalculations';
 import type { TurnPhase } from '../../store/slices/turnSlice';
 import { selectFaction } from '../../store/slices/factionsSlice';
+import type { Faction } from '../../types/faction';
 import './TurnManager.css';
 
 export default function TurnManager() {
@@ -15,7 +16,7 @@ export default function TurnManager() {
   const selectedFactionId = useSelector((state: RootState) => state.factions.selectedFactionId);
 
   const selectedFaction = selectedFactionId
-    ? factions.find((f) => f.id === selectedFactionId)
+    ? factions.find((f: Faction) => f.id === selectedFactionId)
     : null;
 
   const handleAdvancePhase = () => {
@@ -62,13 +63,13 @@ export default function TurnManager() {
             </div>
             <div
               className="phase-indicator"
-              style={{ backgroundColor: phaseColors[turnPhase.phase] }}
+              style={{ backgroundColor: phaseColors[turnPhase.phase as TurnPhase] }}
             >
               <span className="phase-label">Current Phase:</span>
               <span className="phase-name">{turnPhase.phase}</span>
             </div>
           </div>
-          <div className="phase-description">{phaseDescriptions[turnPhase.phase]}</div>
+          <div className="phase-description">{phaseDescriptions[turnPhase.phase as TurnPhase]}</div>
         </div>
 
         {/* Phase Controls */}
@@ -203,7 +204,7 @@ export default function TurnManager() {
           <div className="factions-summary">
             <h3>All Factions {selectedFactionId && <span style={{ fontSize: '12px', color: '#aaa', fontWeight: 'normal' }}>(Click to select)</span>}</h3>
             <div className="factions-list">
-              {factions.map((faction) => {
+              {factions.map((faction: Faction) => {
                 const isSelected = selectedFactionId === faction.id;
                 return (
                   <div
@@ -251,7 +252,7 @@ export default function TurnManager() {
         <div className="phase-info">
           <h3>Phase Cycle</h3>
           <div className="phase-cycle">
-            {(['Income', 'Maintenance', 'Action', 'News'] as TurnPhase[]).map((phase, index) => (
+            {(['Income', 'Maintenance', 'Action', 'News'] as TurnPhase[]).map((phase: TurnPhase, index: number) => (
               <div
                 key={phase}
                 className={`phase-step ${turnPhase.phase === phase ? 'active' : ''} ${
@@ -260,9 +261,9 @@ export default function TurnManager() {
                     : ''
                 }`}
                 style={{
-                  borderColor: phaseColors[phase],
+                  borderColor: phaseColors[phase as TurnPhase],
                   backgroundColor:
-                    turnPhase.phase === phase ? phaseColors[phase] + '20' : 'transparent',
+                    turnPhase.phase === phase ? phaseColors[phase as TurnPhase] + '20' : 'transparent',
                 }}
               >
                 {phase}

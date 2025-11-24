@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import type { FactionAsset } from '../../types/faction';
+import type { Faction, FactionAsset } from '../../types/faction';
+import type { StarSystem } from '../../types/sector';
 import { getAssetById } from '../../data/assetLibrary';
 import {
   calculateAssetRepairCost,
@@ -25,7 +26,7 @@ export default function RepairModal({
   onConfirm,
 }: RepairModalProps) {
   const faction = useSelector((state: RootState) =>
-    state.factions.factions.find((f) => f.id === factionId)
+    state.factions.factions.find((f: Faction) => f.id === factionId)
   );
   const systems = useSelector(
     (state: RootState) => state.sector.currentSector?.systems || []
@@ -39,16 +40,16 @@ export default function RepairModal({
   }
 
   const getSystemName = (systemId: string): string => {
-    const system = systems.find((s) => s.id === systemId);
+    const system = systems.find((s: StarSystem) => s.id === systemId);
     return system?.name || 'Unknown System';
   };
 
   // Get damaged assets (HP < maxHp)
-  const damagedAssets = faction.assets.filter((asset) => asset.hp < asset.maxHp);
+  const damagedAssets = faction.assets.filter((asset: FactionAsset) => asset.hp < asset.maxHp);
   const factionNeedsRepair = faction.attributes.hp < faction.attributes.maxHp;
 
   // Calculate costs for selected repairs
-  const selectedAssets = damagedAssets.filter((asset) =>
+  const selectedAssets = damagedAssets.filter((asset: FactionAsset) =>
     selectedAssetIds.has(asset.id)
   );
 
@@ -141,7 +142,7 @@ export default function RepairModal({
             <div className="repair-section">
               <h3>Damaged Assets</h3>
               <div className="repair-assets-list">
-                {damagedAssets.map((asset) => {
+                {damagedAssets.map((asset: FactionAsset) => {
                   const assetDef = getAssetById(asset.definitionId);
                   const isSelected = selectedAssetIds.has(asset.id);
                   const repair = calculateAssetRepairCost(faction, asset);
@@ -197,6 +198,7 @@ export default function RepairModal({
     </div>
   );
 }
+
 
 
 

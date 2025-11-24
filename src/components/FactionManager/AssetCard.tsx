@@ -1,6 +1,6 @@
 import { useDrag } from 'react-dnd';
 import type { AssetDefinition } from '../../types/asset';
-import { assetHasAbility, getAbilityDescription } from '../../utils/assetAbilities';
+import { assetHasAbility } from '../../utils/assetAbilities';
 import {
   assetHasSpecialFeatures,
   getSpecialFeatureSummary,
@@ -89,11 +89,9 @@ export default function AssetCard({
     return actionDescriptions[assetId] || 'This asset has a special ability that can be used during the Action phase.';
   };
 
-  const cardRef = isDraggable && canAfford && canPurchase && factionId ? drag : null;
-
   return (
     <div
-      ref={cardRef}
+      ref={(isDraggable && canAfford && canPurchase && factionId ? drag : undefined) as any}
       className={`asset-card ${isDisabled ? 'disabled' : ''} ${isDraggable ? 'draggable' : ''} ${isDragging ? 'dragging' : ''}`}
       style={{ 
         borderLeftColor: categoryColor,

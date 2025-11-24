@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
 import { removeFaction, addAsset } from '../../store/slices/factionsSlice';
+import type { Faction } from '../../types/faction';
+import type { StarSystem } from '../../types/sector';
 import { validateAssetPurchase } from '../../utils/assetValidation';
 import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromSystem } from '../../utils/narrativeHelpers';
 import { showNotification } from '../NotificationContainer';
@@ -20,7 +22,7 @@ export default function FactionManager() {
   );
 
   const getSystemName = (systemId: string): string => {
-    const system = systems.find((s) => s.id === systemId);
+    const system = systems.find((s: StarSystem) => s.id === systemId);
     return system?.name || 'Unknown System';
   };
 
@@ -32,7 +34,7 @@ export default function FactionManager() {
   };
 
   const handlePurchaseAsset = (factionId: string, assetDefinitionId: string) => {
-    const faction = factions.find((f) => f.id === factionId);
+    const faction = factions.find((f: Faction) => f.id === factionId);
     if (!faction) {
       showNotification('Faction not found', 'error');
       return;
@@ -59,8 +61,8 @@ export default function FactionManager() {
     );
 
     // Generate narrative for the purchase
-    const homeworldSystem = systems.find((s) => s.id === faction.homeworld);
-    const getSystemHelper = (id: string) => systems.find((s) => s.id === id);
+    const homeworldSystem = systems.find((s: StarSystem) => s.id === faction.homeworld);
+    const getSystemHelper = (id: string) => systems.find((s: StarSystem) => s.id === id);
     const getSystemNameHelper = (id: string): string => {
       const system = getSystemHelper(id);
       return system?.name || 'Unknown System';
@@ -121,7 +123,7 @@ export default function FactionManager() {
             </div>
           ) : (
             <div className="faction-dashboards-container">
-              {factions.map((faction) => (
+              {factions.map((faction: Faction) => (
                 <div key={faction.id} className="faction-dashboard-wrapper">
                   <FactionDashboard
                     factionId={faction.id}

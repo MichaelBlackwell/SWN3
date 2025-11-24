@@ -8,6 +8,7 @@ import type {
   FactionGoalType,
   Faction,
 } from '../../types/faction';
+import type { StarSystem } from '../../types/sector';
 import {
   calculateFactionStats,
   generateFactionId,
@@ -243,7 +244,7 @@ export default function FactionCreationForm() {
                 ? 'No systems available - Generate a sector first'
                 : 'Select a homeworld'}
             </option>
-            {systems.map((system) => (
+            {systems.map((system: StarSystem) => (
               <option key={system.id} value={system.id}>
                 {system.name} ({system.coordinates.x}, {system.coordinates.y})
               </option>

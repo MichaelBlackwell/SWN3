@@ -47,7 +47,7 @@ export interface NarrativeContext {
  */
 const tagSpecificTemplates: Record<
   string, // Tag name (faction tag or world tag)
-  Partial<Record<ActionType, Record<ActionResult | 'default', string[]>>>
+  Partial<Record<ActionType, Partial<Record<ActionResult | 'default', string[]>>>>
 > = {
   // Faction Tags
   Savage: {
@@ -228,7 +228,13 @@ const tagSpecificTemplates: Record<
  */
 const narrativeTemplates: Record<
   ActionType,
-  Record<ActionResult | 'default', string[]>
+  {
+    Success?: string[];
+    Failure?: string[];
+    Partial?: string[];
+    Tie?: string[];
+    default: string[];
+  }
 > = {
   Attack: {
     Success: [

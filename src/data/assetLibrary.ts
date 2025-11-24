@@ -1,7 +1,7 @@
 // Static asset library for Stars Without Number faction assets
 // Based on the official SWN faction rules
 
-import type { AssetDefinition } from '../types/asset';
+import type { AssetDefinition, AssetCategory } from '../types/asset';
 
 // Helper function to parse attack patterns from text descriptions
 function parseAttackPattern(text: string | null): {

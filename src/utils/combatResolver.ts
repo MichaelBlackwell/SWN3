@@ -195,9 +195,9 @@ export function resolveCombat(
  * Uses expected values for dice expressions
  */
 export function calculateAttackOdds(
-  attackerAttribute: AttackType,
+  _attackerAttribute: AttackType,
   attackerAttributeValue: number,
-  defenderAttribute: AttackType,
+  _defenderAttribute: AttackType,
   defenderAttributeValue: number
 ): number {
   // Average d10 roll is 5.5
@@ -243,6 +243,12 @@ export function calculateExpectedCounterattackDamage(
   }
   return calculateDiceAverage(counterattackPattern.damage);
 }
+
+
+
+
+
+
 
 
 

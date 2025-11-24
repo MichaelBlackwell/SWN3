@@ -4,9 +4,11 @@
 import type { AppDispatch, RootState } from '../store/store';
 import { advancePhase, setPhase as setTurnPhase, type TurnPhase } from '../store/slices/turnSlice';
 import { processIncomePhase, processMaintenancePhase } from '../store/slices/factionsSlice';
-import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromSystem } from '../utils/narrativeHelpers';
+import { dispatchNarrativeEntry, createNarrativeContextFromFaction } from '../utils/narrativeHelpers';
 import { calculateTurnIncome } from '../utils/factionCalculations';
 import { getAssetById } from '../data/assetLibrary';
+import type { Faction, FactionAsset } from '../types/faction';
+import type { StarSystem } from '../types/sector';
 
 /**
  * Service to manage turn phase transitions and automatic processing
@@ -17,8 +19,8 @@ export class TurnManager {
    * Automatically processes phase-specific logic (e.g., Income phase)
    */
   static advanceTurnPhase(dispatch: AppDispatch, getState: () => RootState) {
-    const state = getState();
-    const currentPhase = state.turn.phase;
+    // const state = getState();
+    // const currentPhase = state.turn.phase;
 
     // Advance to next phase
     dispatch(advancePhase());
@@ -36,14 +38,14 @@ export class TurnManager {
       const stateAfterProcessing = getState();
       const systems = stateAfterProcessing.sector.currentSector?.systems || [];
       
-      stateAfterProcessing.factions.factions.forEach((faction) => {
+      stateAfterProcessing.factions.factions.forEach((faction: Faction) => {
         const income = calculateTurnIncome(faction.attributes);
         if (income > 0) {
           const getSystemName = (systemId: string): string => {
-            const system = systems.find((s) => s.id === systemId);
+            const system = systems.find((s: StarSystem) => s.id === systemId);
             return system?.name || 'Unknown System';
           };
-          const getSystem = (systemId: string) => systems.find((s) => s.id === systemId);
+          const getSystem = (systemId: string) => systems.find((s: StarSystem) => s.id === systemId);
           
           const actorContext = createNarrativeContextFromFaction(faction, getSystemName, getSystem);
           
@@ -66,23 +68,23 @@ export class TurnManager {
       // Generate narrative entries for maintenance phase
       const stateAfterProcessing = getState();
       
-      stateAfterProcessing.factions.factions.forEach((faction) => {
+      stateAfterProcessing.factions.factions.forEach((faction: Faction) => {
         // Calculate what was paid (difference in credits)
-        const factionBefore = stateBeforeProcessing.factions.factions.find((f) => f.id === faction.id);
+        const factionBefore = stateBeforeProcessing.factions.factions.find((f: Faction) => f.id === faction.id);
         if (!factionBefore) return;
         
-        const maintenancePaid = factionBefore.facCreds - faction.facCreds;
+        // const maintenancePaid = factionBefore.facCreds - faction.facCreds;
         const hasFailedAssets = Object.keys(stateAfterProcessing.factions.assetsFailedMaintenance)
-          .some((assetId) => {
-            const asset = faction.assets.find((a) => a.id === assetId);
+          .some((assetId: string) => {
+            const asset = faction.assets.find((a: FactionAsset) => a.id === assetId);
             return asset !== undefined;
           });
         
         const getSystemName = (systemId: string): string => {
-          const system = systems.find((s) => s.id === systemId);
+          const system = systems.find((s: StarSystem) => s.id === systemId);
           return system?.name || 'Unknown System';
         };
-        const getSystem = (systemId: string) => systems.find((s) => s.id === systemId);
+        const getSystem = (systemId: string) => systems.find((s: StarSystem) => s.id === systemId);
         
         const actorContext = createNarrativeContextFromFaction(faction, getSystemName, getSystem);
         
@@ -93,8 +95,8 @@ export class TurnManager {
         });
         
         // Generate narrative for assets that were destroyed due to maintenance failure
-        factionBefore.assets.forEach((assetBefore) => {
-          const assetAfter = faction.assets.find((a) => a.id === assetBefore.id);
+        factionBefore.assets.forEach((assetBefore: FactionAsset) => {
+          const assetAfter = faction.assets.find((a: FactionAsset) => a.id === assetBefore.id);
           if (!assetAfter) {
             // Asset was removed during maintenance
             const assetDef = getAssetById(assetBefore.definitionId);
@@ -127,14 +129,14 @@ export class TurnManager {
     const stateAfterProcessing = getState();
     const systems = stateAfterProcessing.sector.currentSector?.systems || [];
     
-    stateAfterProcessing.factions.factions.forEach((faction) => {
+    stateAfterProcessing.factions.factions.forEach((faction: Faction) => {
       const income = calculateTurnIncome(faction.attributes);
       if (income > 0) {
         const getSystemName = (systemId: string): string => {
-          const system = systems.find((s) => s.id === systemId);
+          const system = systems.find((s: StarSystem) => s.id === systemId);
           return system?.name || 'Unknown System';
         };
-        const getSystem = (systemId: string) => systems.find((s) => s.id === systemId);
+        const getSystem = (systemId: string) => systems.find((s: StarSystem) => s.id === systemId);
         
         const actorContext = createNarrativeContextFromFaction(faction, getSystemName, getSystem);
         
@@ -162,14 +164,14 @@ export class TurnManager {
       const stateAfterProcessing = getState();
       const systems = stateAfterProcessing.sector.currentSector?.systems || [];
       
-      stateAfterProcessing.factions.factions.forEach((faction) => {
+      stateAfterProcessing.factions.factions.forEach((faction: Faction) => {
         const income = calculateTurnIncome(faction.attributes);
         if (income > 0) {
           const getSystemName = (systemId: string): string => {
-            const system = systems.find((s) => s.id === systemId);
+            const system = systems.find((s: StarSystem) => s.id === systemId);
             return system?.name || 'Unknown System';
           };
-          const getSystem = (systemId: string) => systems.find((s) => s.id === systemId);
+          const getSystem = (systemId: string) => systems.find((s: StarSystem) => s.id === systemId);
           
           const actorContext = createNarrativeContextFromFaction(faction, getSystemName, getSystem);
           

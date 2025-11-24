@@ -6,7 +6,7 @@ const generateNotificationId = () => `notification-${++notificationIdCounter}-${
 
 // Global notification queue
 let notificationQueue: NotificationData[] = [];
-let setNotificationQueueState: ((notifications: NotificationData[]) => void) | null = null;
+let setNotificationQueueState: React.Dispatch<React.SetStateAction<NotificationData[]>> | null = null;
 
 export const showNotification = (
   message: string,
@@ -21,7 +21,7 @@ export const showNotification = (
   };
 
   if (setNotificationQueueState) {
-    setNotificationQueueState((prev) => [...prev, notification]);
+    setNotificationQueueState((prev: NotificationData[]) => [...prev, notification]);
   } else {
     notificationQueue.push(notification);
   }

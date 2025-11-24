@@ -27,7 +27,7 @@ export default function OwnedAssetItem({
   const dispatch = useDispatch();
   const canStageAction = useSelector(selectCanStageAction);
   const faction = useSelector((state: RootState) =>
-    state.factions.factions.find((f) => f.id === factionId)
+    state.factions.factions.find((f: { id: string }) => f.id === factionId)
   );
   const state = useSelector((state: RootState) => state);
 

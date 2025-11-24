@@ -47,7 +47,7 @@ export default function SystemDropZone({
 
   return (
     <div
-      ref={drop}
+      ref={drop as unknown as React.Ref<HTMLDivElement>}
       className={`system-drop-zone ${isActive ? 'drop-active' : ''} ${canDrop ? 'can-drop' : ''}`}
       style={{
         position: 'absolute',

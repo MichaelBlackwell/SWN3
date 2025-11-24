@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { getAssetById } from '../../data/assetLibrary';
+import type { Faction, FactionAsset } from '../../types/faction';
+import type { StarSystem } from '../../types/sector';
+import type { FactionTag } from '../../types/faction';
 import AssetList from './AssetList';
 import OwnedAssetItem from './OwnedAssetItem';
 import RepairModal from './RepairModal';
 import ExpandInfluenceButton from './ExpandInfluenceButton';
-import { stageActionWithPayload, startMovementMode, cancelMovementMode, selectCanStageAction, selectMovementMode } from '../../store/slices/turnSlice';
+import { stageActionWithPayload, cancelMovementMode, selectCanStageAction, selectMovementMode } from '../../store/slices/turnSlice';
 import { showNotification } from '../NotificationContainer';
 import './FactionDashboard.css';
 
@@ -30,14 +33,15 @@ export default function FactionDashboard({
   const movementMode = useSelector(selectMovementMode);
 
   const faction = factionId
-    ? factions.find((f) => f.id === factionId)
+    ? factions.find((f: Faction) => f.id === factionId)
     : null;
 
   const getSystemName = (systemId: string): string => {
-    const system = systems.find((s) => s.id === systemId);
+    const system = systems.find((s: StarSystem) => s.id === systemId);
     return system?.name || 'Unknown System';
   };
 
+  /*
   const handleStartMovement = (assetId: string) => {
     if (!canStageAction) {
       showNotification('Cannot start movement: not in Action phase or action already staged', 'error');
@@ -59,6 +63,7 @@ export default function FactionDashboard({
     dispatch(startMovementMode({ assetId, factionId }));
     showNotification('Movement mode active: Click a valid destination on the map', 'info');
   };
+  */
 
   const handleCancelMovement = () => {
     dispatch(cancelMovementMode());
@@ -164,7 +169,7 @@ export default function FactionDashboard({
               </div>
             </div>
             {(faction.attributes.hp < faction.attributes.maxHp ||
-              faction.assets.some((asset) => asset.hp < asset.maxHp)) && (
+              faction.assets.some((asset: FactionAsset) => asset.hp < asset.maxHp)) && (
               <div className="dashboard-actions">
                 <button
                   className="repair-btn"
@@ -188,7 +193,7 @@ export default function FactionDashboard({
             <div className="dashboard-section">
               <h3>Tags</h3>
               <div className="dashboard-tags">
-                {faction.tags.map((tag) => (
+                {faction.tags.map((tag: FactionTag) => (
                   <span key={tag} className="dashboard-tag">
                     {tag}
                   </span>
@@ -204,7 +209,7 @@ export default function FactionDashboard({
             </div>
             {faction.assets.length > 0 ? (
               <div className="dashboard-assets-list">
-                {faction.assets.map((asset) => {
+                {faction.assets.map((asset: FactionAsset) => {
                   const assetDef = getAssetById(asset.definitionId);
                   return (
                     <OwnedAssetItem
@@ -212,7 +217,7 @@ export default function FactionDashboard({
                       asset={asset}
                       assetName={assetDef?.name || asset.definitionId}
                       systemName={getSystemName(asset.location)}
-                      factionId={factionId}
+                      factionId={factionId || ''}
                     />
                   );
                 })}
@@ -227,7 +232,7 @@ export default function FactionDashboard({
                 No assets owned
               </div>
             )}
-            {canStageAction && (
+            {canStageAction && factionId && (
               <div className="dashboard-actions" style={{ marginTop: 'var(--spacing-2)', flexShrink: 0 }}>
                 <ExpandInfluenceButton
                   factionId={factionId}

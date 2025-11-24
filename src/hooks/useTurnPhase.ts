@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../store/store';
 import { store } from '../store/store';
 import {
   advancePhase,
@@ -90,7 +89,7 @@ export function useTurnPhase() {
         factionId: string;
       };
 
-      const faction = state.factions.factions.find((f) => f.id === factionId);
+      const faction = state.factions.factions.find((f: { id: string }) => f.id === factionId);
       if (faction && faction.facCreds >= 1) {
         // Deduct movement cost (1 FacCred)
         dispatch(updateFaction({
@@ -111,7 +110,7 @@ export function useTurnPhase() {
         factionRepair?: { hpHealed: number; cost: number };
       };
 
-      const faction = state.factions.factions.find((f) => f.id === factionId);
+      const faction = state.factions.factions.find((f: { id: string }) => f.id === factionId);
       if (!faction) {
         dispatch(commitAction());
         return;
@@ -143,7 +142,7 @@ export function useTurnPhase() {
         }
       }
     } else if (currentStagedActionType === 'USE_ABILITY' && currentStagedActionPayload) {
-      const { factionId, assetId, abilityResult } = currentStagedActionPayload as {
+      const { factionId, assetId, abilityResult } = currentStagedActionPayload as unknown as {
         factionId: string;
         assetId: string;
         abilityResult: {
@@ -154,7 +153,7 @@ export function useTurnPhase() {
         };
       };
 
-      const faction = state.factions.factions.find((f) => f.id === factionId);
+      const faction = state.factions.factions.find((f: { id: string }) => f.id === factionId);
       if (!faction) {
         dispatch(commitAction());
         return;
@@ -167,7 +166,7 @@ export function useTurnPhase() {
         ...abilityResult,
       }));
     } else if (currentStagedActionType === 'EXPAND_INFLUENCE' && currentStagedActionPayload) {
-      const { factionId, targetSystemId, hp, cost, rollResult } = currentStagedActionPayload as {
+      const { factionId, targetSystemId, hp, cost, rollResult } = currentStagedActionPayload as unknown as {
         factionId: string;
         targetSystemId: string;
         hp: number;
@@ -186,7 +185,7 @@ export function useTurnPhase() {
         };
       };
 
-      const faction = state.factions.factions.find((f) => f.id === factionId);
+      const faction = state.factions.factions.find((f: { id: string }) => f.id === factionId);
       if (!faction) {
         dispatch(commitAction());
         return;
@@ -203,6 +202,7 @@ export function useTurnPhase() {
         }));
 
         // TODO: Handle opposing faction attacks if rollResult indicates they can attack
+        void rollResult; // Suppress unused variable warning
         // For now, we'll just create the base. The attack resolution can be handled separately
         // or in a future enhancement.
       }

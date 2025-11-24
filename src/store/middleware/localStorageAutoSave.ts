@@ -1,5 +1,4 @@
 import type { Middleware } from '@reduxjs/toolkit';
-import type { RootState } from '../store';
 import { saveManager } from '../../services/saveManager';
 import { showNotification } from '../../components/NotificationContainer';
 
@@ -69,9 +68,11 @@ let pendingSave = false;
  * 
  * @param state - The current Redux state to save
  */
-function performSave(state: RootState): void {
+function performSave(state: unknown): void {
   try {
-    const serializedState = saveManager.serialize(state);
+    // We cast to any here because saveManager expects a specific structure
+    // that matches RootState, but we want to avoid circular dependencies
+    const serializedState = saveManager.serialize(state as any);
     localStorage.setItem(STORAGE_KEY, serializedState);
     pendingSave = false;
   } catch (error) {
@@ -104,7 +105,7 @@ function performSave(state: RootState): void {
  * 
  * @param state - The current Redux state to save
  */
-function scheduleSave(state: RootState): void {
+function scheduleSave(state: unknown): void {
   // Clear any existing timer
   if (saveTimer) {
     clearTimeout(saveTimer);
@@ -130,12 +131,13 @@ function scheduleSave(state: RootState): void {
  * 
  * @returns Redux middleware function
  */
-export const localStorageAutoSave: Middleware<{}, RootState> = (store) => (next) => (action) => {
+export const localStorageAutoSave: Middleware = (store) => (next) => (action: unknown) => {
   // Execute the action first
   const result = next(action);
   
   // Check if this action should trigger an auto-save
-  if (AUTO_SAVE_ACTIONS.has(action.type)) {
+  // Type guard for action
+  if (action && typeof action === 'object' && 'type' in action && typeof action.type === 'string' && AUTO_SAVE_ACTIONS.has(action.type)) {
     // Get the updated state after the action
     const currentState = store.getState();
     
@@ -152,7 +154,7 @@ export const localStorageAutoSave: Middleware<{}, RootState> = (store) => (next)
  * 
  * @param state - The current Redux state to save
  */
-export function saveStateImmediately(state: RootState): void {
+export function saveStateImmediately(state: unknown): void {
   // Clear any pending debounced save
   if (saveTimer) {
     clearTimeout(saveTimer);

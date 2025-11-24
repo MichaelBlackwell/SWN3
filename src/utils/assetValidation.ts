@@ -1,5 +1,4 @@
 import type { Faction } from '../types/faction';
-import type { AssetDefinition } from '../types/asset';
 import { getAssetById } from '../data/assetLibrary';
 
 export interface ValidationResult {
@@ -53,6 +52,12 @@ export function validateAssetPurchase(
 
   return { valid: true };
 }
+
+
+
+
+
+
 
 
 

@@ -612,7 +612,7 @@ export function formatSpecialFeaturesAsList(
 ): string[] {
   const features = getAssetSpecialFeatures(assetId);
   
-  return features.map((feature, index) => {
+  return features.map((feature) => {
     let formatted = '';
     
     if (includeType) {

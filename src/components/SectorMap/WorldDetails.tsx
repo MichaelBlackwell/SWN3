@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
+import type { Faction, FactionAsset, FactionTag } from '../../types/faction';
+import type { StarSystem, Route } from '../../types/sector';
 import { selectSystem } from '../../store/slices/sectorSlice';
 import { getAssetById } from '../../data/assetLibrary';
 import { 
@@ -78,7 +80,7 @@ export default function WorldDetails() {
 
   if (!sector || !selectedSystemId) return null;
 
-  const system = sector.systems.find((s) => s.id === selectedSystemId);
+  const system = sector.systems.find((s: StarSystem) => s.id === selectedSystemId);
   if (!system) return null;
 
   const handleClose = () => {
@@ -91,7 +93,7 @@ export default function WorldDetails() {
   };
 
   const selectedFaction = selectedFactionId
-    ? factions.find((f) => f.id === selectedFactionId)
+    ? factions.find((f: Faction) => f.id === selectedFactionId)
     : null;
 
   const handleTarget = (targetAssetId: string, targetFactionId: string) => {
@@ -111,8 +113,8 @@ export default function WorldDetails() {
     }
 
     // Find the target asset and faction
-    const targetFaction = factions.find((f) => f.id === targetFactionId);
-    const targetAsset = targetFaction?.assets.find((a) => a.id === targetAssetId);
+    const targetFaction = factions.find((f: Faction) => f.id === targetFactionId);
+    const targetAsset = targetFaction?.assets.find((a: FactionAsset) => a.id === targetAssetId);
     const targetAssetDef = targetAsset ? getAssetById(targetAsset.definitionId) : null;
 
     if (!targetFaction || !targetAsset || !targetAssetDef) {
@@ -121,12 +123,12 @@ export default function WorldDetails() {
     }
 
     // Find available attacker assets from selected faction in the same system
-    const attackerAssets = selectedFaction.assets.filter(
-      (asset) => asset.location === system.id
+    const attackerAssets = selectedFaction.assets.filter((asset: FactionAsset) =>
+      asset.location === system.id
     );
 
     // Filter to only assets that can attack
-    const availableAttackers = attackerAssets.filter((asset) => {
+    const availableAttackers = attackerAssets.filter((asset: FactionAsset) => {
       const assetDef = getAssetById(asset.definitionId);
       return assetDef?.attack && asset.hp > 0;
     });
@@ -180,9 +182,9 @@ export default function WorldDetails() {
 
     // Store HP before combat for narrative generation
     const attackerAssetHpBefore = attackerAsset.hp;
-    const attackerFactionHpBefore = selectedFaction.attributes.hp;
+    // const attackerFactionHpBefore = selectedFaction.attributes.hp;
     const defenderAssetHpBefore = targetAsset.hp;
-    const defenderFactionHpBefore = targetFaction.attributes.hp;
+    // const defenderFactionHpBefore = targetFaction.attributes.hp;
 
     // Apply damage
     if (result.attackDamage > 0) {
@@ -206,7 +208,7 @@ export default function WorldDetails() {
     }
 
     // Generate narrative
-    const getSystemHelper = (id: string) => sector.systems.find((s) => s.id === id);
+    const getSystemHelper = (id: string) => sector.systems.find((s: StarSystem) => s.id === id);
     const getSystemNameHelper = (id: string): string => {
       const sys = getSystemHelper(id);
       return sys?.name || 'Unknown System';
@@ -285,7 +287,7 @@ export default function WorldDetails() {
       return;
     }
 
-    const faction = factions.find((f) => f.id === factionId);
+    const faction = factions.find((f: Faction) => f.id === factionId);
     if (!faction) {
       showNotification('Faction not found', 'error');
       return;
@@ -302,7 +304,7 @@ export default function WorldDetails() {
     showNotification('Movement mode active: Click a valid destination on the map', 'info');
   };
 
-  const handleRepair = (assetId: string, factionId: string) => {
+  const handleRepair = (_assetId: string, _factionId: string) => {
     if (!canStageAction) {
       showNotification('Cannot repair: not in Action phase or action already staged', 'error');
       return;
@@ -312,13 +314,13 @@ export default function WorldDetails() {
   };
 
   const handleUseAbility = (assetId: string, factionId: string) => {
-    const faction = factions.find((f) => f.id === factionId);
+    const faction = factions.find((f: Faction) => f.id === factionId);
     if (!faction) {
       showNotification('Faction not found', 'error');
       return;
     }
 
-    const asset = faction.assets.find((a) => a.id === assetId);
+    const asset = faction.assets.find((a: FactionAsset) => a.id === assetId);
     if (!asset) {
       showNotification('Asset not found', 'error');
       return;
@@ -383,13 +385,13 @@ export default function WorldDetails() {
   const populationLabel = POPULATION_LABELS[system.primaryWorld.population] || 'Unknown';
 
   // Find factions that have this system as their homeworld
-  const homeworldFactions = factions.filter((faction) => faction.homeworld === system.id);
+  const homeworldFactions = factions.filter((faction: Faction) => faction.homeworld === system.id);
 
   // Find all assets in this system (from any faction)
-  const assetsInSystem = factions.flatMap((faction) =>
+  const assetsInSystem = factions.flatMap((faction: Faction) =>
     faction.assets
-      .filter((asset) => asset.location === system.id)
-      .map((asset) => ({ ...asset, factionId: faction.id, factionName: faction.name }))
+      .filter((asset: FactionAsset) => asset.location === system.id)
+      .map((asset: FactionAsset) => ({ ...asset, factionId: faction.id, factionName: faction.name }))
   );
 
   return (
@@ -487,7 +489,7 @@ export default function WorldDetails() {
             <div style={{ marginBottom: '16px' }}>
               <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>World Tags</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {system.primaryWorld.tags.map((tag, index) => (
+                {system.primaryWorld.tags.map((tag: string, index: number) => (
                   <span
                     key={index}
                     style={{
@@ -511,7 +513,7 @@ export default function WorldDetails() {
             <div style={{ marginBottom: '16px' }}>
               <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>Trade Codes</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {system.primaryWorld.tradeCodes.map((code, index) => (
+                {system.primaryWorld.tradeCodes.map((code: string, index: number) => (
                   <span
                     key={index}
                     style={{
@@ -567,8 +569,8 @@ export default function WorldDetails() {
                 <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px', fontWeight: '600' }}>
                   Homeworld of:
                 </div>
-                {homeworldFactions.map((faction) => {
-                  const factionAssets = assetsInSystem.filter((asset) => asset.factionId === faction.id);
+                {homeworldFactions.map((faction: Faction) => {
+                  const factionAssets = assetsInSystem.filter((asset: { factionId: string }) => asset.factionId === faction.id);
                   return (
                     <div
                       key={faction.id}
@@ -624,7 +626,7 @@ export default function WorldDetails() {
                       {/* Faction Tags */}
                       {faction.tags.length > 0 && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
-                          {faction.tags.map((tag) => (
+                          {faction.tags.map((tag: FactionTag) => (
                             <span
                               key={tag}
                               style={{
@@ -648,9 +650,9 @@ export default function WorldDetails() {
                             Assets ({factionAssets.length}):
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            {factionAssets.map((asset) => {
+                            {factionAssets.map((asset: any) => {
                               const assetDef = getAssetById(asset.definitionId);
-                              const categoryColor = 
+                              const categoryColor =  
                                 assetDef?.category === 'Force' ? '#ff6b6b' :
                                 assetDef?.category === 'Cunning' ? '#4ecdc4' :
                                 assetDef?.category === 'Wealth' ? '#ffe66d' : '#646cff';
@@ -819,15 +821,15 @@ export default function WorldDetails() {
             )}
 
             {/* Assets from other factions (not homeworld) */}
-            {assetsInSystem.filter((asset) => !homeworldFactions.some((f) => f.id === asset.factionId)).length > 0 && (
+            {assetsInSystem.filter((asset: { factionId: string }) => !homeworldFactions.some((f: Faction) => f.id === asset.factionId)).length > 0 && (
               <div>
                 <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px', fontWeight: '600' }}>
                   Other Assets:
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {assetsInSystem
-                    .filter((asset) => !homeworldFactions.some((f) => f.id === asset.factionId))
-                    .map((asset) => {
+                    .filter((asset: { factionId: string }) => !homeworldFactions.some((f: Faction) => f.id === asset.factionId))
+                    .map((asset: any) => {
                       const assetDef = getAssetById(asset.definitionId);
                       const categoryColor = 
                         assetDef?.category === 'Force' ? '#ff6b6b' :
@@ -835,7 +837,7 @@ export default function WorldDetails() {
                         assetDef?.category === 'Wealth' ? '#ffe66d' : '#646cff';
                       
                       const isSelectedFactionAsset = selectedFactionId === asset.factionId;
-                      const assetFaction = factions.find((f) => f.id === asset.factionId);
+                      const assetFaction = factions.find((f: Faction) => f.id === asset.factionId);
                       const canMove = isSelectedFactionAsset && assetFaction && assetFaction.facCreds >= 1;
                       const needsRepair = asset.hp < asset.maxHp;
                       const hasAbility = assetDef?.specialFlags.hasAction || false;
@@ -1011,8 +1013,8 @@ export default function WorldDetails() {
               Connections ({system.routes.length})
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {system.routes.map((route, index) => {
-                const targetSystem = sector.systems.find((s) => s.id === route.systemId);
+              {system.routes.map((route: Route, index: number) => {
+                const targetSystem = sector.systems.find((s: StarSystem) => s.id === route.systemId);
                 if (!targetSystem) return null;
                 return (
                   <div

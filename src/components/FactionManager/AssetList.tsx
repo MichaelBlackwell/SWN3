@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import {
-  assetLibrary,
   getAllAssetsForFaction,
   getAssetsByCategory,
 } from '../../data/assetLibrary';
@@ -16,13 +15,13 @@ interface AssetListProps {
   onDragStart?: () => void; // Optional callback for drag start
 }
 
-export default function AssetList({ factionId, onPurchase, onDragStart }: AssetListProps) {
+export default function AssetList({ factionId, onPurchase }: AssetListProps) {
   const factions = useSelector((state: RootState) => state.factions.factions);
   const [categoryFilter, setCategoryFilter] = useState<AssetCategory | 'All'>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
   const faction = factionId
-    ? factions.find((f) => f.id === factionId)
+    ? factions.find((f: { id: string }) => f.id === factionId)
     : null;
 
   if (!faction) {

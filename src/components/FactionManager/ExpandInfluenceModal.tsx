@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
+import type { Faction, FactionAsset } from '../../types/faction';
+import type { StarSystem } from '../../types/sector';
 import {
   getValidExpandTargets,
-  hasBaseOfInfluence,
-  hasAssetsOnWorld,
   calculateBaseOfInfluenceCost,
   resolveExpandInfluenceRoll,
   BASE_OF_INFLUENCE_ID,
@@ -30,7 +30,7 @@ export default function ExpandInfluenceModal({
   onConfirm,
 }: ExpandInfluenceModalProps) {
   const faction = useSelector((state: RootState) =>
-    state.factions.factions.find((f) => f.id === factionId)
+    state.factions.factions.find((f: Faction) => f.id === factionId)
   );
   const systems = useSelector(
     (state: RootState) => state.sector.currentSector?.systems || []
@@ -50,10 +50,12 @@ export default function ExpandInfluenceModal({
   const validTargets = getValidExpandTargets(faction, systems);
 
   // If current system is selected, check if it's valid
+  /*
   const currentSystemValid =
     currentSystemId &&
     hasAssetsOnWorld(faction, currentSystemId) &&
     !hasBaseOfInfluence(faction, currentSystemId);
+  */
 
   // Calculate cost for selected system
   const costInfo =
@@ -78,9 +80,11 @@ export default function ExpandInfluenceModal({
     });
   };
 
+  /*
   const selectedSystem = selectedSystemId
-    ? systems.find((s) => s.id === selectedSystemId)
+    ? systems.find((s: StarSystem) => s.id === selectedSystemId)
     : null;
+  */
 
   return (
     <div className="expand-influence-modal-overlay" onClick={onClose}>
@@ -125,10 +129,10 @@ export default function ExpandInfluenceModal({
               </div>
             ) : (
               <div className="expand-influence-targets">
-                {validTargets.map((system) => {
+                {validTargets.map((system: StarSystem) => {
                   const isSelected = selectedSystemId === system.id;
                   const assetsOnWorld = faction.assets.filter(
-                    (asset) =>
+                    (asset: FactionAsset) =>
                       asset.location === system.id &&
                       asset.definitionId !== BASE_OF_INFLUENCE_ID
                   );
