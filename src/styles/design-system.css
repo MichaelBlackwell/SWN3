@@ -1,0 +1,457 @@
+/* Design System - Spacing, Typography, and Visual Hierarchy */
+
+:root {
+  /* ============================================
+     SPACING SCALE
+     Based on 4px base unit for consistency
+     ============================================ */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-5: 1.25rem;   /* 20px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+  --spacing-20: 5rem;     /* 80px */
+
+  /* Legacy spacing variables (for backward compatibility) */
+  --spacing-xs: var(--spacing-1);
+  --spacing-sm: var(--spacing-2);
+  --spacing-md: var(--spacing-4);
+  --spacing-lg: var(--spacing-6);
+  --spacing-xl: var(--spacing-8);
+  --spacing-2xl: var(--spacing-12);
+
+  /* ============================================
+     TYPOGRAPHY SCALE
+     Consistent heading and text sizes
+     ============================================ */
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;      /* 12px - Captions, labels */
+  --font-size-sm: 0.875rem;     /* 14px - Small text, metadata */
+  --font-size-base: 1rem;       /* 16px - Body text */
+  --font-size-lg: 1.125rem;     /* 18px - Large body text */
+  --font-size-xl: 1.25rem;      /* 20px - Small headings */
+  --font-size-2xl: 1.5rem;      /* 24px - Section headings */
+  --font-size-3xl: 1.875rem;    /* 30px - Page titles */
+  --font-size-4xl: 2.25rem;     /* 36px - Hero headings */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+
+  /* ============================================
+     TYPOGRAPHY HIERARCHY
+     Predefined heading styles
+     ============================================ */
+  /* Heading 1 - Page/App Title */
+  --h1-font-size: var(--font-size-3xl);
+  --h1-font-weight: var(--font-weight-semibold);
+  --h1-line-height: var(--line-height-tight);
+  --h1-letter-spacing: var(--letter-spacing-tight);
+  --h1-margin-bottom: var(--spacing-6);
+
+  /* Heading 2 - Section Titles */
+  --h2-font-size: var(--font-size-2xl);
+  --h2-font-weight: var(--font-weight-semibold);
+  --h2-line-height: var(--line-height-tight);
+  --h2-letter-spacing: var(--letter-spacing-normal);
+  --h2-margin-bottom: var(--spacing-5);
+
+  /* Heading 3 - Subsection Titles */
+  --h3-font-size: var(--font-size-xl);
+  --h3-font-weight: var(--font-weight-semibold);
+  --h3-line-height: var(--line-height-normal);
+  --h3-letter-spacing: var(--letter-spacing-normal);
+  --h3-margin-bottom: var(--spacing-4);
+
+  /* Heading 4 - Card/Component Titles */
+  --h4-font-size: var(--font-size-lg);
+  --h4-font-weight: var(--font-weight-medium);
+  --h4-line-height: var(--line-height-normal);
+  --h4-letter-spacing: var(--letter-spacing-normal);
+  --h4-margin-bottom: var(--spacing-3);
+
+  /* Body Text */
+  --body-font-size: var(--font-size-base);
+  --body-font-weight: var(--font-weight-normal);
+  --body-line-height: var(--line-height-normal);
+
+  /* Small Text / Captions */
+  --caption-font-size: var(--font-size-sm);
+  --caption-font-weight: var(--font-weight-normal);
+  --caption-line-height: var(--line-height-normal);
+  --caption-color: var(--text-secondary);
+
+  /* ============================================
+     COMPONENT SPACING
+     Consistent padding/margins for components
+     ============================================ */
+  /* Cards */
+  --card-padding: var(--spacing-6);
+  --card-padding-sm: var(--spacing-4);
+  --card-gap: var(--spacing-4);
+  --card-border-radius: 8px;
+  --card-border-width: 1px;
+
+  /* Buttons */
+  --button-padding-x: var(--spacing-4);
+  --button-padding-y: var(--spacing-3);
+  --button-padding-x-sm: var(--spacing-3);
+  --button-padding-y-sm: var(--spacing-2);
+  --button-padding-x-lg: var(--spacing-6);
+  --button-padding-y-lg: var(--spacing-4);
+  --button-border-radius: 6px;
+  --button-gap: var(--spacing-2);
+
+  /* Forms */
+  --form-input-padding-x: var(--spacing-3);
+  --form-input-padding-y: var(--spacing-3);
+  --form-input-gap: var(--spacing-4);
+  --form-group-gap: var(--spacing-6);
+  --form-label-margin-bottom: var(--spacing-2);
+  --form-border-radius: 6px;
+
+  /* Sections */
+  --section-padding: var(--spacing-8);
+  --section-padding-sm: var(--spacing-6);
+  --section-gap: var(--spacing-6);
+  --section-border-width: 2px;
+
+  /* Containers */
+  --container-padding: var(--spacing-8);
+  --container-padding-sm: var(--spacing-4);
+  --container-max-width: 1440px;
+
+  /* ============================================
+     VISUAL SEPARATION
+     Borders, shadows, and backgrounds
+     ============================================ */
+  /* Border Styles */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 3px;
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+  --border-radius-xl: 12px;
+  --border-radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+
+  /* Visual Hierarchy - Background Layers */
+  --bg-layer-0: var(--bg-primary);
+  --bg-layer-1: var(--bg-secondary);
+  --bg-layer-2: var(--bg-tertiary);
+  --bg-layer-hover: rgba(255, 255, 255, 0.05);
+
+  /* ============================================
+     COMPONENT GROUPING
+     Spacing between related elements
+     ============================================ */
+  --group-gap-tight: var(--spacing-2);
+  --group-gap-normal: var(--spacing-4);
+  --group-gap-loose: var(--spacing-6);
+  --group-padding: var(--spacing-4);
+  --group-border-radius: var(--border-radius-lg);
+}
+
+/* ============================================
+   TYPOGRAPHY BASE STYLES
+   ============================================ */
+h1, .h1 {
+  font-size: var(--h1-font-size);
+  font-weight: var(--h1-font-weight);
+  line-height: var(--h1-line-height);
+  letter-spacing: var(--h1-letter-spacing);
+  margin: 0 0 var(--h1-margin-bottom) 0;
+  color: var(--text-primary);
+}
+
+h2, .h2 {
+  font-size: var(--h2-font-size);
+  font-weight: var(--h2-font-weight);
+  line-height: var(--h2-line-height);
+  letter-spacing: var(--h2-letter-spacing);
+  margin: 0 0 var(--h2-margin-bottom) 0;
+  color: var(--text-primary);
+}
+
+h3, .h3 {
+  font-size: var(--h3-font-size);
+  font-weight: var(--h3-font-weight);
+  line-height: var(--h3-line-height);
+  letter-spacing: var(--h3-letter-spacing);
+  margin: 0 0 var(--h3-margin-bottom) 0;
+  color: var(--text-primary);
+}
+
+h4, .h4 {
+  font-size: var(--h4-font-size);
+  font-weight: var(--h4-font-weight);
+  line-height: var(--h4-line-height);
+  letter-spacing: var(--h4-letter-spacing);
+  margin: 0 0 var(--h4-margin-bottom) 0;
+  color: var(--text-primary);
+}
+
+p, .body-text {
+  font-size: var(--body-font-size);
+  font-weight: var(--body-font-weight);
+  line-height: var(--body-line-height);
+  margin: 0 0 var(--spacing-4) 0;
+  color: var(--text-primary);
+}
+
+small, .caption {
+  font-size: var(--caption-font-size);
+  font-weight: var(--caption-font-weight);
+  line-height: var(--caption-line-height);
+  color: var(--caption-color);
+}
+
+/* ============================================
+   COMPONENT STYLES
+   Consistent button, card, and form styles
+   ============================================ */
+
+/* Button Variants */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  border: var(--border-width-thin) solid var(--border-color);
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--touch-target-min);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background-color: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+  border-color: var(--accent-primary);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--bg-layer-hover);
+  color: var(--text-primary);
+}
+
+.btn-sm {
+  padding: var(--button-padding-y-sm) var(--button-padding-x-sm);
+  font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+  padding: var(--button-padding-y-lg) var(--button-padding-x-lg);
+  font-size: var(--font-size-lg);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--bg-layer-1);
+  border: var(--card-border-width) solid var(--border-color);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.card-sm {
+  padding: var(--card-padding-sm);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--spacing-4);
+  border-bottom: var(--border-width-thin) solid var(--border-color);
+  margin-bottom: var(--spacing-4);
+}
+
+.card-body {
+  flex: 1;
+}
+
+.card-footer {
+  padding-top: var(--spacing-4);
+  border-top: var(--border-width-thin) solid var(--border-color);
+  margin-top: var(--spacing-4);
+}
+
+/* Form Element Styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-label-margin-bottom);
+  margin-bottom: var(--form-group-gap);
+}
+
+.form-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.form-label .required {
+  color: #ff6b6b;
+  margin-left: var(--spacing-1);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: var(--form-input-padding-y) var(--form-input-padding-x);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  background-color: var(--bg-layer-2);
+  border: var(--border-width-thin) solid var(--border-color);
+  border-radius: var(--form-border-radius);
+  color: var(--text-primary);
+  transition: border-color 0.2s, outline 0.2s;
+  min-height: var(--touch-target-min);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-color: var(--accent-primary);
+}
+
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: #ff6b6b;
+}
+
+.form-error {
+  font-size: var(--font-size-sm);
+  color: #ff6b6b;
+  margin-top: var(--spacing-1);
+}
+
+/* Section Separators */
+.section {
+  padding: var(--section-padding);
+}
+
+.section-sm {
+  padding: var(--section-padding-sm);
+}
+
+.section-divider {
+  border-top: var(--section-border-width) solid var(--border-color);
+  margin: var(--section-gap) 0;
+}
+
+.section-header {
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-4);
+  border-bottom: var(--border-width-medium) solid var(--border-color);
+}
+
+/* Visual Grouping */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--group-gap-normal);
+  padding: var(--group-padding);
+  background-color: var(--bg-layer-1);
+  border: var(--border-width-thin) solid var(--border-color);
+  border-radius: var(--group-border-radius);
+}
+
+.group-tight {
+  gap: var(--group-gap-tight);
+}
+
+.group-loose {
+  gap: var(--group-gap-loose);
+}
+
+/* Responsive Typography Adjustments */
+@media (max-width: 768px) {
+  :root {
+    --h1-font-size: var(--font-size-2xl);
+    --h2-font-size: var(--font-size-xl);
+    --h3-font-size: var(--font-size-lg);
+    --h4-font-size: var(--font-size-base);
+    --section-padding: var(--section-padding-sm);
+    --card-padding: var(--card-padding-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --h1-font-size: var(--font-size-xl);
+    --h2-font-size: var(--font-size-lg);
+    --h3-font-size: var(--font-size-base);
+    --h4-font-size: var(--font-size-sm);
+  }
+}
+

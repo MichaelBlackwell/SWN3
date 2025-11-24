@@ -1,0 +1,156 @@
+/* Responsive Design System */
+
+/* Breakpoint Variables */
+:root {
+  /* Breakpoints */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-large: 1440px;
+
+  /* Touch-friendly sizes (minimum 44x44px for accessibility) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+
+  /* Responsive font sizes */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+
+  /* Responsive spacing */
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-2xl: 3rem;     /* 48px */
+}
+
+/* Mobile-first base styles */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Touch-friendly button base styles */
+button,
+a[role="button"],
+input[type="button"],
+input[type="submit"] {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+}
+
+/* Responsive typography scaling */
+@media (max-width: 480px) {
+  :root {
+    --font-size-xs: 0.6875rem;   /* 11px */
+    --font-size-sm: 0.8125rem;   /* 13px */
+    --font-size-base: 0.9375rem; /* 15px */
+    --font-size-lg: 1rem;        /* 16px */
+    --font-size-xl: 1.125rem;    /* 18px */
+    --font-size-2xl: 1.25rem;    /* 20px */
+    --font-size-3xl: 1.5rem;     /* 24px */
+  }
+
+  body {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  body {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (min-width: 769px) {
+  body {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Utility classes for responsive visibility */
+.hide-mobile {
+  display: block;
+}
+
+.show-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+/* Responsive container padding */
+.responsive-container {
+  padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+@media (max-width: 1024px) {
+  .responsive-container {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .responsive-container {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-container {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
+
+/* Touch-friendly interactive elements */
+@media (max-width: 768px) {
+  button,
+  a[role="button"],
+  .clickable {
+    padding: 0.75rem 1rem;
+    font-size: var(--font-size-base);
+  }
+
+  /* Ensure adequate spacing between touch targets */
+  button + button,
+  .clickable + .clickable {
+    margin-left: var(--spacing-sm);
+  }
+}
+
+/* Responsive grid utilities */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* Responsive text utilities */
+.text-responsive {
+  font-size: clamp(var(--font-size-sm), 2.5vw, var(--font-size-base));
+}
+
+.heading-responsive {
+  font-size: clamp(var(--font-size-xl), 4vw, var(--font-size-2xl));
+}
+

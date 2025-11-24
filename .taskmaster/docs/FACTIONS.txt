@@ -1,0 +1,1872 @@
+FACTIONS
+ Interstellar merchant combines, tyrannical planetary 
+empires, sinister cults of eugenic perfection… groups 
+such as these all have a role to play in Stars Without 
+Number. Such organized, motivated groups are known 
+as factions, and this chapter describes ways in which a 
+GM can use them to further events in a sector. Player 
+characters that attain sufficient power and fame might 
+even establish their own factions, and the rules below 
+give ways to handle inter-faction fighting and the ad
+vancement of each group’s goals.
+ Using Factions in Your Game
+ The faction system in Stars Without Number is intended 
+to provide a GM with a constant stream of background 
+activity, adventure hooks, and visible setting reactions 
+to PC actions. It is an optional system, one that a GM 
+can take or leave as their own campaign suggests, but 
+it can provide an interested GM with tools to simplify 
+the business of running the campaign’s background.
+ The faction system is not meant to be a stand
+alone game that doesn’t require GM involvement. It’s 
+not balanced for equivalence between sides, isn’t de
+signed to incentivize optimal play choices, and some 
+situations will certainly require a GM to referee them. 
+The system is, however, built to produce the kind of 
+output that a working GM is likely to find most useful.
+ Some GMs will have no use for a formalized fac
+tion system. These people feel most comfortable sim
+ply dictating the outcome of conflicts and ambitions 
+among the assorted groups and organizations in their 
+campaign. When two groups clash, the results will be 
+determined by what the GM thinks is most reasonable.
+ This is a perfectly valid way of doing things, and 
+indeed, when a GM decides how some off-stage orga
+nization interacts with a fully-statted faction they’re 
+going to have to make calls like that anyway. Yet the 
+disadvantages of such a method are twofold.
+ First, it lacks surprise for the GM. By definition, 
+the reasonable thing always happens, and even the 
+occasional randomizer tossed in produces results that 
+are to some degree predictable to the GM. History and 
+current affairs are full of wildly unlikely-seeming out
+comes, however, and sometimes the GM can benefit 
+by seeing a genuinely shocking result percolate out of 
+some conflict. Even in the absence of the adventure 
+hooks such surprises create, not knowing exactly how 
+her campaign is going to shake out helps keep a GM 
+interested in events.
+ Second, an unstructured system has few prompts 
+to goad a GM into thinking of unexpected interactions 
+between factions. A GM simply provided with a list of 
+NPC groups to write events for will tend to reach for 
+the interactions and outcomes that are foremost in their 
+mind, implicitly going along with assumptions about 
+how things should play out. If instead they’re handed a 
+slow-burn struggle between a militant terrorist group 
+with fanatical zealots for an asset and a eugenics-loving 
+religion with a crack team of lawyers, they’re going to 
+think somewhat harder about how these two factions 
+might play out their conflict, and will get results that 
+don’t automatically feed their assumptions.
+ One of the easiest ways to use the faction system 
+is as a news chyron for your campaign. After each fac
+tion turn, you can boil down events to a few sentences 
+apiece and hand them to your players at the start of the 
+next gaming session, letting them know what’s on the 
+news channels and underground gossip boards of your 
+campaign. If your players get excited about one of the 
+events, you can dedicate the next downtime between 
+sessions to brewing up an adventure related to their 
+efforts at involvement.
+ Another use of the system is as a way to formalize 
+the setting reaction to PC actions. If the last adven
+ture involved the PCs utterly discrediting the leader 
+of a political party you’re using as a faction, you might 
+scratch off the Demagogue asset that the party had that 
+represented that leader. A quick scribble gives you the 
+news crawl next session telling the PCs that the leader 
+had decided to step down to spend more time with 
+her family.
+ The factions you write up are not the only organi
+zations and groups in your world, but they are the ones 
+the PCs are most likely to care about or the ones most 
+pertinent to their current activities. You don’t need to 
+keep the same factions active all the time; if the cam
+paign shifts focus halfway across the sector, you can 
+simply freeze the local factions until the PCs get back in 
+their zone of relevance. If you have the spare time and 
+effort, you might even keep them running, letting the 
+PCs discover how things shook out when and if they 
+ever get back to that region of space.
+ In time, the PCs themselves can start creating their 
+own factions to contend with rivals and seek influence 
+on a scale impractical for a lone wanderer. While PC 
+factions use all the same rules and faction turn actions 
+as NPC ones, they have the tremendous advantage of 
+being the focus of a veteran adventuring party’s helpful 
+interest. Almost anything that can be accomplished by 
+faction turn actions can be done more quickly by the 
+appropriate PC adventures.
+ This, of course, is an easy way for a GM to let the 
+players write their own adventure content. So long as 
+the PCs care about their pet factions or allied groups, 
+their own ambitions and desire to help will practically 
+create whole sessions worth of adventure outlines for 
+you. Important NPCs in rival groups will become hated 
+nemeses, hostile assets will become the targets of their 
+bad intent, and the players will constantly be on the 
+lookout for ways to augment their allies. For the sake 
+of your own time and effort, you should let them.
+212• faCtionS, aSSetS, and turnS
+ faCTIons, asseTs, and Turns
+ A faction is any group that you intend to use as an im
+portant actor in the sector. In theory, any organization 
+could qualify as a faction; every planetary government, 
+business, religion, or club could be described with the 
+rules given here. Still, that kind of exhaustive catalog
+ing is neither practical nor profitable. Faction status 
+should be reserved for those organizations that will do 
+things important to the PCs or the background world. 
+You should not bother creating more factions for your 
+game than you are actually using at that moment. Save 
+your effort for the groups that count.
+ It may be necessary to turn an organization into a 
+faction in the course of play. If the PCs suddenly take a 
+deep interest in a eugenic cult they recently faced on the 
+jungle moon of Perihelion, it might be useful for the 
+GM to turn the group into a formal faction, the better 
+to understand how the PCs might injure it and what 
+resources the cult might have to fight back. Or it might 
+be that the PC group’s interstellar trading cartel faction 
+tries to topple a world’s tyrannical government, thus 
+making it worthwhile to define the tyrant’s resources.
+ As a general rule, you shouldn’t have more than 
+five or six factions at the start of your campaign, and 
+fewer is quite possible. Fewer than three tend to make 
+for too much stability, however, and might not gen
+erate enough activity to make for interesting news 
+reports and adventure hooks. Possible factions in a 
+campaign might include criminal groups, local reli
+gions, planetary governments, political movements, 
+terrorist organizations, noble houses, or any other 
+band that might conceivably be someone the players 
+care about or some group that might possibly hire or 
+oppose the PCs. 
+Defining a Faction
+ Factions have attributes consisting of six statistics, a 
+homeworld, and one or more tags.
+ Hit points measure a faction’s cohesion, morale, 
+and group unity. The higher a faction’s hit points, the 
+harder it is to break it up. A faction that loses hit points 
+has lost cohesion somehow, either through the death 
+of leadership, the demoralization of members, or the 
+rise of fractious power blocs inside its structure. A fac
+tion needs time to recover from hit point damage. A 
+faction’s maximum hit points are based on its Force, 
+Cunning, and Wealth, as given later in the chapter.
+ Force rating is the faction’s general aptitude at ap
+plying physical violence, measured on a scale ranging 
+from 1 to 8. A rating of 1 implies an organization with 
+little or no aptitude for physical coercion, while a rating 
+of 8 might be appropriate for a regional hegemon with 
+a powerful, expansionist military. A high Force rating 
+doesn’t necessarily mean that the faction has much in 
+the way of a standing army, but it does mean that the 
+faction can think clearly about the use of force and is 
+accustomed to military reasoning. Governments tend 
+to have high Force ratings to represent police forces 
+and military structures. Terrorist groups, mercenary 
+bands, and other organizations that rely on brute vio
+lence also tend to have high Force ratings.
+ Cunning rating reflects the faction’s skills at es
+pionage, infiltration, internal security, and covert 
+manipulation of other groups. A rating of 1 implies a 
+completely visible faction with no resources for resist
+ing infiltration, while a rating of 8 implies a faction of 
+Illuminati unknown to all but a handful of paranoid 
+conspiracy-mongers with tendrils of influence reach
+ing to the farthest star in the sector. Eugenics cults, ter
+rorist groups, spy agencies, and some religious groups 
+tend to favor a good Cunning score.
+ Wealth rating indicates the faction’s commercial, 
+scientific, and industrial resources. A Wealth score of 
+1 means that the faction has little in the way of income 
+or investments, no dedicated manufacturing facilities, 
+and no laboratories or researchers available. A Wealth 
+score of 8 is appropriate for some system-spanning 
+merchant empire or the combine that runs the pretech 
+manufactories of an untouched factory world.
+ FacCreds are a measure of the faction’s general 
+wealth and resources, spent to purchase and main
+tain assets or carry out faction operations. A FacCred 
+doesn’t necessarily represent a certain sum of credits so 
+much as it represents logistics capability, available re
+sources, and managerial focus. A faction on a primitive 
+world may not have a single credit to its name, but its 
+command of a legion of laborers and the food supplies 
+necessary to feed them are a vast store of FacCreds all 
+the same. All the credits in a sector do no good if they 
+can’t be effectively translated into a useful asset.
+ Factions also accumulate experience points. They 
+gain these points from accomplishing goals, with the 
+larger goals earning them correspondingly more expe
+rience points. Once enough experience is accumulated 
+the faction can spend it to improve a rating. The higher 
+the rating, the more experience is necessary to raise it. 
+It’s vastly more difficult to go from Force 7 to 8 than 
+from Force 1 to 2.
+ The faction’s homeworld represents the location 
+of its core leadership and support. Factions can always 
+purchase assets and take actions on their homeworld, 
+even if they lack any other assets there. By the same 
+token, an enemy can always launch attacks against the 
+faction on their homeworld if the enemy is able to 
+move in its own assets.
+ Tags are special traits that relate to the faction’s 
+nature or special aptitudes. A cabal of rebel conspira
+tors might have the Secretive tag, which gives a bonus 
+to resisting certain attacks, or Deep Roots, which gives 
+them a bonus to operations on their homeworld. Most 
+factions have one or two tags.
+Faction Assets
+ faCtionS, aSSetS, and turnS •213 
+The Faction Turn
+ Aside from the six statistics, faction also possess assets. 
+Assets are facilities, contacts, trained units of specialists, 
+or other specific objects, places, or groups of value. A 
+regiment of postech infantry is an asset, as is a pretech 
+manufactory, a master assassin, or an interstellar ship
+ping company.
+ Assets require certain ratings to support. A fleet 
+of capital warships isn’t going to be useful to a faction 
+with Force 3 no matter how much wealth the faction 
+has. It just doesn’t have the infrastructure and institu
+tional mindset to use such an asset effectively.
+ Assets have hit points much like factions do. An as
+set reduced to zero hit points by an attack is destroyed; 
+either physically ruined, hopelessly scattered, totally 
+demoralized, or lost to a rival buyer. Asset hit points 
+can be regained with time for repair, reorganization, or 
+culling members suborned by other powers.
+ Assets have a purchase cost and sometimes a main
+tenance cost, paid in FacCreds. The first turn that a 
+faction fails to pay the maintenance cost of an asset, it 
+becomes unavailable for use. If the maintenance cost 
+isn’t paid the next turn, the asset is lost.
+ Assets often have an Attack. When an asset is used 
+to strike at another faction, the attack entry is used to 
+determine what rating is attacked and the amount of 
+hit point damage that is done by a successful hit. An 
+asset without an Attack entry can’t be used to initiate 
+a strike at an enemy faction.
+ A Counterattack line indicates the damage an asset 
+does to an unsuccessful attacker. If an attacking asset 
+misses its strike against the target, the target’s Counter
+attack entry damage is done. An asset without a Coun
+terattack entry does no damage to a failed attacker. It’s 
+quite possible to have an asset with no Attack but a 
+powerful Counterattack, making it useless at offense 
+but very dangerous to assault.
+ Assets have a type, such as “Special Forces”, “Mil
+itary Unit”, “Facility”, “Starship” or the like. This type 
+is mostly relevant when factions wish to upgrade an 
+asset, or some special tag applies only to assets of a 
+certain type.
+ Assets have a location, usually the planet on which 
+they were purchased, though it might also be a deep
+space habitat, a particular moon, or some other general 
+geographical location. Assets cannot be used against 
+different locations unless they are first transported 
+there, usually by means of a logistical asset.
+ Most assets also require a particular tech level to 
+purchase. They can be transported to worlds with low
+er tech levels, but they must be purchased on a planet 
+with a sufficient level of technology.
+ A faction may own no more assets of a particular 
+type than they have points in the relevant rating. Thus, 
+a faction with Force 3 can own three Force assets. In a 
+pinch, a faction can exceed this total, but each asset over 
+the maximum costs an additional FacCred in mainte
+nance each turn.
+ Faction actions are divided up by turns. As a rule of 
+thumb, a faction turn happens once per month, or once 
+after each adventure. Turns might happen more or less 
+often depending on the GM’s preferred pace of events. 
+Each faction can usually take one action per turn.
+ At the beginning of each turn, roll a die that’s no 
+smaller than the number of factions you have. Thus, if 
+you’ve got six factions in the sector, roll a d6. If you’ve 
+got nine, roll a d10, and so forth. Whatever number 
+comes up is the faction that acts first; thus, if you roll 
+a 4, the fourth faction on your list acts first. Then the 
+one after it, and the one after that, and so forth, rolling 
+over the top of the list when necessary.
+ At the beginning of each turn, a faction gains Fac
+Creds equal to half their Wealth rating rounded up plus 
+one-quarter of their total Force and Cunning ratings, 
+rounded down. Any maintenance costs must be paid 
+at the beginning of each turn. Assets that cannot be 
+maintained are unusable; an asset that goes without 
+maintenance for two consecutive rounds is lost. A fac
+tion cannot voluntarily choose not to pay maintenance.
+ If a faction has no goal at the start of a turn, they 
+may pick a new one. If they wish to abandon a prior 
+goal, they may do so, but the demoralization and con
+fusion costs them that turn’s FacCred income and they 
+may perform no other action that turn.
+ At the end of each faction turn, the GM should 
+translate the turn’s events into a few lines of rumor or 
+news that can be related to the PCs. A successful attack 
+by the Lawyers of the Bright Dawn Guild on the Peri
+helion government’s Union Toughs might be reported 
+as “Neohuman rights activists on Perihelion applaud 
+the election of Parminder Smith to the leadership of the 
+government-sponsored Transit Workers Union. Miss 
+Smith is a strong supporter of neohuman research and 
+legal emancipation.”
+ Acting During A Turn
+ Factions can take several different types of actions, 
+though generally only one action per turn. The list 
+provided consists of the usual actions a faction might 
+find useful; you should feel free to allow variations on 
+the list depending on the particular situation. PC ad
+ventures always exist outside of the faction turn econ
+omy. If you run an adventure involving the PC group’s 
+destruction of the Sorority of the Golden Flame’s secret 
+laboratories on a volcanic planetoid, then the faction’s 
+asset is simply destroyed, with no chance of resisting.
+ A faction can only take one type of action per round, 
+but they can perform that action on as many worlds as 
+they wish. A faction that selects the Attack action, for 
+example, can launch attacks on multiple worlds, while 
+one that selects the Use Asset Ability action can use the 
+special abilities of any or all assets they possess. This 
+limit on the type of action allowed in a round tends 
+to slow down events, allowing for the more gradual 
+development of situations in play.
+214• faCtion aCtionS
+ faCTIon aCTIons
+ The following list of actions includes the most com
+mon activities a faction might choose to perform. The 
+GM should feel free to add new action types, or allow 
+alternate choices if a faction wishes to do something 
+that doesn’t quite fit the list below. As a rule, a faction 
+should only be able to do one thing per turn, but should 
+be able to do that same thing with any or all assets.
+ Attack: Attacking is the chief way by which a faction 
+assaults a rival’s assets and organizational struc
+ture. A successful attack can damage or destroy an 
+enemy asset, or even damage the leadership and 
+cohesion of an enemy faction. It’s up to the GM 
+or players to describe an attack and its methods.
+ Attacks can only be launched against known 
+assets. If a rival has stealthed assets on a world, 
+they cannot be targeted for an attack until they’ve 
+been discovered by a faction’s intelligence agents. 
+Attacks can only be launched against assets on the 
+same world as the attacker.
+ To launch an attack, the attacker selects one 
+or more of their own assets and targets a rival fac
+tion with assets on the same world. One at a time, 
+each attacking asset is matched against a defending 
+asset chosen by the defender. Each attacking asset 
+can attack only once per turn, though a defending 
+asset can defend as many times as the defender 
+wishes, assuming it can survive multiple conflicts.
+ Once matched, the attacker rolls 1d10 and 
+adds the relevant attribute for the asset. For exam
+ple, a military unit’s Attack might add the faction’s 
+Force rating to the attack roll, while a cyberninja 
+unit might add the faction’s Cunning to the attack 
+roll. The defender then rolls 1d10 and adds the 
+attribute that the attack targets. In the instance of 
+the military unit, this might be an attack against 
+Force, causing the defender to add their Force 
+rating to the roll, while defending against the 
+cyberninjas might require adding the defender’s 
+Cunning rating. The Attack line of the attacking 
+asset indicates which attribute to add to the attack 
+roll and which to add to the defense roll.
+ If the attacker’s roll exceeds the defender’s roll, 
+the attack is a success. The defending asset suffers 
+damage as given on the Attack line of the attacking 
+asset. If the defender has a Base of Influence on the 
+world, the defender may opt to let the damage by
+pass the asset and hit the Base of Influence instead, 
+causing damage to it and the faction hit points. If 
+the asset or Base of Influence is reduced to zero 
+hit points, it is lost.
+ If the attacker’s roll is less than the defender’s 
+roll, the attack fails. The defending asset can apply 
+whatever damage their Counterattack line indi
+cates to the attacking asset. If the defending asset 
+has no Counterattack line, the attacker suffers no 
+consequences for the failed attack.
+ A tie on the roll results in both Attack and 
+Counterattack succeeding. Both attacker and de
+fender take damage as indicated.
+ Buy Asset: The faction buys one asset on their home
+world or another planet on which they have a 
+Base of Influence. These assets take time to as
+semble, and can neither attack, defend, nor grant 
+their special benefits until the beginning of the 
+faction’s next turn. The faction must have a suf
+ficient rating to buy an asset, and the planet must 
+have a tech level sufficient to support the asset’s 
+creation. Only one asset can be purchased by a 
+faction per turn.
+ Change Homeworld: A faction can move to a different 
+homeworld, if they have a Base of Influence on 
+the destination planet. This action takes one turn, 
+plus one more for each hex of distance between 
+the old homeworld and the new. During this time 
+the faction can initiate no actions.
+ Expand Influence: The faction buys a Base of Influence 
+asset on a planet on which they have at least one 
+other asset. The faction then rolls 1d10+Cunning 
+rating against similar rolls by every other faction 
+on the planet. Any of the others that equal or 
+beat the faction’s roll may make a free immedi
+ate Attack action against the Base of Influence if 
+they wish. Other assets present on the planet may 
+defend against the attack as normal. The Base of 
+Influence cannot be used until the beginning of 
+the faction’s next turn.
+ To buy a Base of Influence, the purchaser pays 
+one FacCred for every hit point the base has, up 
+to a maximum equal to the faction’s maximum 
+hit points. Bases with few hit points are relatively 
+peripheral outposts, easy to dislodge but cheap to 
+erect. Bases with many hit points are significant 
+strongholds that would hurt the faction badly to 
+lose but are much harder to eliminate.
+ Factions may use this action to buy additional 
+hit points for a Base of Influence, paying one addi
+tional FacCred up to the maximum HP allowed. It 
+is possible to decrease a base’s hit points with the 
+action as well, albeit without refunds. The base on 
+a faction’s homeworld cannot be shrunk this way.
+ Refit Asset: Change one asset to any other asset of the 
+same type. If the new asset is of a more expensive 
+type, pay the difference. The asset must be on a 
+planet that allows the purchase of the new asset. 
+Turning a militia squad into elite skirmishers 
+requires a tech level 4 world and governmental 
+permission, for example. A refitted asset is un
+able to attack or defend until the beginning of the 
+faction’s next turn.
+Repair Asset/Faction: Heal damage to an asset or faction. 
+faCtion aCtionS •215 
+Locations are considered general to a specific star 
+For one FacCred, an asset heals points of damage 
+equal to the faction’s score in its ruling attribute. 
+More damage can be healed in this single action, 
+but the cost of repair increases by one FacCred 
+for each further amount repaired- two FacCreds 
+for the second amount healed, three FacCreds for 
+the third amount healed, et cetera. If used to heal 
+a faction, the faction regains hit points equal to 
+the rounded average of its highest and lowest at
+tribute ratings. This healing cannot be hurried by 
+additional spending. Use of this action allows the 
+faction to heal as many different assets as it wishes.
+ Sell Asset: Gain half the FacCred cost of the asset, 
+rounded down.
+ Seize Planet: The faction seeks to become the ruling 
+body of a world. The faction must destroy all 
+unstealthed assets on the planet belonging to fac
+tions who oppose their attempt before they can 
+successfully take control. If all the assets cannot be 
+destroyed in one turn, the faction must continue 
+the attempt next turn until either successful or all 
+of their own assets on that planet have been de
+stroyed or have left the planet. No other actions 
+can be taken in the meanwhile. Once all resistance 
+has been crushed, the attacker must maintain at 
+least one unstealthed asset on the world for three 
+turns. If successful, they gain the Planetary Govern
+ment tag for the world.
+ Use Asset Ability: Use the special abilities of one or 
+more assets, such as the transport ability of logis
+tics assets, or the intelligence-gathering abilities 
+of spy assets.
+ Handling Special Cases
+ When in doubt, a GM should simply make a judgment 
+based on their own best sense of the situation. Despite 
+this general case, there are a few more particular situ
+ations that come up often enough to bear some specific 
+guidance in handling them.
+ Sometimes, a ground unit will choose to attack 
+a starship unit, or some other unit that seems to be 
+beyond their reach. As a general rule, you should allow 
+this, and simply decide how it was that the ground unit 
+was able to cause problems for the starships. Maybe 
+they subverted officers, or sabotaged support facilities, 
+or drove logistical suppliers out of business.
+ Some assets require the permission of the plane
+tary government to raise them on a particular world or 
+move them into that world’s system. The necessity of 
+this will depend on how advanced the planetary gov
+ernment is and how direct the contact. A TL2 planetary 
+government probably wouldn’t even notice the arrival 
+of a capital fleet in their star system, let alone be able 
+to do anything to prevent it. Even so, native lawyers, 
+bribed offworlder officials, and hired mercenaries 
+might still be able to harass a force the locals couldn’t 
+bar from entering their territory.
+ system rather than a particular world. The faction’s 
+marketers might be operating out of the planetary cap
+ital, but for purposes of location, they’re as much in the 
+system as a Scavenger Fleet floating around the rim. 
+Getting shuttles to and from wherever they need to go 
+inside the system is not a problem for most factions.
+ Sometimes two factions will want to merge for 
+some reason. The efficiency of this will depend on how 
+much the factions like each other and how close they 
+are in function; give this propinquity a rating from 1, 
+for two factions that hate each other and don’t do simi
+lar things at all, to 9, for two factions that are in perfect 
+synchrony. Use 6 for two factions of average similarity. 
+Whenever you need to see how well the merger went, 
+roll a compatibility check; 1d10 versus this number. If 
+the roll is equal or less, it worked, and if it’s higher, the 
+merger didn’t work so well in that regard.
+ Now determine the Force, Wealth, and Cunning 
+ratings for the new faction. For each one, roll a com
+patibility check; on a success, use the higher of the two 
+factions’ scores, while on a failure, use the lower one.
+ For each asset, roll a compatibility check; on a suc
+cess, the asset belongs to the new faction, on a failure, 
+it’s forcibly sold. FacCreds are totaled between the two 
+factions, and the merged faction gets all the Bases of 
+Influence each originally had. Pick a new goal as well. 
+If the faction has assets its new ratings can’t support, it 
+keeps them, but can’t use Repair Asset on them.
+ PC adventures always overrule faction die rolls. 
+If the PCs undertake an adventure which results in 
+the crippling or destruction of a hostile faction’s asset, 
+that asset is destroyed without any need for dice. In 
+the same vein, if they swoop in to rescue some asset 
+that the dice declared was ruined and undertake an ad
+venture that plausibly salvages the situation, that asset 
+comes back into existence. The faction system is built 
+to help create adventure hooks, not shut them down.
+ By the same token, if a PC adventure seems to 
+plausibly create an asset for a faction, then that should 
+be credited to the group. It is entirely in your interest 
+as a GM to let the players plot out adventure goals and 
+find motivation in helping a faction. Every adventure 
+they spend helping or harming a faction is one more 
+hook of engagement with the campaign world and one 
+less adventure idea you need to come up with.
+ If your factions are too quiet with a lack of inter
+esting conflict among them, don’t hesitate to create that 
+conflict. A sector full of turtling factions that hide out 
+and painstakingly build their resources doesn’t make 
+for much engagement, so insert a personal grudge or 
+add a gold-rush opportunity.
+ When a faction buys an asset, they are not neces
+sarily creating something ex nihilo. They might have 
+always had that particular resource, but are only now 
+mobilizing it effectively. A planetary government with 
+no military assets doesn’t necessarily lack an army, it 
+just lacks an army that is useful to its current goals.
+216• buying and uSing aSSetS
+ buyIng and usIng asseTs
+ Assets can be normally purchased on any world that has 
+a Base of Influence and sufficient tech level to support 
+their creation. In a few cases, however, acquiring an 
+asset requires more than just FacCreds and a planet.
+ Starship-type assets cannot be purchased on a 
+world with less than several hundred thousand inhab
+itants unless they can explain how the ships are being 
+provided or supported by another power. Planets with 
+very small populations lack such major infrastructure.
+ Some assets require the permission of a planetary 
+government in order to purchase them or move them 
+onto the planet. This is not a formality; the standing 
+government’s forces can physically disrupt any attempt 
+to recruit the asset on their world, or shoot it down in 
+its vulnerable entry phase. Whether or not this permis
+sion will be extended will usually depend on the fac
+tion’s relationship with a planet’s government, though 
+bribes of 1d4 FacCreds can occasionally suffice. Under 
+no conditions will a government willingly permit the 
+entry of assets powerful enough to overthrow them.
+ Planetary governments cannot prevent the land
+ing of assets without the permission-needed quality. 
+Such assets are too unthreatening and nondescript to 
+alert them until after they’ve already been formed or 
+have landed. Of course, there is nothing stopping them 
+from attacking these assets either directly or indirectly 
+should they feel threatened.
+ Only one asset can be purchased per turn by a 
+given faction, and assembling it takes time. The asset 
+can neither attack, defend, nor give any special benefits 
+until the beginning of the buyer’s next turn.
+ Using Faction Assets
+ As its action for the turn, a faction can choose to use the 
+special actions of one or more assets. They can trigger 
+these special abilities in any order, but each form of as
+set must be used all at the same time; you cannot trigger 
+Heavy Drop Assets to move a Monopoly asset onto a 
+world, activate the Monopoly ability to siphon cash, 
+and then use another Heavy Drop Asset to move the 
+Monopoly back offworld. All Heavy Drop Assets must 
+be finished before Monopolies can be triggered, and 
+so forth. Unless specified otherwise, all asset targets 
+must be in the same stellar system with the acting assets.
+ In some cases, assets are called to make a test 
+against another faction, such as a Cunning vs. Wealth 
+test. For these tests, the acting asset’s faction rolls 1d10 
+and adds their score in the acting attribute, while the 
+target faction rolls 1d10 and adds their score in the de
+fending attribute. If the actor rolls higher than the de
+fender, the action is successful. Certain tags may grant 
+a faction extra dice for these rolls, in which case the 
+highest d10 out of those rolled is used. These tests do 
+not count as attacks, and no damage or counterattacks 
+are triggered.
+ Bases of Influence
+ Bases of Influence are special assets, and use certain 
+special rules. A faction cannot buy assets on a world 
+without a Base of Influence, though it can move assets 
+purchased elsewhere onto the planet, and it can always 
+buy assets on its homeworld even if its Base of Influ
+ence there is destroyed. Of course, that assumes it still 
+has a Base of Influence somewhere else.
+ First, a faction can only ever have one Base of In
+fluence on a world at a time. Bases of Influence cannot 
+be moved once in place. Bases of Influence cannot be 
+purchased with a Buy Asset action. They can only be 
+put in place with an Expand Influence action. Bases of 
+Influence have a sale value of zero FacCreds.
+ The cost of a Base of Influence is equal to its max
+imum hit points, which can be up to the owning fac
+tion’s maximum hit points. Bases of Influence do not 
+count against a faction’s maximum assets.
+ Damage done to a Base of Influence is also done 
+directly to a faction’s hit points. If a Base of Influence 
+is brought below zero hit points, the overflow damage 
+is not counted against the owning faction’s hit points.
+ As a consequence, a faction must decide how heav
+ily to invest in a particular Base of Influence. A minor 
+foothold on a world consisting of a base with few hit 
+points is cheap and risks limited harm to the faction 
+should it be destroyed, but it’s also more vulnerable to 
+being wiped out by a rival group.
+ It’s quite possible for a faction to be effectively 
+destroyed by smashing enough heavily-invested Bases 
+of Influence on other worlds. While the homeworld’s 
+Base might be in perfect condition, the faction has so 
+badly overextended itself in failed expansion that it 
+can no longer sustain itself as a going concern. The 
+resources and personnel that the homeworld needed 
+to import are no longer available, and the credits and 
+effort spent on the now-destroyed Bases are wasted. 
+The backlash from this can be ruinous to any faction.
+ Every faction also has a homeworld. A homeworld 
+is always automatically equipped with a Base of Influ
+ence with maximum hit points. If a faction moves its 
+homeworld to a planet that already has a Base of Influ
+ence, the base on the new homeworld has its hit points 
+set to the maximum possible and the homeworld’s Base 
+of Influence swaps in the hit point value that the des
+tination world’s base originally had.
+faCtion goalS •217 
+faCTIon goals
+ Factions usually have motivations and goals beyond 
+simple existence. To grow, a faction needs to accom
+plish goals that are in line with their leadership’s pur
+poses. Successful achievement of these goals helps the 
+faction grow in strength and influence.
+ A faction can pursue one goal at a time. Once a goal 
+is successfully attained, the faction may select a new 
+one at the beginning of their next turn or delay until a 
+good opportunity arises. If a faction chooses to aban
+don a goal, the demoralizing effect of it and the waste 
+of preparations costs them that turn’s FacCred income, 
+and they cannot perform any other action that turn.
+ A faction that successfully accomplishes a goal 
+gains experience points equal to the goal’s difficulty. 
+This experience may be saved, or spent at the beginning 
+of any turn to increase the Force, Cunning, or Wealth 
+ratings of a faction. Optionally, the GM might allow a 
+faction to buy a new tag if their deeds justify it.
+ It’s the GM’s choice as to what might constitute 
+an appropriate goal for a faction, but below are some 
+potential goals and the difficulties attached to each.
+ Military Conquest: Destroy a number of Force assets of 
+rival factions equal to your faction’s Force rating. 
+Difficulty is 1/2 number of assets destroyed.
+ Commercial Expansion: Destroy a number of Wealth 
+assets of rival factions equal to your faction’s 
+Wealth rating. Difficulty is 1/2 number of assets 
+destroyed.
+ Intelligence Coup: Destroy a number of Cunning assets 
+of rival factions equal to your faction’s Cunning 
+rating. Difficulty is 1/2 number of assets destroyed.
+ Planetary Seizure: Take control of a planet, becoming 
+the legitimate planetary government. Difficulty 
+equal to half the average of the current ruling 
+faction’s Force, Cunning, and Wealth ratings. If 
+the planet somehow lacks any opposing faction to 
+resist the seizure, it counts as Difficulty 1.
+ Expand Influence: Plant a Base of Influence on a new 
+planet. Difficulty 1, +1 if the attempt is contested 
+by a rival faction.
+ Blood the Enemy: Inflict a number of hit points of dam
+age on enemy faction assets or bases equal to your 
+faction’s total Force, Cunning, and Wealth ratings. 
+Difficulty 2.
+ Peaceable Kingdom: Don’t take an Attack action for four 
+turns. Difficulty 1.
+ Destroy the Foe: Destroy a rival faction. Difficulty equal 
+to 1 plus the average of the faction’s Force, Cun
+ning, and Wealth ratings.
+ Inside Enemy Territory: Have a number of stealthed 
+assets on worlds with other planetary govern
+ments equal to your Cunning score. Units that 
+are already stealthed on worlds when this goal is 
+adopted don’t count. Difficulty 2.
+ Invincible Valor: Destroy a Force asset with a mini
+mum purchase rating higher than your faction’s 
+Force rating. Thus, if your Force is 3, you need to 
+destroy a unit that requires Force 4 or higher to 
+purchase. Difficulty 2.
+ Wealth of Worlds: Spend FacCreds equal to four times 
+your faction’s Wealth rating on bribes and influ
+ence. This money is effectively lost, but the goal 
+is then considered accomplished. The faction’s 
+Wealth rating must increase before this goal can 
+be selected again. Difficulty 2.
+ Raising Faction Stats
+ Faction attributes can be raised at the beginning of 
+each turn, if enough experience points are available. 
+The cost of raising a faction attribute rises as the rating 
+rises. As a faction’s ratings improve, it becomes harder 
+to destroy, and gains additional maximum hit points.
+ The maximum hit points of a faction are equal to 4 
+plus the experience point cost of the highest attributes 
+in Force, Cunning, and Wealth they have attained. 
+For example, a faction with Force 3, Cunning 2, and 
+Wealth 2 has a maximum hit point total of 4 + 4 + 2 
++ 2 = 12 hit points. A brand-new faction with Force 1, 
+Cunning 2, and Wealth 1 has a maximum hit point total 
+of 4 + 1 + 2 + 1 = 8 hit points.
+ Experience points spent by factions differ from 
+those gained by PCs in that they are lost when they in
+crease an attribute. Once a faction spends 4 XP to raise 
+Force from 2 to 3, for example, those points are lost, 
+and 6 more must be spent to raise Force from 3 to 4.
+ Rating XP Cost Hit Point Value
+ 1-1
+ 2 2 2
+ 3 4 4
+ 4 6 6
+ 5 9 9
+ 6 12 12
+ 7 16 16
+ 8 20 20
+218• Cunning aSSetS
+ CunnIng asseTs
+ Base of Influence: This asset is special, and is required 
+for purchasing or upgrading units on a particular 
+world. Any damage done to a Base of Influence is 
+also done to a faction’s hit points. The cost of a 
+Base of Influence equals its maximum hit points, 
+which can be any number up to the total maxi
+mum hit points of its owning faction. A faction’s 
+bases of influence don’t count against their maxi
+mum assets. A Base of Influence can only be pur
+chased with the Expand Influence action.
+ Blackmail: Selectively degrade the effectiveness of an 
+asset. Any attempt to attack or defend against 
+Blackmail loses any bonus dice earned by tags.
+ Boltholes: Equipped with a number of postech inno
+vations to make cleaning them out a costly and 
+dangerous pursuit. If a faction Special Forces 
+or Military Unit asset on the same planet as the 
+Boltholes suffers damage sufficient to destroy it, 
+it is instead set at 0 HP and rendered untouchable 
+and unusable until it is repaired to full strength. 
+If the Boltholes are destroyed before this happens, 
+the asset is destroyed with them.
+ Book of Secrets: Exhaustively cataloged psychometric 
+records on important and influential local figures, 
+allowing uncanny accuracy in predicting their ac
+tions. Once per turn, a Book of Secrets allows the 
+faction to reroll one die for an action taken on 
+that world or force an enemy faction to reroll one 
+die. This reroll can only be forced once per turn, 
+no matter how many Books of Secrets are owned.
+ Covert Shipping: Quiet interstellar asset transport. Any 
+one Special Forces unit can be moved between any 
+worlds within three hexes of the Covert Shipping 
+at the cost of one FacCred.
+ Covert Transit Net: Facilities web an area of space with 
+a network of smugglers and gray-market freighter 
+captains. As an action, any Special Forces assets 
+can be moved between any worlds within three 
+hexes of the Covert Transit Net.
+ Cracked Comms: A cryptographic asset for the inter
+ception and deciphering of enemy communica
+tions. Friendly fire can be induced with the right 
+interference. If the Cracked Comms succeeds in 
+defending against an attack, it can immediately 
+cause the attacking asset to make an attack against 
+itself for normal damage or counterattack results.
+ Cyberninjas: Outfitted with the latest in personal 
+stealth cyberware, cyberninjas are designed to 
+avoid all but the most careful scans.
+ Demagogues: Popular leaders of a particular faith or 
+ideology that can be relied upon to point their 
+followers in the direction of maximum utility.
+ False Front: This asset allows a faction to preserve more 
+valuable resources. If another asset on the planet 
+suffers enough damage to destroy it, the faction 
+can sacrifice the false front instead to nullify the 
+killing blow. 
+Informers: Minions that lace a planet’s underworld, 
+watchful for intruders. They can choose to Attack 
+a faction without specifying a target asset. On a 
+successful Cunning vs. Cunning attack, all Steal
+thed assets on the planet belonging to that faction 
+are revealed. Informers can target a faction even if 
+none of their assets are visible on a world; at worst, 
+they simply learn that there are no stealthed assets.
+ Lobbyists: Usable to block the governmental permis
+sion that is sometimes required to buy an asset or 
+transport it into a system. When a rival faction 
+gains permission to do so, the Lobbyists can make 
+an immediate Cunning vs. Cunning test against 
+the faction; if successful, the permission is with
+drawn and cannot be re-attempted until next turn. 
+Organization Moles : These can subvert and confuse 
+enemy assets, striking to damage their cohesion.
+ Panopticon Matrix: These facilities weave braked-AI 
+intelligence analysts into a web of observation 
+capable of detecting the slightest evidence of in
+truders on a world. Every rival Stealthed asset on 
+the planet must succeed in a Cunning vs. Cunning 
+test at the beginning of every turn or lose their 
+Stealth. The owner also gains an additional die 
+on all Cunning attacks and defenses on that planet.
+ Party Machines: Political blocks control particular cities 
+or regions… blocks that are firmly in control of 
+the faction. Each turn, a Party Machine provides 
+1 FacCred to its owning faction.
+ Popular Movements: A planet-wide surge of enthusiasm 
+for a cause controlled by the faction. This sup
+port pervades all levels of government, and the 
+government always grants any asset purchase or 
+movement requests made by the faction.
+ Saboteurs: Minions rained in launching strikes against 
+enemy operations. An asset attacked by saboteurs 
+cannot apply any Use Asset Ability action until the 
+start of the attacking faction’s next turn. This ap
+plies whether or not the attack was successful.
+ Seditionists: These asset sap a target’s loyalty and will to 
+obey. For a cost of 1d4 FacCreds, the Seditionists 
+can attach themselves to an enemy asset. Until 
+they attach to a different asset or no longer share 
+the same planet, the affected asset cannot attack. 
+If the asset is destroyed, the Seditionists survive.
+ Seductresses: They and their male equivalents subvert 
+the leadership of enemy assets. As an action, a Se
+ductress can travel to any world within one hex. 
+As an attack, a Seductress does no damage, but an 
+asset that has been successfully attacked imme
+diately reveals any other Stealthed assets of that 
+faction on the planet. Only Special Forces units 
+can attack a Seductress.
+Cunning aSSetS •219 
+Asset HP Cost TL Type Attack Counter Note
+ Cunning 1
+ Smugglers 4 2 4 Starship Cunning vs. Wealth, 1d4 damage None A
+ Informers 3 2 0 Special Forces Cunning vs. Cunning, special None A, S
+ False Front 2 1 0 Logistics Facility None None S
+ Base of Influence * * 0 Special None None S
+ Cunning 2
+ Lobbyists 4 4 0 Special Forces Cunning vs. Cunning, special None S
+ Saboteurs 6 5 0 Special Forces Cunning vs. Cunning, 2d4 damage None S
+ Blackmail 4 4 0 Tactic Cunning vs. Cunning, 1d4+1 damage None S
+ Seductress 4 4 0 Special Forces Cunning vs. Cunning, special None A, S
+ Cunning 3
+ Cyberninjas 4 6 4 Special Forces Cunning vs. Cunning, 2d6 damage None
+Stealth-2 0 Tactic None None S
+ Covert Shipping 4 8 4 Logistics Facility None None A, S
+ Cunning 4
+ Party Machine 10 8 0 Logistics Facility Cunning vs. Cunning, 2d6 damage 1d6 damage S
+ Vanguard Cadres 12 8 3 Military Unit Cunning vs. Cunning, 1d6 damage 1d6 damage
+Tripwire Cells 8 12 4 Special Forces None 1d4 damage A, S
+ Seditionists 8 12 0 Special Forces None None A
+ Cunning 5
+ Organization Moles 8 10 0 Tactic Cunning vs. Cunning, 2d6 damage None
+ Cracked Comms 6 14 0 Tactic None Special S
+ Boltholes 6 12 4 Logistics Facility None 2d6 damage S
+ Cunning 6
+ Transport Lockdown 10 20 4 Tactic Cunning vs. Cunning, special None S
+ Covert Transit Net 15 18 4 Logistics Facility None None A
+ Demagogue 10 20 0 Special Forces Cunning vs. Cunning, 2d8 damage 1d8 damage
+Cunning 7
+ Popular Movement 16 25 4 Tactic Cunning vs. Cunning, 2d6 damage 1d6 damage S
+ Book of Secrets 10 20 4 Tactic None 2d8 damage S
+ Treachery 5 10 0 Tactic Cunning vs. Cunning, Special None S
+ Cunning 8
+ Panopticon Matrix 20 30 5 Logistics Facility None 1d6 damage. S
+ A “P” special code indicates a need for planetary governmental permission to raise or transport in the asset. “A” means 
+that the asset can perform a special action, and “S” indicates that the asset has a special feature or cost.
+ Smugglers: Men and women skilled in extracting per
+sonnel. For one FacCred, the smugglers asset can 
+transport itself and/or any one Special Forces unit 
+to a planet up to two hexes away.
+ Stealth: Not an asset, per se, but a special quality that 
+can be purchased for another Special Forces asset 
+on the planet. An asset that has been Stealthed 
+cannot be detected or attacked by other factions. 
+If the unit normally requires the permission of a 
+planetary government to be moved onto a planet, 
+that permission may be foregone. An asset loses 
+its Stealth if it is used to attack or defend.
+ Transport Lockdown: These techniques involve selec
+tive pressure on local routing and shipping com
+panies. On a successful Cunning vs. Cunning at
+tack against a rival faction, the rival faction cannot 
+transport assets onto that planet without spending 
+1d4 FacCreds and waiting one turn.
+ Treachery: Traitors can attack an enemy asset. On a 
+successful attack, the Treachery asset is lost, 5 Fac
+Creds are gained, and the targeted asset switches 
+sides to join the traitor’s faction, even if the faction 
+does not otherwise have the attributes necessary.
+ Tripwire Cells: These observers are alert to the arriv
+al of stealthed units. Whenever a stealthed asset 
+lands or is purchased on a planet with tripwire 
+cells, the Cells make an immediate Cunning vs. 
+Cunning attack against the owning faction. If suc
+cessful, the asset loses its stealth.
+ Vanguard Cadres: Followers of the movement are in
+spired sufficiently to take up arms and fight on 
+behalf of their leadership.
+220• forCe aSSetS
+ forCe asseTs
+ Base of Influence: This asset is special, and is required 
+for purchasing or upgrading units on a particular 
+world. Any damage done to a Base of Influence is 
+also done to a faction’s hit points. The cost of a 
+Base of Influence equals its maximum hit points, 
+which can be any number up to the total maxi
+mum hit points of its owning faction. A faction’s 
+bases of influence don’t count against their maxi
+mum assets. A Base of Influence can only be pur
+chased with the Expand Influence action.
+ Beachhead Landers: A collection of short-range, 
+high-capacity spike drive ships capable of moving 
+large numbers of troops. As an action, the asset 
+may move any number of assets on the planet, in
+cluding itself, to any world within one hex at a cost 
+of one FacCred per asset moved.
+ Blockade Fleets: A ragtag lot of corsairs, pirates, priva
+teers, and other deniable assets. When they suc
+cessfully Attack an enemy faction asset, they steal 
+1d4 FacCreds from the target faction as well. This 
+theft can occur to a faction only once per turn, 
+no matter how many blockade fleets attack. As an 
+action, this asset may also move itself to a world 
+within one hex.
+ Capital Fleets: The pride of an empire, this is a collec
+tion of massive capital warships without peer in 
+most sectors. Capital fleets are expensive to keep 
+flying, and cost an additional 2 FacCreds of main
+tenance each turn. As an action, they may move 
+to any world within three hexes of their current 
+location. Planetary government permission is re
+quired to raise a capital fleet, but not to move one 
+into a system.
+ Counterintel Units: These security units specialize in 
+code breaking, internal security, and monitoring 
+duties. They can crack open enemy plots long be
+fore they have time to come to fruition.
+ Cunning Traps: This asset covers all the myriad strata
+gems of war, from induced landslides to spreading 
+local diseases.
+ Deep Strike Landers: These advanced transport ships 
+are capable of moving an asset long distances. As 
+an action, any one non-Starship asset, including 
+itself, can be moved between any two worlds 
+within three hexes of the deep strike landers, at a 
+cost of 2 FacCreds. This movement can be done 
+even if the local planetary government objects, al
+beit doing so is usually an act of open war.
+ Elite Skirmishers: These lightly-equipped troops are 
+trained for guerrilla warfare and quick raids.
+ Extended Theater: These facilities allow for transport
+ing assets long distances. As an action, any one 
+non-Starship asset, including itself, can be moved 
+between any two worlds within two hexes of the 
+extended theater, at a cost of 1 FacCred.
+ Gravtank Formations: These tank formations are com
+posed of advanced postech gravtank units that are 
+capable of covering almost any terrain and crack
+ing even the toughest defensive positions.
+ Guerrilla Populace: Such assets reflect popular support 
+among the locals and a cadre of men and women 
+willing to fight as partisans.
+ Hardened Personnel: These are the employees and sup
+port staff of the faction that have been trained in 
+defensive fighting and equipped with supply cach
+es and hardened fallback positions.
+ Heavy Drop Assets: These craft allow for the transport 
+of resources from one world to another. As an 
+action, any one non-Starship asset, including this 
+one, may be moved to any world within one hex 
+for one FacCred.
+ Hitmen: Crudely-equipped thugs and assassins with 
+minimal training that have been aimed at a rival 
+faction’s leadership.
+ Integral Protocols: A complex web of braked-AI sup
+ported sensors and redundant security checks used 
+to defeat attempts to infiltrate an area. They can 
+defend only against attacks versus Cunning, but 
+they add an additional die to the defender’s roll.
+ Militia Units: Groups of lightly-equipped irregular 
+troops with rudimentary military training but no 
+heavy support.
+ Planetary Defenses: Massive mag cannons and gravi
+tic braker gun arrays designed to defend against 
+starship bombardments and repel unauthorized 
+landing. Planetary defenses can only defend 
+against attacks by Starship-type assets.
+ Postech Infantry: The backbone of most planetary 
+armies, these well-trained soldiers are usually 
+equipped with mag weaponry and combat field 
+uniforms, and have heavy support units attached.
+ Pretech Infantry: The cream of the stellar ground 
+forces, elite troops kitted out in the best pretech 
+weaponry and armor available, with sophisticated 
+heavy support weaponry integral to the unit.
+ Pretech Logistics: These assets represent caches, smug
+glers, or internal research and salvage programs. 
+As an action, a pretech logistics asset allows the 
+owner to buy one Force asset on that world that 
+requires up to tech level 5 to purchase. This asset 
+costs half again as many FacCreds as usual, round
+ed up. Only one asset can be purchased per turn.
+ Psychic Assassins: Combat-trained psychics equipped 
+with advanced pretech stealth gear and psitech 
+weaponry. Psychic assassins automatically start 
+Stealthed when purchased.
+ Security Personnel: Standard civilian guards or police
+men, usually equipped with nonlethal weaponry 
+or personal sidearms.
+Eliminating Force Assets
+ It’s important to remember that a disabled or dam
+aged Force asset hasn’t necessarily been blown to 
+pieces on a battlefield. When thinking of ways that 
+a conflict might have harmed such an asset, re
+member that demoralization, confusion, subver
+sion, and simple lack of upkeep might all cripple 
+the effectiveness of an asset, or even destroy it as 
+an effective force without rebuilding as expensive 
+as buying a fresh asset. A navy with spacemanship 
+skills so neglected as to constantly run ships into 
+each other is just as worthless to its owning faction 
+as a fleet of smoking wrecks, and the only damage 
+done there was to the organization’s focus.
+ forCe aSSetS •221 
+Space Marines: Heavily-armored specialist troops 
+trained for ship boarding actions and opposed 
+landings. As an action, they can move to any world 
+within one hex of their current location, whether 
+or not the planetary government permits it.
+ Strike Fleets: Forces composed of frigate or cruiser-class 
+vessels equipped with space-to-ground weaponry 
+and sophisticated defenses against light planetary 
+weaponry. As an action, they can move to any 
+world within one hex of their current location.
+ Zealots: Members of the faction so utterly dedicated 
+that they are willing to launch suicide attacks or 
+hold positions to the death. Zealots take 1d4 dam
+age every time they launch a successful attack or 
+perform a counterattack.
+ Asset HP Cost TL Type Attack Counter Note
+ Force 1
+ Security Personnel 3 2 0 Military Unit Force vs. Force, 1d3+1 damage 1d4 damage
+Hitmen 1 2 0 Special Forces Force vs. Cunning, 1d6 damage None
+Militia Unit 4 4 3 Military Unit Force vs. Force, 1d6 damage 1d4+1 damage P
+ Base of Influence * * 0 Special None None S
+ Force 2
+ Heavy Drop Assets 6 4 4 Facility None None A
+ Elite Skirmishers 5 5 4 Military Unit Force vs. Force, 2d4 damage 1d4+1 damage P
+ Hardened Personnel 4 4 3 Special Forces None 1d4+1 damage
+Guerrilla Populace 6 4 0 Military Unit Force vs. Cunning, 1d4+1 damage None
+Force 3
+ Zealots 4 6 0 Special Forces Force vs Force, 2d6 damage 2d6 damage S
+ Cunning Trap 2 5 0 Tactic None 1d6+3 damage
+Counterintel Unit 4 6 4 Special Forces Cunning vs Cunning, 1d4+1 damage 1d6 damage
+Force 4
+ Beachhead Landers 10 10 4 Facility None None A
+ Extended Theater 10 10 4 Facility None None A
+ Strike Fleet 8 12 4 Starship Force vs. Force, 2d6 damage 1d8 damage A
+ Postech Infantry 12 8 4 Military Unit Force vs. Force, 1d8 damage 1d8 damage P
+ Force 5
+ Blockade Fleet 8 10 4 Starship Force vs. Wealth, 1d6 damage * None S
+ Pretech Logistics 6 14 0 Facility None None A
+ Psychic Assassins 4 12 4 Special Forces Cunning vs. Cunning, 2d6+2 damage None S
+ Force 6
+ Pretech Infantry 16 20 5 Military Unit Force vs. Force, 2d8 damage 2d8+2 damage P
+ Planetary Defenses 20 18 4 Facility None 2d6+6 damage * S
+ Gravtank Formation 14 25 4 Military Unit Force vs. Force, 2d10+4 damage 1d10 damage P
+ Force 7
+ Deep Strike Landers 10 25 4 Facility None None A
+ Integral Protocols 10 20 5 Facility None 2d8+2 damage * S
+ Space Marines 16 30 4 Military Unit Force vs. Force 2d8+2 damage 2d8 damage A
+ Force 8
+ Capital Fleet 30 40 4 Spaceship Force vs. Force, 3d10+4 damage 3d8 damage A, S
+ A “P” special code indicates a need for planetary governmental permission to raise or transport in the asset. “A” means 
+that the asset can perform a special action, and “S” indicates that the asset has a special feature or cost.
+222• Wealth aSSetS
+ WealTh asseTs
+ Bank Assets: Once per turn, the faction can ignore one 
+cost or FacCred loss imposed by another faction. 
+This does not require an action. Multiple bank as
+sets allow multiple losses to be ignored.
+ Base of Influence: These follow the standard rules for 
+Bases of Influence.
+ Blockade Runners: These starship captains excel at 
+transporting goods through unfriendly lines. As 
+an action, a blockade runner can transfer itself or 
+any one Military Unit or Special Forces to a world 
+within three hexes for a cost of two FacCreds. 
+They can even move units that would otherwise 
+require planetary government permission to enter.
+ Commodities Brokers: They substantially lessen the 
+cost of large-scale investments by timing mate
+rials purchases properly. As an action, the owner 
+of a commodities broker can roll 1d8; that many 
+FacCreds are subtracted from the cost of their next 
+asset purchase, down to a minimum of half nor
+mal price, rounded down.
+ Franchise: This asset reflects a deniable connection 
+with a local licensee for the faction’s goods and 
+services. When a Franchise successfully attacks a 
+enemy asset, the enemy faction loses one FacCred 
+(if available), which is gained by the Franchise’s 
+owner. This loss can happen only once a turn, no 
+matter how many Franchises attack.
+ Freighter Contract: A special link with heavy shipping 
+spacers. As an action, the faction may move any 
+one non-Force asset, including this one, to any 
+world within two hexes at a cost of one FacCred.
+ Harvesters: These gather the natural resources of a 
+world, whether ore, biologicals, or other unpro
+cessed goods. As an action, the Harvesters’ owning 
+faction may roll 1d6. On 3+, gain one FacCred.
+ Hostile Takeover: This asset can seize control of dam
+aged and poorly-controlled assets. If a Hostile 
+Takeover does enough damage to destroy an as
+set, the target is instead reduced to 1 hit point and 
+acquired by the Hostile Takeover’s owning faction.
+ Laboratory: The lab allows a world to make hesitant 
+progress in tech. The presence of a Laboratory 
+allows assets to be purchased on that world as if it 
+had Tech Level 4.
+ Lawyers: Sophists in immaculate suits or charismatic 
+tribal skalds, lawyers have the ability to tie an ene
+my up in the coils of their own internal rules, dam
+aging assets with confusion and red tape. Lawyers 
+cannot attack or counterattack Force assets.
+ Local Investments: These give the faction substantial in
+fluence over the commerce on a world. Any other 
+faction that tries to buy an asset on that planet 
+must pay one extra FacCred. This money is not 
+given to the investments’ owner, but is lost. This 
+penalty is only applied once.
+ Marketers: Deployed to confuse enemy factions into 
+untimely investments. As an action, the marketers 
+may test Cunning vs. Wealth against a rival fac
+tion’s asset. If successful, the target faction must 
+immediately pay half the asset’s purchase cost, 
+rounded down, or have it become disabled and 
+useless until this price is paid.
+ Medical Center: Salvage and repair damaged assets. 
+Once between turns, if a Special Forces or Mili
+tary Unit asset on the world is destroyed, the fac
+tion may immediately pay half its purchase cost 
+to restore it with one hit point. Any Repair Asset 
+action taken on that world costs one less FacCred 
+for Special Forces and Military Units.
+ Mercenaries: Groups of well-equipped, highly-trained 
+soldiers willing to serve the highest bidder. Mer
+cenaries have a maintenance cost of one FacCred 
+per turn. As an action, Mercenaries can move to 
+any world within one hex of their current location. 
+To purchase or move a Mercenary asset to a planet 
+requires government permission.
+ Monopoly: An open or tacit stranglehold on certain vital 
+businesses or resources on a world. As an action, 
+owners of a monopoly may force one other faction 
+with unstealthed assets on that world to pay them 
+one FacCred. If the target faction can’t pay, they 
+lose one asset of their choice on the world.
+ Postech Industry: As an action, the owning faction can 
+roll 1d6 for a Postech Industry asset. On a 1, one 
+FacCred is lost, on a 2-4 one FacCred is earned, 
+and a 5-6 returns two FacCreds. If money is lost 
+and no resources are available to pay it, the Pos
+tech Industry is destroyed.
+ Pretech Manufactories: Rare, precious examples of 
+functioning pretech industrial facilities, retrofit
+ted to work without the benefit of specialized psy
+chic disciplines. As an action, the owning faction 
+can roll 1d8 for a Pretech Manufactory, and gain 
+half that many FacCreds, rounded up.
+ Pretech Researchers: A highly versatile team of research 
+and design specialists capable of supporting lim
+ited pretech… as long as they’re adequately fund
+ed. Any world with Pretech Researchers on it is 
+treated as tech level 5 for the purpose of buying 
+Cunning and Wealth assets. Pretech researchers 
+have a maintenance cost of 1 FacCred per turn.
+ R&D Departments: These allow the smooth extension 
+of wealth-creation and industrial principles to the 
+farthest reaches of the faction’s operations. A fac
+tion with an R&D department may treat all plan
+ets as having tech level 4 for purposes of buying 
+Wealth assets.
+ Scavenger Fleets: These rag-tag armadas bring enor
+mous technical and mercantile resources to their 
+patrons, along with a facility with heavy guns. As 
+Wealth aSSetS •223 
+Asset HP Cost TL Type Attack Counter Note
+ Wealth 1
+ Franchise 3 2 2 Facility Wealth vs. Wealth, 1d4 damage 1d4-1 damage S
+ Harvesters 4 2 0 Facility None 1d4 A
+ Local Investments 2 1 2 Facility Wealth vs. Wealth, 1d4-1 damage None S
+ Base of Influence * * 0 Special None None S
+ Wealth 2
+ Freighter Contract 4 5 4 Starship Wealth vs. Wealth, 1d4 damage None A
+ Lawyers 4 6 0 Special Forces Cunning vs. Wealth, 2d4 damage 1d6 damage S
+ Union Toughs 6 4 0 Military Unit Wealth vs. Force, 1d4+1 damage 1d4 damage
+ Surveyors 4 4 4 Special Forces None 1d4 damage A, S
+ Wealth 3
+ Postech Industry 4 8 4 Facility None 1d4 damage A
+ Laboratory 4 6 0 Facility None None S
+ Mercenaries 6 8 4 Military Unit Wealth vs. Force, 2d4+2 damage 1d6 damage A, S, P
+ Wealth 4
+ Shipping Combine 10 10 4 Facility None 1d6 damage A
+ Monopoly 12 8 3 Facility Wealth vs. Wealth, 1d6 damage 1d6 damage S
+ Medical Center 8 12 4 Facility None None S
+ Bank 8 12 3 Facility None None S
+ Wealth 5
+ Marketers 8 10 0 Tactic Cunning vs. Wealth, 1d6 damage None A
+ Pretech Researchers 6 14 4 Special Forces None None S
+ Blockade Runners 6 12 4 Starship None 2d4 damage A
+ Wealth 6
+ Venture Capital 10 15 4 Facility Wealth vs. Wealth, 2d6 1d6 damage A
+ R&D Department 15 18 4 Facility None None S
+ Commodities Broker 10 20 0 Special Forces Wealth vs. Wealth, 2d8 damage 1d8 damage A
+ Wealth 7
+ Pretech Manufactory 16 25 5 Facility None None S
+ Hostile Takeover 10 20 4 Tactic Wealth vs. Wealth, 2d10 damage 2d8 damage S
+ Transit Web 5 15 5 Facility Cunning vs. Cunning, 1d12 damage None S
+ Wealth 8
+ Scavenger Fleet 20 30 5 Starship Wealth vs. Wealth, 2d10+4 damage 2d10 damage.
+ A “P” special code indicates a need for planetary governmental permission to raise or transport in the asset. “A” means 
+that the asset can perform a special action, and “S” indicates that the asset has a special feature or cost.
+ an action, a Scavenger Fleet can be moved to any 
+world within three hexes. Scavenger Fleets cost 2 
+FacCreds a turn in maintenance.
+ Shipping Combine: Transport large amounts of equip
+ment and personnel between worlds. As an action, 
+the combine may move any number of non-Force 
+assets, including itself, to any world within two 
+hexes at a cost of one FacCred per asset.
+ Surveyors: Explore potential resource and investment 
+options on worlds. The presence of a Surveyor 
+crew allows one additional die to be rolled on 
+Expand Influence actions. As an action, a surveyor 
+crew can be moved to any world within two hexes.
+ Transit Web: These facilities allow almost effortless re
+location of all assets. For one FacCred, any num
+ber of non-starship Cunning or Wealth assets may 
+be moved between any two worlds within three 
+hexes of the Transit Web. This may be done freely 
+on the owner’s turn so long as the fee can be paid, 
+and using the ability doesn’t require an action.
+ Union Toughs: These bruisers don’t much like scabs and 
+management, and they’re willing to take the fac
+tion’s word on which people are which. They’re 
+lightly armed and poorly trained, but they can in
+filtrate to perform sabotage.
+ Venture Capital: This asset grows resources out of 
+seemingly nowhere, harvesting the best of entre
+preneurship for the faction’s benefit. As an action, 
+venture capital can be tapped. 1d8 is rolled; on a 1, 
+the asset is destroyed, while on a 2-3 one FacCred 
+is gained, 4-7 yields two FacCreds and 8 grants 
+three FacCreds.
+224• faCtion tagS
+ faCTIon Tags
+ Most factions have some unique quality about them, 
+some trait that distinguishes them from other factions 
+of similar resources. Whether a particularly fanatical 
+band of ideological crusaders or an ancient order of 
+pacifistic scientists, faction tags allow a GM to give a 
+group a few special tricks of their own.
+ A faction should generally be given one tag, or two 
+at the most for particularly versatile organizations. The 
+exception is the Planetary Government tag, which can 
+be acquired– and lost– multiple times to reflect the 
+faction’s seizure of new worlds. Factions tags do not 
+normally change without some drastic and organiza
+tion-shaping event.
+ Colonists
+ This faction is a fresh colony on an otherwise largely 
+untouched planet. It is this brave band of pioneers that 
+will tame the world’s wild forces and bring forth a bet
+ter life for those who come after.
+ Effect: This faction has all the benefits of the Planetary 
+Government tag for its homeworld, as no other 
+government exists on a fresh colony. The faction’s 
+homeworld is also treated as if it had at least tech 
+level 4. Colonies with fewer than 100,000 citi
+zens lack the necessary industrial infrastructure 
+to build Spaceship-type assets.
+ Deep Rooted
+ This faction has been part of a world’s life for time out 
+of mind. Most natives can hardly imagine the world 
+without this faction’s presence, and the traditional pre
+rogatives and dignities of the group are instinctively 
+respected.
+ Effect: This faction can roll one additional d10 when 
+defending against attacks on assets on their home
+world. If the faction ever changes homeworlds, 
+this tag is lost.
+ Eugenics Cult
+ The forbidden maltech secrets of advanced human ge
+netic manipulation are known to this faction, and they 
+use them with gusto. Slave-engineered humanoids and 
+“deathless” leadership are just two of the more common 
+alterations these unstable scientists undertake.
+ Effect: Eugenics Cultists can buy the Gengineered 
+Slaves asset; it’s an asset requiring Force 1 with 
+the statistics of 6 HP, 2 FacCred cost, tech level 4 
+required, with an Attack of Force vs. Force/1d6 
+damage and a Counterattack of 1d4 damage. Once 
+per turn, the Eugenics Cult can roll an extra d10 
+on an attack or defense by a Gengineered Slaves 
+asset, regardless of the stat being used. Gengi
+neered Slaves can count as either a Military Unit 
+or Special Forces, determined when the cult first 
+creates a specific asset.
+ Exchange Consulate
+ This faction is either led through an Exchange Con
+sulate or has close ties with that pacifistic society of 
+bankers and diplomats. The sophisticated economic 
+services they provide strengthen the faction.
+ Effect: When the faction successfully completes a 
+“Peaceable Kingdom” Goal, they may roll 1d6; on 
+a 4+, they gain a bonus experience point. Once 
+per turn, the faction may roll an extra d10 when 
+defending against a Wealth attack.
+ Fanatical
+ The members of this faction just don’t know when to 
+quit. No matter how overmatched, the members will 
+keep fighting to the bitter end- and occasionally past it.
+ Effect: The faction always rerolls any dice that come up 
+as 1. This zealousness leaves them open at times, 
+however; they always lose ties during attacks.
+ Imperialists
+ This faction nurses wild dreams of controlling the sec
+tor, whether out of an impulse to bring their local cul
+ture and technology to less fortunate worlds or simple 
+lust for dominion. They excel at defeating planetary 
+defenses and standing armies.
+ Effect: This faction may roll an extra d10 for attacks 
+made as part of a Seize Planet action.
+ Machiavellian
+ This faction’s meat and drink is intrigue, its members 
+delighting in every opportunity to scheme. It may be 
+a secret cabal of hidden masters or the decadent court 
+of a fallen stellar empire, but its membership has for
+gotten more of treachery than most others ever learn.
+ Effect: Once per turn, this faction can roll an additional 
+d10 when making a Cunning attack.
+ Mercenary Group
+ The faction sells its services to the highest bidder, and 
+is an extremely mobile organization. Vast amounts of 
+men and material can be moved interstellar distances 
+in just a few months.
+ Effect: All faction assets gain the following special abil
+ity: As an action, the asset may move itself to any 
+world within one hex.
+ Perimeter Agency
+ This faction is or is closely tied to an Agency of the 
+enigmatic Perimeter organization. Originally orga
+nized by the Terran Mandate to detect and contain 
+maltech outbreaks until Mandate fleet resources could 
+be dispatched, the Perimeter retains numerous ancient 
+override codes for pretech security protocols.
+ Effect: Once per turn, the faction may roll an addi
+tional d10 when making an attack against an asset 
+faCtion tagS •225 
+that requires tech level 5 to purchase. The faction 
+may roll an extra die when making a test to detect 
+Stealthed assets.
+ Pirates
+ This faction is a scourge of the spacelanes, driving up 
+the cost of shipping and terrorizing merchant captains 
+without pity. They steal and refit ships with vicious 
+ingenuity, cobbling together space armadas out of the 
+leavings of their prey.
+ Effect: Any movement of an asset onto a world that has 
+a Base of Influence for this faction costs one extra 
+FacCred, paid to this faction.
+ Planetary Government
+ This faction is the legitimate government of a planet. 
+Rebel groups and rival factions may have assets on the 
+planet, but control over the instruments of the state 
+is firmly in this faction’s hands. The faction may rule 
+openly, or it may simply have an inexorable grasp on 
+the existing authorities.
+ Effect: The faction’s permission is required to buy or 
+import those assets marked as needing govern
+ment permission. This tag can be acquired multi
+ple times, once for each planet the faction controls.
+ Plutocratic
+ This faction prizes wealth, and its membership strives 
+constantly to expand and maintain personal fortunes. 
+Perhaps it is a ruling council of oligarchs or a star-span
+ning trade cartel.
+ Effect: Once per turn, this faction can roll an additional 
+d10 when making a Wealth attack.
+ Preceptor Archive
+ This faction is or has close ties to a Preceptor Archive 
+a place of learning operated by the learned Preceptors 
+of the Great Archive. These Archives are peaceful in
+stitutions dedicated to the spread of practical knowl
+edge and useful engineering to the wider cosmos. Their 
+large numbers of educated personnel make advanced 
+equipment more practical for deployment.
+ Effect: Purchasing an asset that requires tech level 4 or 
+more costs one fewer FacCred than normal. The 
+Preceptor Archive may also take the special action 
+“Teach Planetary Population”, costing 2 FacCreds 
+and allowing them to roll 1d12 for one world. On 
+a 12, the world’s tech level permanently becomes 
+4 for the purposes and purchases of this faction.
+ Psychic Academy
+ Most significant factions are capable of employing psy
+chics, but this faction can actually train their own. They 
+excel at precise and focused application of the psionic 
+disciplines, and can get far more out of their available 
+psychic resources than other factions.
+ Effect: This faction can provide psionic mentor train
+ing to qualified psychics. Once per turn, this fac
+tion can also force a rival faction to reroll any one 
+d10, whether or not they’re involved in the roll.
+ Savage
+ Whether a proud tribe of neoprimitives struggling 
+against the material limits of their world or a pack of 
+degenerate tomb world cannibals, this faction is accus
+tomed to surviving without the benefits of advanced 
+technology and maximizing local resources.
+ Effect: Once per turn, this faction can roll an extra die 
+when defending with an asset that requires tech 
+level 0 to purchase.
+ Scavengers
+ This faction might live within the wreckage of a tomb 
+world, salvage the castoffs of some decadent plea
+sure-world or ply the ruins of an orbital scrapyard. 
+Whatever their territory, this faction knows how to 
+find worth amid seemingly useless trash.
+ Effect: Whenever the faction destroys an asset or has 
+one of their assets destroyed, they gain 1 FacCred.
+ Secretive
+ This faction is marked by elaborate protocols of secre
+cy and misdirection. It may be split up into numerous 
+semi-autonomous cells, or consist largely of trained es
+pionage professionals. Finding the assets of such a fac
+tion can often be more difficult than destroying them.
+ Effect: All assets purchased by this faction automatical
+ly begin Stealthed. See the list of Cunning assets 
+for details on Stealth.
+ Technical Expertise
+ The faction is staffed by large numbers of expert en
+gineers and scientists. They can turn even the most 
+unpromising labor pool into superb technicians.
+ Effect: This faction treats all planets on which they 
+have a Base of Influence as if they were at least 
+tech level 4. They can build Starship-type assets 
+on any world with at least ten thousand occupants.
+ Theocratic
+ The faction is fueled by the fierce certainty that God 
+is with them- and with no one else. The tight and 
+occasionally irrational obedience that pervades the 
+organization makes it difficult to infiltrate or subvert 
+effectively.
+ Effect: Once per turn, this faction can roll an extra d10 
+when defending against a Cunning attack.
+ Warlike
+ There are factions with a military orientation, and then 
+there are factions that just really love killing things. 
+Whether or not this faction has developed sophisticat
+ed military resources and techniques, the membership 
+is zealous in battle and has a positive taste for fighting.
+ Effect: Once per turn, this faction can roll an additional 
+d10 when making a Force attack.
+226• faCtionS in your CamPaign
+ faCTIons In your CamPaIgn
+ To create a faction, first decide on the scale of the orga
+nization. Many factions are restricted to a single world, 
+and even the most impressive sector empire rarely 
+exerts direct control over more than a dozen worlds. 
+Place the faction’s homeworld and locate any Bases of 
+Influence it might have on other worlds. A few words 
+beside each Base describing the form it takes can be 
+handy in later planning out adventures with the faction.
+ Next, prioritize the faction’s attributes, deciding 
+the order in which they focus on Force, Cunning, and 
+Wealth. Minor factions should have a 4 in their most 
+important attribute, established planetary govern
+ments should have a 6, and regional hegemons should 
+have an 8. Their second-most important attribute is 
+one less than their primary, and their tertiary attribute 
+is three less. You can calculate the faction’s hit points 
+from that, but normally minor powers will have 15 HP, 
+major powers will have 29 HP, and sector hegemons 
+will have 49 HP. Their off-world Bases of Influence 
+normally have a maximum HP equal to half that.
+ Give minor powers one asset in their primary at
+tribute and one asset in a different attribute. Give major 
+powers two assets in their primary attribute, and two 
+assets in different attributes, and give regional hege
+mons four assets in their primary and four in others. 
+Place these assets on the worlds occupied by the faction.
+ Select an appropriate faction tag for the organiza
+tion, one fitting their special focus and origins. If the 
+faction has direct governmental control over one or 
+more worlds, add Planetary Government tags to them.
+ Finally, select a Goal for the faction. For your ini
+tial three or four sector factions, try to pick goals that 
+will put them in conflict with each other. If the factions 
+you make are content to hide from the world and get 
+along in peace and quiet, they’re unlikely to be terribly 
+useful as patrons or enemies for the PC group, unless 
+you intend to enlist the PCs as defenders of some be
+leaguered group of innocents.
+eXamPle faCTIons
+ examPle faCtionS •227 
+A GM doesn’t always have time to sort out the details 
+of every faction that might be needed. A group might 
+decide to attack the planetary government of a world 
+that wasn’t important or interesting enough to merit 
+the effort to define its governmental faction during 
+sector creation, for example. The following sample 
+factions can be pulled and used for such places as nec
+essary. Where appropriate, you can add the Planetary 
+Government tag for legitimate world governments.
+ Colony World
+ Thinly-populated worlds with limited infrastructure 
+tend to have weak colonial governments concerned 
+chiefly with issues of basic survival rather than expan
+sion or intrigue.
+ Attributes: Force 4, Cunning 3, Wealth 1
+ Hit Points: 15
+ Assets: Guerrilla Populace/Force 2 and Saboteurs/Cun
+ning 2
+ Tags: Colonists
+ Lost World
+ Primitive and barbaric by the standards of the space go
+ing worlds, a lost world lacks the technical resources of 
+their neighbors, but may well have substantial advan
+tages in population and cultural cohesion depending on 
+the world’s habitability.
+ Attributes: Force 4, Cunning 1, Wealth 3
+ Hit Points: 15
+ Assets: Zealots/Force 3, Harvesters/Wealth 1
+ Tags: Savage
+ Backwater Planet
+ Perhaps this world was important once, but disaster, 
+ennui, or the Scream has left it a sleepy planet disinter
+ested in the wider galaxy. Most worlds with ordinary 
+levels of technology in a sector will fit this template.
+ Attributes: Force 6, Cunning 3, Wealth 5
+ Hit Points: 29
+ Assets: Postech Infantry/Force 4, Planetary Defenses/
+ Force 6, Informers/Cunning 1, Bank/Wealth 4
+ Tags: Deep Rooted
+ Zealous Faith
+ This religious organization is a powerful force in the 
+sector, likely with major congregations on several 
+worlds. 
+Attributes: Force 3, Cunning 6, Wealth 5
+ Hit Points: 29
+ Assets: Demagogue/Cunning 6, Organization Moles/
+ Cunning 5, Zealots/Force 3, Marketers/Wealth 5
+ Tags: Theocratic
+ Regional Hegemon
+ This world is the mightiest military power in the sector 
+and leads a half-dozen neighboring worlds in a “volun
+tary confederation” that it ever seeks to expand.
+ Attributes: Force 8, Cunning 5, Wealth 7
+ Hit Points: 49
+ Assets: Space Marines/Force 7, Planetary Defenses/
+ Force 6, Blockade Fleet/Force 5, Extended The
+ater/Force 4, Pretech Manufactory/Wealth 7, 
+Shipping Combine/Wealth 4, Tripwire Cells/
+ Cunning 4, Cyberninjas/Cunning 3
+ Tags: Imperialists
+ Mercantile Combine
+ A star-spanning consortium of merchants might oper
+ate out of one particular world, but their final loyalty 
+is always to their credit balance.
+ Attributes: Force 3, Cunning 5, Wealth 6
+ Hit Points: 29
+ Assets: Venture Capital/Wealth 6, Shipping Combine/
+ Wealth 4, Hardened Personnel/Forces 2, Black
+mail/Cunning 2
+ Tags: Plutocratic
+ Eugenics Cult
+ Some people are born to rule- literally. These eugenics 
+cults believe that superior breeds of humanity can be 
+successfully engineered, and that good genetic back
+ground legitimizes rule over less “advanced” humans. 
+Such cults are widely loathed, but the experimental 
+medical treatment they offer to those who can find 
+them makes unwilling converts of some.
+ Attributes: Force 3, Cunning 6, Wealth 5
+ Hit Points: 29
+ Assets: Boltholes/Cunning 5, Demagogue/Cunning 6, 
+Laboratory/Wealth 3, Gengineered Slaves/Force 
+1
+ Tags: Eugenics Cult
+ Rebel Freedom Fighters
+ Even in the most tyrannical corners of the galaxy, the 
+human heart yearns for freedom. These factions spring 
+up in the shadow of oppressive governments. For each 
+one that is crushed, a new one rises in time.
+ Attributes: Force 3, Cunning 4, Wealth 1
+ Hit Points: 15
+ Assets: Seditionists/Cunning 4, Zealots/Force 3
+ Tags: Secretive
+228• examPle of faCtion Play
+ an eXamPle of faCTIon Play
+ The GM has just finished brewing up her initial sector. 
+She has a rough sketch of the worlds, she’s fleshed out 
+the planet where the initial play session will occur, and 
+she’s ready to run the game. She thinks it’d be nice to 
+have some background activity going on, so she plans 
+to create three factions to decorate her world.
+ She picks out three groups that are likely to be 
+significant players in this corner of her sector: the harsh 
+planetary government of Typhon, the initial starting 
+point for the game, the Rathskeller Combine, a mul
+tistellar megacorp based off the world of Danube in 
+the neighboring solar system, and the Way of Voth, a 
+pretech-worshiping cult with a hidden base on Singu
+larity, a gas giant moon in a system neighboring both.
+ These aren’t the only possible factions in the sys
+tem, of course, but they’re the ones most likely to be 
+pertinent to PC interests. If the PCs move on, she might 
+retire some of these factions to bring in new ones. She 
+knows she shouldn’t have more than a half-dozen fac
+tions active at once unless she’s ready to do a lot of 
+tracking during each faction turn.
+ She knows the Typhon government is a fairly 
+powerful faction, having effective control of its home 
+planet save for some plucky rebels against its autocratic 
+monarchy. Force is its strongest tool, so she gives it a 
+rating of 6 in that, followed by Wealth of 5 and Cun
+ning of 3. Its maximum hit points are 29. As a major 
+power, it has two Force assets and two more assets of 
+any kind. Typhon would love to have Pretech Infantry 
+and has the Force score to support it, but its tech level 
+is 4, too low for such advanced troops. It settles for a 
+Strike Fleet and some Postech Infantry. Aside from that, 
+it has a government Monopoly on spike drive com
+ponents and a Postech Industry that helps make them. 
+It also has a Base of Influence on its home world of 
+Typhon that automatically has 29 hit points, the same 
+as the faction itself. Finally, it has the faction tag of 
+Planetary Government, because it’s the legitimate ruler 
+of Typhon.
+ For the Rathskeller Combine, the GM decides that 
+it’s about as powerful as the Typhon government due 
+to its far-flung mercantile connections. On reflection, 
+she thinks its main money comes from its control of 
+the ship-building industry outside the Typhon system, 
+which makes it an economic competitor with the state
+run Typhon shipyards. She gives it a Wealth rating of 
+6, Force of 5, and Cunning of 3, with a maximum HP 
+of 29. Since it’s starship-centric, she gives it Shipping 
+Combine and Blockade Runner assets for Wealth, and 
+other assets of Elite Skirmishers and Saboteurs. The 
+Plutocratic tag fits its mercantile origins.
+ For the final faction, the GM decides to make 
+them a relatively weak group, one that tries to use its 
+limited supplies of pretech artifacts to manipulate “less 
+4, a Wealth of 3, and a Force of 1. Its maximum hit 
+points are 15. It gets only two assets as a minor power, 
+so goes with Cyberninjas and Covert Shipping to get 
+those ninjas where they need to go. The GM mulls over 
+the faction tags, but none seem to be quite right. She 
+decides to give it her own tag of “Pretech Stores”, let
+ting it treat Singularity as a tech level 5 world for pur
+poses of buying high-tech assets there. While there’s no 
+other meaningful authority on the gas giant moon, the 
+GM doesn’t think it’s proper to give them the Planetary 
+Government tag because there really isn’t anything else 
+on Singularity except the Vothite base. They don’t have 
+the implicit military power to prevent hostile military 
+assets from landing on the world, so they don’t really 
+fit the mold of the Planetary Government tag.
+ The last step in creating the factions is to give each 
+of them an initial goal. She decides that the Rathskeller 
+Combine is really interested in breaking into Typhon’s 
+closed market. She gives it the Expand Influence goal, 
+which rewards it when it can found a Base of Influence 
+on another planet. Typhon is a violent, expansionistic 
+power that goes in for Blood the Enemy, so it seeks to 
+inflict hit point damage on rival assets equal to the sum 
+of its attributes, or 14 points. The Vothites know they 
+can’t survive a direct confrontation with either import
+ant power, so they want to get ready to make a move 
+when they’re stronger; they choose Peaceable Kingdom, 
+needing to spend four consecutive turns without taking 
+an Attack action.
+ With this established, the GM is ready to run the 
+first faction turn.
+ Turn One
+ The GM randomly selects the Rathskeller Combine to 
+go first, followed by Typhon, and then the Vothites.
+ First, the Combine earns its income for the turn; 
+half its Wealth plus a quarter of its total Force and Cun
+ning, rounded down. That means 5 FacCreds.
+ Next, it pays maintenance. It has no assets that 
+require maintenance and hasn’t got more assets of any 
+one type than its corresponding attribute, so it has no 
+maintenance cost. If it were to accumulate four Cun
+ning assets, however, while only having a Cunning of 
+3, it would have to pay one FacCred for each over the 
+limit. Bases of Influence don’t count for this purpose.
+ Now the Combine has to decide what action to 
+take. It knows that Typhon is itching for a fight. The 
+Combine is nervous about their rival’s Strike Fleet, 
+but that seems to be the only force that immediately 
+threatens them. The Postech Infantry that Typhon has 
+doesn’t have any practical way to cross into Danubian 
+space unless Typhon buys some sort of transport asset. 
+Right now there seems no way for the Typhonians 
+to do that, so the Combine decides to go for a long 
+developed” societies. She gives it a Cunning score of 
+economic game, taking the Buy Asset action to spend 2 
+examPle of faCtion Play •229 
+FacCreds on Harvesters. The GM decides that this rep
+resents a new flotilla of asteroid mining tugs. A faction 
+can buy only one asset per turn and can take only one 
+action, so the Combine’s turn is over.
+ Typhon isn’t wasting any time. It gets its FacCred 
+income for the turn of 4 FacCreds and uses its action to 
+Use Asset Ability to let its Strike Fleet enter the Danube 
+system. Some assets require governmental permission 
+to move them into a system with an existing govern
+ment, but not Strike Fleets. They tend to make their 
+own permission. Typhon would like to start attacking 
+Combine assets, but it can only take one action per turn, 
+so it will have to wait until the next one to open fire.
+ The Vothites are keeping their head down, accru
+ing their 2 FacCreds. As poor as they are, they need 
+to do something about it, so they invest in a Buy As
+set action to get a Harvester. The GM decides that it 
+represents scavenger teams dispatched to loot vital 
+resources from the dangerous pretech caches hidden 
+on Singularity.
+ As the final step, the GM translates these faction 
+actions into newsfeed stories to share with the PCs. 
+She scribbles up short news blasts about “Typhon First 
+Fleet Dispatched to Suppress Piracy in the Danube Sys
+tem”, “Rathskeller Combine Commissions New Wing 
+of Asteroid Miners”, and “Unusual Ship Traffic In Sin
+gularity System”. These stories may not have the whole 
+truth about affairs, but they’re what the PCs would find 
+out from the local news organizations.
+ Turn Two
+ The PCs completed their first adventure and are busy 
+swanning around in the Danube system. Nothing 
+they’ve done directly impinges on the local factions, 
+so the GM simply runs the next faction turn after the 
+session is over. Random rolls give Voth the first action, 
+then Typhon, and then the Combine.
+ Voth gets another 2 FacCreds and dutifully uses 
+Buy Asset to get another Harvester, scaling up their sal
+vage efforts. This makes two Wealth assets that Voth 
+has; it can get one more Wealth asset before it starts to 
+have to pay maintenance on any additional ones. They 
+would’ve liked to have used Use An Asset to see if their 
+existing Harvester made them any money, but they 
+can’t take two different actions during the same turn, 
+so they must wait for now.
+ Typhon now collects its 4 FacCreds, for a total of 
+8, and uses the Attack action. If it had multiple assets in 
+position, it could attack with all of them; as it stands, 
+only the Strike Fleet is in the same location as a rival 
+power. It aims at the Base of Influence, but the Com
+bine gets to decide which asset the Strike Fleet engages. 
+It chooses to defend with its Blockade Runners. The 
+Strike Fleet’s Attack is Force versus Force, so Typhon 
+rolls 1d10 and adds its Force rating for a score of 11. 
+Against this, the Combine rolls 1d10 and adds its own 
+Force rating for a score of 12. The Strike Fleet’s attack 
+has failed, and it takes the Counterattack damage of the 
+Blockade Runners, for 2d4 damage, for 7 points. The 
+Strike Fleet is now down to 1 hit point.
+ The Rathskeller Combine now senses an opportu
+nity. They collect their income of 5 FacCreds for a total 
+of 8 and take an Attack action of their own, ordering 
+the Saboteurs to press the attack. The Strike Fleet is the 
+only viable target in the sector, so Typhon is forced to 
+defend with it. The Saboteurs’ attack is Cunning versus 
+Cunning. The Combine rolls an 8, a tepid result, while 
+the Strike Fleet gets lucky and rolls a 9. The Saboteurs 
+are forced to take the Strike Fleet’s counterattack dam
+age of 1d8, and roll a 6; they are wiped out. Stung, the 
+Combine throws the Elite Skirmishers into the fray, 
+the only other asset they have that even has an attack. 
+They roll a Force vs. Force attack, Typhon rolls badly, 
+and the Strike Fleet is destroyed.
+ The GM then writes up the news blasts for the 
+session, describing how “pirate” boarding parties de
+stroyed the Typhonian strike fleet by taking advantage 
+of security breaches caused by recently-discovered sab
+oteurs. She decides that both Danube and Typhon want 
+to avoid outright war, and that Danube’s planetary gov
+ernment won’t get involved so long as Typhon is only 
+cutting down Combine holdings.
+ Turn Three
+ As it turns out, the PCs took notice of that news item 
+about Singularity’s ship activity and decided to inves
+tigate. In the course of their adventure they killed a 
+Vothite salvage crew and snatched away a precious haul 
+of pretech artifacts that the crew had been recovering. 
+The GM decides that this costs the Vothites one of their 
+two Harvester assets. There is no die roll or faction ac
+tion related to this; the PCs did it, so it simply happens. 
+They also left plenty of evidence, so the GM makes a 
+note to have a Vothite cyberninja come after them and 
+their stolen artifacts. Such small-scale actions related to 
+PC adventures don’t require a full faction action, so the 
+Vothites don’t need to use an Attack action to go after 
+the troublesome PCs.
+ The Vothites go first this round and are not 
+amused. They collect their 2 FacCreds and Use An 
+Ability to see if their remaining Harvester makes them 
+any money; they roll a 4 on its ability and gain an extra 
+FacCred, for a total of 3 in its coffers this turn.
+ Typhon goes next, collecting 4 FacCreds for a total 
+of 12. It’s licking its wounds, but at least it managed to 
+inflict 6 of the necessary 14 points of damage on a foe 
+to succeed at its Blood the Enemy goal. It uses Buy Asset 
+to buy a new Strike Fleet, reconstituting it from the 
+survivors and spending all 12 FacCreds on it.
+ The Combine goes last, and is at a crossroads. Their 
+income this turn gives them 13 FacCreds and they’ve 
+successfully destroyed a Typhionian Strike Fleet, but 
+it cost them their Saboteurs, and they have only one 
+asset left that can even attack at all. What should they 
+do to address the Typhonian menace? Maybe some PC 
+mercenaries might tip the scales for them…
+

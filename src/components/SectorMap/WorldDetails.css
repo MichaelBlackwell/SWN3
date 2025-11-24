@@ -1,0 +1,285 @@
+/* World Details Panel Styles */
+
+.world-details-panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 400px;
+  background-color: var(--bg-layer-1);
+  border-left: var(--border-width-thin) solid var(--border-color);
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+  outline: none;
+  transition: transform 0.3s ease-in-out;
+}
+
+.world-details-panel__content {
+  padding: var(--spacing-5);
+}
+
+.world-details-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-5);
+}
+
+.world-details-panel__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--h2-font-size);
+}
+
+.world-details-panel__close-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--font-size-2xl);
+  cursor: pointer;
+  padding: var(--spacing-1);
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.world-details-panel__close-button:hover {
+  background-color: var(--bg-layer-hover);
+  color: var(--text-primary);
+}
+
+.world-details-section {
+  margin-bottom: var(--spacing-6);
+}
+
+.world-details-section__title {
+  color: var(--text-primary);
+  font-size: var(--h3-font-size);
+  margin-bottom: var(--spacing-3);
+  border-bottom: var(--border-width-thin) solid var(--border-color);
+  padding-bottom: var(--spacing-2);
+}
+
+.world-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.world-details-grid-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.world-details-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--spacing-1);
+}
+
+.world-details-value {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.world-details-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.world-details-tag {
+  padding: var(--spacing-1) var(--spacing-2);
+  background-color: var(--bg-layer-2);
+  border: var(--border-width-thin) solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+}
+
+.world-details-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Faction List in World Details */
+.world-details-faction-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.world-details-faction-item {
+  padding: var(--spacing-4);
+  background-color: var(--bg-layer-2);
+  border: var(--border-width-thin) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+}
+
+.world-details-faction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: var(--spacing-2);
+}
+
+.world-details-faction-name {
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.world-details-faction-type {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-1);
+}
+
+.world-details-faction-attributes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+  font-size: var(--font-size-xs);
+}
+
+.world-details-faction-attribute {
+  text-align: center;
+  padding: var(--spacing-1);
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-sm);
+}
+
+.world-details-faction-attribute-label {
+  color: var(--text-secondary);
+}
+
+.world-details-faction-attribute-value {
+  color: var(--text-primary);
+}
+
+.world-details-faction-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-2);
+}
+
+.world-details-faction-tag {
+  padding: var(--spacing-1) var(--spacing-2);
+  background-color: var(--accent-primary);
+  color: #fff;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+}
+
+.world-details-faction-assets {
+  margin-top: var(--spacing-2);
+  padding-top: var(--spacing-2);
+  border-top: var(--border-width-thin) solid var(--border-color);
+}
+
+.world-details-faction-assets-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--spacing-2);
+  font-weight: var(--font-weight-semibold);
+}
+
+.world-details-faction-assets-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.world-details-asset-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius-sm);
+}
+
+.world-details-asset-info {
+  flex: 1;
+}
+
+.world-details-asset-name {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-1);
+}
+
+.world-details-asset-meta {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.world-details-asset-meta-item {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.world-details-asset-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
+}
+
+.world-details-asset-action-button {
+  padding: var(--spacing-1) var(--spacing-2);
+  background-color: var(--bg-layer-2);
+  border: var(--border-width-thin) solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: var(--touch-target-min);
+}
+
+.world-details-asset-action-button:hover:not(:disabled) {
+  background-color: var(--bg-layer-hover);
+  border-color: var(--accent-primary);
+}
+
+.world-details-asset-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.world-details-asset-action-button--primary {
+  background-color: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+.world-details-asset-action-button--primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.world-details-asset-action-button--danger {
+  background-color: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+}
+
+.world-details-asset-action-button--danger:hover:not(:disabled) {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+
