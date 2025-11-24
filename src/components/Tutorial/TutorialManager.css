@@ -1,0 +1,112 @@
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allow clicking through to the game */
+  z-index: 10000;
+}
+
+.tutorial-tooltip {
+  position: absolute;
+  background-color: rgba(20, 20, 25, 0.8); /* 80% opacity */
+  backdrop-filter: blur(5px); /* Blur what is beneath */
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  max-width: 350px;
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  pointer-events: auto; /* Re-enable pointer events for the tooltip itself */
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 10001;
+  cursor: grab; /* Indicate draggable */
+  user-select: none; /* Prevent text selection while dragging */
+}
+
+.tutorial-tooltip:active {
+  cursor: grabbing;
+}
+
+.tutorial-tooltip h3 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-xs);
+}
+
+.tutorial-tooltip p {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.tutorial-tooltip__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.tutorial-tooltip__progress {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tutorial-tooltip__buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.tutorial-button {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.tutorial-button:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--primary-color);
+}
+
+.tutorial-button--primary {
+  background-color: var(--primary-color);
+  color: var(--bg-dark);
+  border-color: var(--primary-color);
+  font-weight: bold;
+}
+
+.tutorial-button--primary:hover {
+  background-color: var(--primary-light);
+}
+
+.tutorial-highlight {
+  position: absolute;
+  border: 3px solid var(--secondary-color);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  box-shadow: 0 0 15px var(--secondary-color);
+  animation: pulse 2s infinite;
+  z-index: 9999;
+  transition: all 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 10px var(--secondary-color); }
+  50% { box-shadow: 0 0 25px var(--secondary-color), 0 0 5px rgba(255, 255, 255, 0.5); }
+  100% { box-shadow: 0 0 10px var(--secondary-color); }
+}
+

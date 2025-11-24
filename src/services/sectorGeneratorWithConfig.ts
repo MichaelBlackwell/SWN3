@@ -1,17 +1,18 @@
-﻿import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { defineHex, Grid, rectangle } from 'honeycomb-grid';
 import type {
   Sector,
   StarSystem,
   Coordinates,
 } from '../types/sector';
+import type { Faction } from '../types/faction';
 import { generatePrimaryWorld } from './worldGenerator';
 import { generateTradeRoutes } from './tradeRouteGenerator';
+import type { ScenarioConfig } from '../store/slices/gameModeSlice';
+import { generateRandomFactionForSystem } from './factionGenerator';
 
 const GRID_WIDTH = 8;
 const GRID_HEIGHT = 10;
-const MIN_SYSTEMS = 21;
-const MAX_SYSTEMS = 30;
 const MAX_CONNECTIONS_PER_SYSTEM = 4;
 const MAX_SPIKE_DRIVE_RANGE = 3;
 
@@ -54,17 +55,11 @@ interface Edge {
   distance: number;
 }
 
-/**
- * Generate spike drive routes (connectivity backbone)
- * Trade routes will be determined separately based on economic factors
- */
 function generateSpikeRoutes(systems: StarSystem[]): void {
-  // Initialize empty route arrays
   for (const system of systems) {
     system.routes = [];
   }
   
-  // Build list of all possible edges within spike drive range
   const edges: Edge[] = [];
   for (let i = 0; i < systems.length; i++) {
     for (let j = i + 1; j < systems.length; j++) {
@@ -75,17 +70,14 @@ function generateSpikeRoutes(systems: StarSystem[]): void {
     }
   }
   
-  // Sort edges by distance (shortest first for minimum spanning tree)
   edges.sort((a, b) => a.distance - b.distance);
   
-  // Track connections per system
   const connectionCounts = new Map<string, number>();
   systems.forEach((s) => connectionCounts.set(s.id, 0));
   
   const systemMap = new Map<string, StarSystem>();
   systems.forEach((s) => systemMap.set(s.id, s));
   
-  // Union-Find for detecting cycles
   const parent = new Map<string, string>();
   systems.forEach((s) => parent.set(s.id, s.id));
   
@@ -104,7 +96,6 @@ function generateSpikeRoutes(systems: StarSystem[]): void {
     return true;
   }
   
-  // Phase 1: Build minimum spanning tree (ensures connectivity)
   for (const edge of edges) {
     const fromCount = connectionCounts.get(edge.from)!;
     const toCount = connectionCounts.get(edge.to)!;
@@ -123,7 +114,6 @@ function generateSpikeRoutes(systems: StarSystem[]): void {
     }
   }
   
-  // Phase 2: Add additional routes for redundancy (randomly)
   const remainingEdges = edges.filter((e) => {
     const fromSystem = systemMap.get(e.from)!;
     return !fromSystem.routes.some((r) => r.systemId === e.to);
@@ -145,13 +135,9 @@ function generateSpikeRoutes(systems: StarSystem[]): void {
     }
   }
   
-  // Phase 3: Ensure all systems are connected (handle edge cases)
   ensureFullConnectivity(systems, systemMap, connectionCounts);
 }
 
-/**
- * Ensure all systems are reachable (connect isolated systems)
- */
 function ensureFullConnectivity(
   systems: StarSystem[],
   systemMap: Map<string, StarSystem>,
@@ -178,7 +164,6 @@ function ensureFullConnectivity(
     }
   }
   
-  // Connect any isolated systems
   for (const system of systems) {
     if (!visited.has(system.id)) {
       let nearestDistance = Infinity;
@@ -208,45 +193,66 @@ function ensureFullConnectivity(
   }
 }
 
+
 /**
- * Generate a complete sector with realistic worlds and trade routes
- * 
- * Generation Process:
- * 1. Generate star system coordinates
- * 2. Generate realistic worlds with interconnected traits
- * 3. Generate spike drive routes (connectivity backbone)
- * 4. Generate trade routes based on economic factors
+ * Generate a sector with scenario configuration
  */
-export function generateSector(): Sector {
-  const systemCount = randomInt(MIN_SYSTEMS, MAX_SYSTEMS);
+export function generateSectorWithConfig(config: ScenarioConfig): { sector: Sector; factions: Faction[] } {
+  const systemCount = randomInt(config.systemCount.min, config.systemCount.max);
   const coordinates = generateStarCoordinates(systemCount);
   
-  // Generate systems with realistic worlds
   const systems: StarSystem[] = coordinates.map((coord, index) => {
     const systemId = `system-${index + 1}`;
     return {
       id: systemId,
       name: faker.location.city() + ' System',
       coordinates: coord,
-      primaryWorld: generatePrimaryWorld(), // Now uses the new intelligent generator
+      primaryWorld: generatePrimaryWorld(),
       secondaryWorlds: [],
       pointsOfInterest: [],
       routes: [],
     };
   });
   
-  // Generate spike drive routes (physical connectivity)
   generateSpikeRoutes(systems);
-  
-  // Generate trade routes (economic connectivity based on world traits)
   generateTradeRoutes(systems);
   
   const sector: Sector = {
     id: faker.string.uuid(),
-    name: faker.location.city() + ' Sector',
+    name: config.name,
     created: Date.now(),
     systems,
   };
   
-  return sector;
+  // Generate factions using template-based system
+  const factions: Faction[] = [];
+  const usedSystemIds = new Set<string>();
+  
+  for (let i = 0; i < config.factionCount; i++) {
+    // Find an unused system for homeworld
+    let homeworldSystem: StarSystem;
+    if (usedSystemIds.size < systems.length) {
+      const availableSystems = systems.filter(s => !usedSystemIds.has(s.id));
+      homeworldSystem = availableSystems[Math.floor(Math.random() * availableSystems.length)];
+      usedSystemIds.add(homeworldSystem.id);
+    } else {
+      // If all systems are used, allow reuse
+      homeworldSystem = systems[Math.floor(Math.random() * systems.length)];
+    }
+    
+    // Generate faction based on homeworld characteristics
+    const faction = generateRandomFactionForSystem(homeworldSystem);
+    
+    // Set a default goal
+    faction.goal = {
+      type: 'Expand Influence',
+      requirements: {},
+      progress: {},
+    };
+    
+    factions.push(faction);
+  }
+  
+  return { sector, factions };
 }
+

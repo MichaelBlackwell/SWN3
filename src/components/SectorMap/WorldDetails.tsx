@@ -24,6 +24,8 @@ import './WorldDetails.css';
 import { resolveCombat } from '../../utils/combatResolver';
 import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromTargetFaction, createNarrativeContextFromSystem } from '../../utils/narrativeHelpers';
 import ExpandInfluenceButton from '../FactionManager/ExpandInfluenceButton';
+import { getWorldEconomicProfile } from '../../services/worldGenerator';
+import { getSystemTradeInfo } from '../../services/tradeRouteGenerator';
 
 const POPULATION_LABELS = [
   'Failed Colony',
@@ -395,173 +397,32 @@ export default function WorldDetails() {
   );
 
   return (
-    <div
-      ref={panelRef}
-      tabIndex={-1}
-      role="dialog"
-      aria-label={`Details for ${system.name}`}
-      style={{
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        bottom: 0,
-        width: '400px',
-        backgroundColor: '#2a2a2a',
-        borderLeft: '1px solid #444',
-        overflowY: 'auto',
-        zIndex: 100,
-        boxShadow: '-2px 0 8px rgba(0, 0, 0, 0.3)',
-        outline: 'none',
-        transition: 'transform 0.3s ease-in-out',
-      }}
-    >
-      <div style={{ padding: '20px' }}>
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, color: '#fff', fontSize: '24px' }}>{system.name}</h2>
-          <button
-            ref={closeButtonRef}
-            onClick={handleClose}
-            aria-label="Close system details"
-            style={{
-              background: 'none',
-              border: '1px solid #555',
-              color: '#fff',
-              padding: '6px 12px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#444';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.outline = '2px solid #4a9eff';
-              e.currentTarget.style.outlineOffset = '2px';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.outline = 'none';
-            }}
-          >
-            Close
-          </button>
-        </div>
-
-        {/* Primary World Section */}
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
-            Primary World: {system.primaryWorld.name}
-          </h3>
-
-          {/* Core Stats Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-            <div>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Atmosphere</div>
-              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.atmosphere}</div>
+    <>
+      {/* Left Panel - Factions & Assets */}
+      {(homeworldFactions.length > 0 || assetsInSystem.length > 0) && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: '400px',
+            backgroundColor: '#2a2a2a',
+            borderRight: '1px solid #444',
+            overflowY: 'auto',
+            zIndex: 100,
+            boxShadow: '2px 0 8px rgba(0, 0, 0, 0.3)',
+            outline: 'none',
+            transition: 'transform 0.3s ease-in-out',
+          }}
+        >
+          <div style={{ padding: '20px' }}>
+            {/* Header */}
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ margin: 0, color: '#fff', fontSize: '20px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
+                {system.name} - Factions & Assets
+              </h3>
             </div>
-            <div>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Temperature</div>
-              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.temperature}</div>
-            </div>
-            <div>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Biosphere</div>
-              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.biosphere}</div>
-            </div>
-            <div>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Population</div>
-              <div style={{ color: '#fff', fontSize: '14px' }}>{populationLabel}</div>
-            </div>
-            <div>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Tech Level</div>
-              <div style={{ color: '#fff', fontSize: '14px' }}>TL{system.primaryWorld.techLevel}</div>
-            </div>
-            <div>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Government</div>
-              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.government}</div>
-            </div>
-          </div>
-
-          {/* World Tags */}
-          {system.primaryWorld.tags && system.primaryWorld.tags.length > 0 && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>World Tags</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {system.primaryWorld.tags.map((tag: string, index: number) => (
-                  <span
-                    key={index}
-                    style={{
-                      backgroundColor: '#444',
-                      color: '#fff',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                    }}
-                    title={tag}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Trade Codes */}
-          {system.primaryWorld.tradeCodes && system.primaryWorld.tradeCodes.length > 0 && (
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>Trade Codes</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {system.primaryWorld.tradeCodes.map((code: string, index: number) => (
-                  <span
-                    key={index}
-                    style={{
-                      backgroundColor: '#3a5a3a',
-                      color: '#fff',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                    }}
-                  >
-                    {code}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Secondary Worlds */}
-        {system.secondaryWorlds && system.secondaryWorlds.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
-              Secondary Worlds ({system.secondaryWorlds.length})
-            </h3>
-            <div style={{ color: '#aaa', fontSize: '14px' }}>
-              Secondary world generation not yet implemented.
-            </div>
-          </div>
-        )}
-
-        {/* Points of Interest */}
-        {system.pointsOfInterest && system.pointsOfInterest.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
-              Points of Interest ({system.pointsOfInterest.length})
-            </h3>
-            <div style={{ color: '#aaa', fontSize: '14px' }}>
-              Points of interest generation not yet implemented.
-            </div>
-          </div>
-        )}
-
-        {/* Factions Section */}
-        {(homeworldFactions.length > 0 || assetsInSystem.length > 0) && (
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
-              Factions & Assets
-            </h3>
 
             {/* Homeworld Factions */}
             {homeworldFactions.length > 0 && (
@@ -610,15 +471,15 @@ export default function WorldDetails() {
                           </div>
                         </div>
                         <div style={{ textAlign: 'center', padding: '4px', backgroundColor: '#1a1a1a', borderRadius: '4px' }}>
-                          <div style={{ color: '#aaa' }}>Force</div>
+                          <div style={{ color: '#ff6b6b' }}>Force</div>
                           <div style={{ color: '#fff' }}>{faction.attributes.force}</div>
                         </div>
                         <div style={{ textAlign: 'center', padding: '4px', backgroundColor: '#1a1a1a', borderRadius: '4px' }}>
-                          <div style={{ color: '#aaa' }}>Cunning</div>
+                          <div style={{ color: '#4ecdc4' }}>Cunning</div>
                           <div style={{ color: '#fff' }}>{faction.attributes.cunning}</div>
                         </div>
                         <div style={{ textAlign: 'center', padding: '4px', backgroundColor: '#1a1a1a', borderRadius: '4px' }}>
-                          <div style={{ color: '#aaa' }}>Wealth</div>
+                          <div style={{ color: '#ffe66d' }}>Wealth</div>
                           <div style={{ color: '#fff' }}>{faction.attributes.wealth}</div>
                         </div>
                       </div>
@@ -1004,6 +865,335 @@ export default function WorldDetails() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Right Panel - World Details */}
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-label={`Details for ${system.name}`}
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: '400px',
+          backgroundColor: '#2a2a2a',
+          borderLeft: '1px solid #444',
+          overflowY: 'auto',
+          zIndex: 100,
+          boxShadow: '-2px 0 8px rgba(0, 0, 0, 0.3)',
+          outline: 'none',
+          transition: 'transform 0.3s ease-in-out',
+        }}
+      >
+        <div style={{ padding: '20px' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={{ margin: 0, color: '#fff', fontSize: '24px' }}>{system.name}</h2>
+            <button
+              ref={closeButtonRef}
+              onClick={handleClose}
+              aria-label="Close system details"
+              style={{
+                background: 'none',
+                border: '1px solid #555',
+                color: '#fff',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#444';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.outline = '2px solid #4a9eff';
+                e.currentTarget.style.outlineOffset = '2px';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.outline = 'none';
+              }}
+            >
+              Close
+            </button>
+          </div>
+
+        {/* Primary World Section */}
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
+            Primary World: {system.primaryWorld.name}
+          </h3>
+
+          {/* Core Stats Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+            <div>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Atmosphere</div>
+              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.atmosphere}</div>
+            </div>
+            <div>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Temperature</div>
+              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.temperature}</div>
+            </div>
+            <div>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Biosphere</div>
+              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.biosphere}</div>
+            </div>
+            <div>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Population</div>
+              <div style={{ color: '#fff', fontSize: '14px' }}>{populationLabel}</div>
+            </div>
+            <div>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Tech Level</div>
+              <div style={{ color: '#fff', fontSize: '14px' }}>TL{system.primaryWorld.techLevel}</div>
+            </div>
+            <div>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '4px' }}>Government</div>
+              <div style={{ color: '#fff', fontSize: '14px' }}>{system.primaryWorld.government}</div>
+            </div>
+          </div>
+
+          {/* World Tags */}
+          {system.primaryWorld.tags && system.primaryWorld.tags.length > 0 && (
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>World Tags</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {system.primaryWorld.tags.map((tag: string, index: number) => (
+                  <span
+                    key={index}
+                    style={{
+                      backgroundColor: '#444',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                    }}
+                    title={tag}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Lore Section - Trade Codes & Economic Information */}
+          <details style={{ marginBottom: '16px' }}>
+            <summary style={{ 
+              color: '#fff', 
+              fontSize: '14px', 
+              fontWeight: '600',
+              cursor: 'pointer',
+              padding: '8px',
+              backgroundColor: '#333',
+              borderRadius: '4px',
+              marginBottom: '12px',
+              userSelect: 'none'
+            }}>
+              Lore
+            </summary>
+
+            {/* Trade Codes */}
+            {system.primaryWorld.tradeCodes && system.primaryWorld.tradeCodes.length > 0 && (
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>Trade Codes</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {system.primaryWorld.tradeCodes.map((code: string, index: number) => (
+                    <span
+                      key={index}
+                      style={{
+                        backgroundColor: '#3a5a3a',
+                        color: '#fff',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                      }}
+                    >
+                      {code}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Economic Information */}
+            {(() => {
+              const economicProfile = getWorldEconomicProfile(system.primaryWorld);
+              const tradeInfo = getSystemTradeInfo(system, sector.systems);
+              
+              return (
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ color: '#aaa', fontSize: '12px', marginBottom: '8px' }}>Economic Profile</div>
+                  
+                  {/* Economic Value Bar */}
+                  <div style={{ marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <span style={{ color: '#aaa', fontSize: '11px' }}>Economic Value</span>
+                      <span style={{ 
+                        color: economicProfile.economicValue >= 70 ? '#4ecdc4' :
+                               economicProfile.economicValue >= 40 ? '#ffe66d' : '#ff6b6b',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}>
+                        {economicProfile.economicValue}/100
+                      </span>
+                    </div>
+                    <div style={{ 
+                      width: '100%', 
+                      height: '8px', 
+                      backgroundColor: '#1a1a1a', 
+                      borderRadius: '4px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        width: `${economicProfile.economicValue}%`,
+                        height: '100%',
+                        backgroundColor: economicProfile.economicValue >= 70 ? '#4ecdc4' :
+                                         economicProfile.economicValue >= 40 ? '#ffe66d' : '#ff6b6b',
+                        transition: 'width 0.3s ease'
+                      }} />
+                    </div>
+                    {tradeInfo.isTradeHub && (
+                      <div style={{
+                        marginTop: '6px',
+                        padding: '4px 8px',
+                        backgroundColor: '#ff8c00',
+                        color: '#fff',
+                        borderRadius: '4px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                        textTransform: 'uppercase'
+                      }}>
+                        ⭐ Major Trade Hub
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Exports */}
+                  {economicProfile.resourceExport.length > 0 && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ color: '#4ecdc4', fontSize: '11px', marginBottom: '6px', fontWeight: '600' }}>
+                        📦 Exports
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                        {economicProfile.resourceExport.map((resource: string, index: number) => (
+                          <span
+                            key={index}
+                            style={{
+                              backgroundColor: '#1a3a3a',
+                              color: '#4ecdc4',
+                              padding: '3px 6px',
+                              borderRadius: '3px',
+                              fontSize: '10px',
+                              border: '1px solid #4ecdc4'
+                            }}
+                          >
+                            {resource}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Imports */}
+                  {economicProfile.resourceImport.length > 0 && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ color: '#ff6b6b', fontSize: '11px', marginBottom: '6px', fontWeight: '600' }}>
+                        📥 Imports
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                        {economicProfile.resourceImport.map((resource: string, index: number) => (
+                          <span
+                            key={index}
+                            style={{
+                              backgroundColor: '#3a1a1a',
+                              color: '#ff6b6b',
+                              padding: '3px 6px',
+                              borderRadius: '3px',
+                              fontSize: '10px',
+                              border: '1px solid #ff6b6b'
+                            }}
+                          >
+                            {resource}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Trade Partners */}
+                  {tradeInfo.tradeRouteCount > 0 && (
+                    <div>
+                      <div style={{ color: '#ffe66d', fontSize: '11px', marginBottom: '6px', fontWeight: '600' }}>
+                        🤝 Trade Partners ({tradeInfo.tradeRouteCount})
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {tradeInfo.tradePartners.map((partner: string, index: number) => (
+                          <div
+                            key={index}
+                            style={{
+                              backgroundColor: '#3a3a1a',
+                              color: '#ffe66d',
+                              padding: '4px 8px',
+                              borderRadius: '3px',
+                              fontSize: '11px',
+                              border: '1px solid #ffe66d'
+                            }}
+                          >
+                            {partner}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* No trade information */}
+                  {tradeInfo.tradeRouteCount === 0 && economicProfile.resourceExport.length === 0 && (
+                    <div style={{ 
+                      color: '#666', 
+                      fontSize: '11px', 
+                      fontStyle: 'italic',
+                      padding: '8px',
+                      backgroundColor: '#1a1a1a',
+                      borderRadius: '4px'
+                    }}>
+                      Limited economic activity
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </details>
+        </div>
+
+        {/* Secondary Worlds */}
+        {system.secondaryWorlds && system.secondaryWorlds.length > 0 && (
+          <div style={{ marginBottom: '24px' }}>
+            <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
+              Secondary Worlds ({system.secondaryWorlds.length})
+            </h3>
+            <div style={{ color: '#aaa', fontSize: '14px' }}>
+              Secondary world generation not yet implemented.
+            </div>
+          </div>
+        )}
+
+        {/* Points of Interest */}
+        {system.pointsOfInterest && system.pointsOfInterest.length > 0 && (
+          <div style={{ marginBottom: '24px' }}>
+            <h3 style={{ color: '#fff', fontSize: '18px', marginBottom: '12px', borderBottom: '1px solid #444', paddingBottom: '8px' }}>
+              Points of Interest ({system.pointsOfInterest.length})
+            </h3>
+            <div style={{ color: '#aaa', fontSize: '14px' }}>
+              Points of interest generation not yet implemented.
+            </div>
+          </div>
         )}
 
         {/* Routes */}
@@ -1045,8 +1235,9 @@ export default function WorldDetails() {
             disabled={areActionButtonsDisabled}
           />
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

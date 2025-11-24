@@ -3,30 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
 import { addFaction } from '../../store/slices/factionsSlice';
 import type {
-  FactionType,
   FactionTag,
   FactionGoalType,
-  Faction,
 } from '../../types/faction';
 import type { StarSystem } from '../../types/sector';
-import {
-  calculateFactionStats,
-  generateFactionId,
-  calculateStartingFacCreds,
-} from '../../utils/factionCalculations';
+import { 
+  generateRandomFactionForSystem, 
+  generateFactionFromTemplate, 
+  getFactionTemplates 
+} from '../../services/factionGenerator';
 
-const FACTION_TYPES: FactionType[] = [
-  'Government',
-  'Corporation',
-  'Religion',
-  'Criminal Organization',
-  'Mercenary Group',
-  'Rebel Movement',
-  'Eugenics Cult',
-  'Colony',
-  'Regional Hegemon',
-  'Other',
-];
+// Get available faction templates
+const FACTION_TEMPLATES = getFactionTemplates();
 
 const FACTION_TAGS: FactionTag[] = [
   'Colonists',
@@ -67,8 +55,9 @@ const FACTION_GOALS: FactionGoalType[] = [
 
 interface FormData {
   name: string;
-  type: FactionType | '';
+  template: string; // Template name instead of type
   homeworld: string;
+  useAutoGenerate: boolean; // Whether to auto-generate based on homeworld
   tags: FactionTag[];
   goal: FactionGoalType | '';
 }
@@ -81,8 +70,9 @@ export default function FactionCreationForm() {
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    type: '',
+    template: '',
     homeworld: '',
+    useAutoGenerate: true,
     tags: [],
     goal: '',
   });
@@ -115,14 +105,14 @@ export default function FactionCreationForm() {
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Faction name is required';
-    } else if (formData.name.trim().length < 3) {
+    if (!formData.useAutoGenerate && !formData.name.trim()) {
+      newErrors.name = 'Faction name is required when not using auto-generate';
+    } else if (!formData.useAutoGenerate && formData.name.trim().length < 3) {
       newErrors.name = 'Faction name must be at least 3 characters';
     }
 
-    if (!formData.type) {
-      newErrors.type = 'Faction type is required';
+    if (!formData.useAutoGenerate && !formData.template) {
+      newErrors.template = 'Faction template is required when not using auto-generate';
     }
 
     if (!formData.homeworld) {
@@ -144,28 +134,39 @@ export default function FactionCreationForm() {
       return;
     }
 
-    // Calculate attributes based on type
-    const attributes = calculateFactionStats(formData.type as FactionType);
-    const startingFacCreds = calculateStartingFacCreds(attributes);
+    const selectedSystem = systems.find(s => s.id === formData.homeworld);
+    if (!selectedSystem) {
+      setErrors({ homeworld: 'Selected homeworld not found' });
+      return;
+    }
 
-    // Create the faction object
-    const newFaction: Faction = {
-      id: generateFactionId(),
-      name: formData.name.trim(),
-      type: formData.type as FactionType,
-      homeworld: formData.homeworld,
-      attributes,
-      facCreds: startingFacCreds,
-      tags: formData.tags,
-      goal: formData.goal
-        ? {
-            type: formData.goal as FactionGoalType,
-            requirements: {},
-            progress: {},
-          }
-        : null,
-      assets: [],
-    };
+    let newFaction;
+
+    if (formData.useAutoGenerate) {
+      // Auto-generate faction based on homeworld characteristics
+      newFaction = generateRandomFactionForSystem(selectedSystem);
+    } else {
+      // Use selected template
+      newFaction = generateFactionFromTemplate(
+        formData.template,
+        selectedSystem,
+        formData.name.trim() || undefined
+      );
+    }
+
+    // Override tags if manually selected
+    if (formData.tags.length > 0) {
+      newFaction.tags = formData.tags;
+    }
+
+    // Set goal if specified
+    if (formData.goal) {
+      newFaction.goal = {
+        type: formData.goal as FactionGoalType,
+        requirements: {},
+        progress: {},
+      };
+    }
 
     // Dispatch to Redux store
     dispatch(addFaction(newFaction));
@@ -173,59 +174,81 @@ export default function FactionCreationForm() {
     // Reset form
     setFormData({
       name: '',
-      type: '',
+      template: '',
       homeworld: '',
+      useAutoGenerate: true,
       tags: [],
       goal: '',
     });
     setErrors({});
   };
 
-  const previewAttributes =
-    formData.type
-      ? calculateFactionStats(formData.type as FactionType)
-      : null;
+  // Get preview attributes from selected template
+  const selectedTemplate = FACTION_TEMPLATES.find(t => t.name === formData.template);
+  const previewAttributes = selectedTemplate?.attributes || null;
 
   return (
     <form onSubmit={handleSubmit}>
-        {/* Name Input */}
+        {/* Auto-Generate Toggle */}
         <div className="form-group">
-          <label htmlFor="faction-name">
-            Faction Name <span className="required">*</span>
+          <label>
+            <input
+              type="checkbox"
+              checked={formData.useAutoGenerate}
+              onChange={(e) => handleInputChange('useAutoGenerate', e.target.checked)}
+            />
+            <span style={{ marginLeft: '8px' }}>Auto-generate faction based on homeworld</span>
           </label>
-          <input
-            id="faction-name"
-            type="text"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            placeholder="Enter faction name"
-            className={errors.name ? 'error' : ''}
-          />
-          {errors.name && <span className="error-message">{errors.name}</span>}
+          <p style={{ fontSize: '0.9em', color: '#888', marginTop: '4px' }}>
+            When enabled, the faction will be automatically generated to match the homeworld's characteristics
+          </p>
         </div>
 
-        {/* Type Selection */}
-        <div className="form-group">
-          <label htmlFor="faction-type">
-            Faction Type <span className="required">*</span>
-          </label>
-          <select
-            id="faction-type"
-            value={formData.type}
-            onChange={(e) =>
-              handleInputChange('type', e.target.value as FactionType)
-            }
-            className={errors.type ? 'error' : ''}
-          >
-            <option value="">Select a type</option>
-            {FACTION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-          {errors.type && <span className="error-message">{errors.type}</span>}
-        </div>
+        {/* Name Input (only if not auto-generating) */}
+        {!formData.useAutoGenerate && (
+          <div className="form-group">
+            <label htmlFor="faction-name">
+              Faction Name <span className="required">*</span>
+            </label>
+            <input
+              id="faction-name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              placeholder="Enter faction name"
+              className={errors.name ? 'error' : ''}
+            />
+            {errors.name && <span className="error-message">{errors.name}</span>}
+          </div>
+        )}
+
+        {/* Template Selection (only if not auto-generating) */}
+        {!formData.useAutoGenerate && (
+          <div className="form-group">
+            <label htmlFor="faction-template">
+              Faction Template <span className="required">*</span>
+            </label>
+            <select
+              id="faction-template"
+              value={formData.template}
+              onChange={(e) => handleInputChange('template', e.target.value)}
+              className={errors.template ? 'error' : ''}
+            >
+              <option value="">Select a template</option>
+              {FACTION_TEMPLATES.map((template) => (
+                <option key={template.name} value={template.name}>
+                  {template.name}
+                </option>
+              ))}
+            </select>
+            {errors.template && <span className="error-message">{errors.template}</span>}
+            {selectedTemplate && (
+              <p style={{ fontSize: '0.9em', color: '#888', marginTop: '4px' }}>
+                {selectedTemplate.description}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Homeworld Selection */}
         <div className="form-group">
@@ -319,7 +342,7 @@ export default function FactionCreationForm() {
               </div>
               <div>
                 <strong>Starting FacCreds:</strong>{' '}
-                {calculateStartingFacCreds(previewAttributes)}
+                {10} {/* Default starting credits */}
               </div>
             </div>
           </div>

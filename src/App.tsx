@@ -1,31 +1,65 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from './store/store';
 import MainLayout from './components/MainLayout';
+import MainMenu from './components/MainMenu/MainMenu';
 import SectorMap from './components/SectorMap/SectorMap';
 import FactionManager from './components/FactionManager/FactionManager';
 import TurnManager from './components/TurnManager/TurnManager';
 import NewsFeed from './components/NewsFeed/NewsFeed';
 import NotificationContainer from './components/NotificationContainer';
 import SaveMenu from './components/SaveMenu/SaveMenu';
+import TutorialManager from './components/Tutorial/TutorialManager';
 import { generateSector } from './services/sectorGenerator';
+import { generateSectorWithConfig } from './services/sectorGeneratorWithConfig';
 import { setSector } from './store/slices/sectorSlice';
 import { clearAllFactions, addFaction } from './store/slices/factionsSlice';
 import { resetTurnState } from './store/slices/turnSlice';
+import { setCurrentView, returnToMenu } from './store/slices/gameModeSlice';
 import type { Faction } from './types/faction';
-import { calculateFactionStats, generateFactionId, calculateStartingFacCreds } from './utils/factionCalculations';
+import { generateRandomFactionForSystem } from './services/factionGenerator';
 import './App.css';
 import './styles/layout.css';
 import './components/AppHeader.css';
 import './components/SectorMapView.css';
 
-type ViewMode = 'sector' | 'factions';
-
 function App() {
   const dispatch = useDispatch();
-  const [viewMode, setViewMode] = useState<ViewMode>('sector');
+  const gameMode = useSelector((state: RootState) => state.gameMode.mode);
+  const currentScenario = useSelector((state: RootState) => state.gameMode.currentScenario);
+  const viewMode = useSelector((state: RootState) => state.gameMode.currentView);
+  const sector = useSelector((state: RootState) => state.sector);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState<'turn' | 'news'>('turn');
+
+  // Check if we should show menu on initial load
+  useEffect(() => {
+    // If gameMode is menu but there's a sector loaded (from localStorage),
+    // we're in an inconsistent state. Stay at menu.
+    // If gameMode is editor/scenario but no sector, go to menu.
+    if (gameMode !== 'menu' && (!sector.currentSector || !sector.currentSector.id)) {
+      dispatch(returnToMenu());
+    }
+  }, []); // Only run on mount
+
+  // Initialize scenario when entering scenario mode
+  useEffect(() => {
+    if (gameMode === 'scenario' && currentScenario) {
+      // Clear existing data
+      dispatch(clearAllFactions());
+      dispatch(resetTurnState());
+      
+      // Generate new sector and factions with scenario config
+      const { sector, factions } = generateSectorWithConfig(currentScenario);
+      dispatch(setSector(sector));
+      
+      // Add all generated factions
+      factions.forEach(faction => {
+        dispatch(addFaction(faction));
+      });
+    }
+  }, [gameMode, currentScenario, dispatch]);
 
   const handleGenerateSector = () => {
     // Clear all factions when generating a new sector
@@ -36,44 +70,27 @@ function App() {
     // Reset turn state
     dispatch(resetTurnState());
     
-    // Create 2 test factions on the same planet (first system)
+    // Create 2 test factions using template-based generation
     if (newSector.systems.length > 0) {
-      const firstSystemId = newSector.systems[0].id;
+      const firstSystem = newSector.systems[0];
       
-      // Create first test faction (Government)
-      const faction1Attributes = calculateFactionStats('Government');
-      const faction1: Faction = {
-        id: generateFactionId(),
-        name: 'Test Faction Alpha',
-        type: 'Government',
-        homeworld: firstSystemId,
-        attributes: faction1Attributes,
-        facCreds: calculateStartingFacCreds(faction1Attributes),
-        tags: ['Planetary Government'],
-        goal: {
-          type: 'Expand Influence',
-          requirements: {},
-          progress: {},
-        },
-        assets: [],
+      // Generate first faction based on homeworld characteristics
+      const faction1 = generateRandomFactionForSystem(firstSystem);
+      faction1.name = 'Test Faction Alpha';
+      faction1.goal = {
+        type: 'Expand Influence',
+        requirements: {},
+        progress: {},
       };
       
-      // Create second test faction (Corporation)
-      const faction2Attributes = calculateFactionStats('Corporation');
-      const faction2: Faction = {
-        id: generateFactionId(),
-        name: 'Test Faction Beta',
-        type: 'Corporation',
-        homeworld: firstSystemId,
-        attributes: faction2Attributes,
-        facCreds: calculateStartingFacCreds(faction2Attributes),
-        tags: ['Plutocratic'],
-        goal: {
-          type: 'Commercial Expansion',
-          requirements: {},
-          progress: {},
-        },
-        assets: [],
+      // Generate second faction on same system (if there are multiple systems, use second one)
+      const secondSystem = newSector.systems.length > 1 ? newSector.systems[1] : firstSystem;
+      const faction2 = generateRandomFactionForSystem(secondSystem);
+      faction2.name = 'Test Faction Beta';
+      faction2.goal = {
+        type: 'Commercial Expansion',
+        requirements: {},
+        progress: {},
       };
       
       dispatch(addFaction(faction1));
@@ -81,9 +98,25 @@ function App() {
     }
   };
 
+  const handleReturnToMenu = () => {
+    dispatch(returnToMenu());
+  };
+
+  // Show main menu if in menu mode
+  if (gameMode === 'menu') {
+    return (
+      <>
+        <NotificationContainer />
+        <MainMenu />
+      </>
+    );
+  }
+
+  // Show game interface for editor or scenario modes
   return (
     <MainLayout>
       <NotificationContainer />
+      <TutorialManager />
       <div className="app-container">
         <header className="app-header">
           <div className="app-header__left">
@@ -91,7 +124,7 @@ function App() {
             <nav className={`app-header__nav ${isMobileMenuOpen ? '' : 'app-header__nav--collapsed'}`}>
               <button
                 onClick={() => {
-                  setViewMode('sector');
+                  dispatch(setCurrentView('sector'));
                   setIsMobileMenuOpen(false);
                 }}
                 className={`app-header__nav-button ${viewMode === 'sector' ? 'app-header__nav-button--active' : ''}`}
@@ -101,7 +134,7 @@ function App() {
               </button>
               <button
                 onClick={() => {
-                  setViewMode('factions');
+                  dispatch(setCurrentView('factions'));
                   setIsMobileMenuOpen(false);
                 }}
                 className={`app-header__nav-button ${viewMode === 'factions' ? 'app-header__nav-button--active' : ''}`}
@@ -112,8 +145,15 @@ function App() {
             </nav>
           </div>
           <div className="app-header__right">
+            <button
+              onClick={handleReturnToMenu}
+              className="app-header__action-button"
+              style={{ marginRight: '0.5rem' }}
+            >
+              ← Main Menu
+            </button>
             <SaveMenu />
-            {viewMode === 'sector' && (
+            {viewMode === 'sector' && gameMode === 'editor' && (
               <button
                 onClick={handleGenerateSector}
                 className="app-header__action-button"

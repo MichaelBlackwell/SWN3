@@ -909,11 +909,92 @@
             "testStrategy": "Run the full test suite to verify all special features are implemented correctly. Manually test a sample of assets with special features to ensure they work as expected in the UI and gameplay."
           }
         ]
+      },
+      {
+        "id": 14,
+        "title": "Game Tutorial & Onboarding",
+        "description": "Task 14: Game Tutorial & Onboarding System",
+        "details": "",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Tutorial Modal Component Structure",
+            "description": "Create the reusable modal component with navigation tabs or a stepper interface to house tutorial content.",
+            "dependencies": [],
+            "details": "Develop a `TutorialModal` component using the project's UI library. The component must support a multi-tab or stepper layout to organize different help topics. Include standard modal features such as a backdrop, a close button, and navigation controls (Next/Previous) for moving between tutorial sections. Ensure the modal is responsive.\n<info added on 2025-11-24T12:58:19.506Z>\nCreated TutorialModal.tsx and TutorialModal.css in src/components/Tutorial/. Implemented a responsive modal with tabbed navigation (Getting Started, Map, Factions, Combat) and Next/Previous controls. Styled using the project's dark theme variables.\n</info added on 2025-11-24T12:58:19.506Z>",
+            "status": "done",
+            "testStrategy": "Render the modal in isolation (Storybook or unit test) to verify layout, tab switching logic, and close button functionality."
+          },
+          {
+            "id": 2,
+            "title": "Author and Implement Getting Started & Map Content",
+            "description": "Create the content for the initial tutorial section covering the game objective and map navigation.",
+            "dependencies": [
+              1
+            ],
+            "details": "Write and format the text for the 'Getting Started' and 'Sector Map' sections. Explain the hex grid, how to inspect Star Systems, and the winning conditions. Integrate this content into the first tab of the `TutorialModal`. Include placeholders for screenshots if the UI supports image rendering.",
+            "status": "done",
+            "testStrategy": "Open the modal to the first tab and verify the text renders correctly and is legible against the background."
+          },
+          {
+            "id": 3,
+            "title": "Author and Implement Faction, Assets, & Economics Content",
+            "description": "Create the tutorial sections explaining Faction management, Asset types, and the Economic cycle.",
+            "dependencies": [
+              1
+            ],
+            "details": "Combine the 'Factions & Assets' and 'Turn Cycle & Economics' topics into a cohesive section. Explain FacCreds, the three Asset types (Force, Cunning, Wealth), purchasing logic, maintenance costs, and how the turn cycle updates resources. Add this content to the middle tabs of the modal.",
+            "status": "done",
+            "testStrategy": "Verify that the Faction and Economics tabs display the correct information and that navigation between this and the previous section works smoothly."
+          },
+          {
+            "id": 4,
+            "title": "Author and Implement Combat & Conflict Content",
+            "description": "Create the tutorial section detailing combat mechanics, attack rolls, and damage resolution.",
+            "dependencies": [
+              1
+            ],
+            "details": "Write the content for the 'Combat & Conflict' section. Detail how assets attack, defense ratings, HP, and the consequences of losing an asset. Explain the specific mechanics of Force vs. Force, Cunning vs. Cunning, and Wealth vs. Wealth conflicts. Implement this as the final content section.",
+            "status": "done",
+            "testStrategy": "Check the Combat section for clarity and formatting. Ensure no text overflow occurs on smaller screens."
+          },
+          {
+            "id": 5,
+            "title": "Integrate Help Button and Toggle Logic",
+            "description": "Add the trigger mechanism in the App Header and manage the modal's open/close state.",
+            "dependencies": [
+              1
+            ],
+            "details": "Add a 'Help' or '?' icon button to the `AppHeader` component. Implement the state logic (either local React state or Redux UI slice) to toggle the `TutorialModal` visibility when the button is clicked. Ensure the tutorial can be dismissed via the close button or clicking the backdrop.",
+            "status": "done",
+            "testStrategy": "Click the Help button in the header to confirm the modal opens. Click the close button to confirm it closes. Verify the state persists correctly during the session."
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "Interactive Tutorial Content & Walkthrough",
+        "description": "Develop the script, triggers, and interactive steps for the game tutorial to guide players through UI navigation, faction actions, and combat mechanics using the existing Onboarding System.",
+        "details": "Using the framework established in Task 14, implement a step-by-step interactive guide that covers the game's core functionality. \n\n1. **UI Tour**: Highlight key areas (Resources, Map, Action Bar) based on the reorganized layout from Task 12.\n2. **Movement & Actions**: Force a context where the player must select a unit and perform Move, Repair, and Expand actions (Task 11).\n3. **Asset Management**: Guide the player to purchase a unit, explaining the cost and Special Feature indicators (Task 13).\n4. **Combat Primer**: Script a mock engagement to explain the Conflict Resolution flow.\n5. **Turn Cycle**: Explain the End Turn mechanic and resource generation.\n\nImplementation involves creating a `TutorialConfig` object that defines the sequence of modals, the DOM elements to highlight, and the Redux state predicates required to advance to the next step.",
+        "testStrategy": "Start a new game session with a clean state. Verify the tutorial overlay appears immediately. Follow instructions exactly and verify success states for each step (Move, Repair, Purchase). Attempt to perform invalid actions during a guided step to ensure input blocking works. Verify that the tutorial concludes correctly and sets the `tutorialComplete` flag in the SaveManager.",
+        "status": "pending",
+        "dependencies": [
+          11,
+          12,
+          13,
+          14
+        ],
+        "priority": "medium",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-11-23T17:31:41.933Z",
-      "updated": "2025-11-24T07:02:07.173Z",
+      "updated": "2025-11-24T13:06:53.059Z",
       "description": "Tasks for master context"
     }
   }

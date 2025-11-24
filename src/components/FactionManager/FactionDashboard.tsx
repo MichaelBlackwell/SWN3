@@ -23,6 +23,7 @@ export default function FactionDashboard({
   onPurchaseAsset,
 }: FactionDashboardProps) {
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isAssetStoreOpen, setIsAssetStoreOpen] = useState(false);
   const [showRepairModal, setShowRepairModal] = useState(false);
   const dispatch = useDispatch();
   const factions = useSelector((state: RootState) => state.factions.factions);
@@ -35,6 +36,14 @@ export default function FactionDashboard({
   const faction = factionId
     ? factions.find((f: Faction) => f.id === factionId)
     : null;
+
+  const unlockedCategoryLabels = faction
+    ? [
+        faction.attributes.force > 0 ? 'Force' : null,
+        faction.attributes.cunning > 0 ? 'Cunning' : null,
+        faction.attributes.wealth > 0 ? 'Wealth' : null,
+      ].filter(Boolean)
+    : [];
 
   const getSystemName = (systemId: string): string => {
     const system = systems.find((s: StarSystem) => s.id === systemId);
@@ -101,6 +110,9 @@ export default function FactionDashboard({
     setShowRepairModal(false);
     showNotification('Repair action staged. Commit to execute.', 'info');
   };
+
+  const handleOpenAssetStore = () => setIsAssetStoreOpen(true);
+  const handleCloseAssetStore = () => setIsAssetStoreOpen(false);
 
   if (!faction) {
     return (
@@ -262,10 +274,29 @@ export default function FactionDashboard({
               </div>
             </>
           )}
-          <AssetList 
-            factionId={factionId} 
-            onPurchase={onPurchaseAsset}
-          />
+          <div className="asset-store-preview">
+            <div>
+              <p className="asset-store-preview__eyebrow">Deployment Hub</p>
+              <h3>Asset Store</h3>
+              <p className="asset-store-preview__copy">
+                Browse 40+ units tailored to your current ratings. Perfect for reinforcing {getSystemName(faction.homeworld)} or staging the next op.
+              </p>
+              <div className="asset-store-preview__meta">
+                <span>FacCreds: <strong>{faction.facCreds}</strong></span>
+                <span>
+                  Unlocked categories:{' '}
+                  <strong>{unlockedCategoryLabels.length ? unlockedCategoryLabels.join(' · ') : 'None yet'}</strong>
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="asset-store-preview__btn"
+              onClick={handleOpenAssetStore}
+            >
+              Open Store
+            </button>
+          </div>
         </div>
       </div>
       )}
@@ -275,6 +306,40 @@ export default function FactionDashboard({
           onClose={() => setShowRepairModal(false)}
           onConfirm={handleRepairConfirm}
         />
+      )}
+      {isAssetStoreOpen && factionId && (
+        <div className="asset-store-modal" role="dialog" aria-modal="true" aria-labelledby="asset-store-title">
+          <div className="asset-store-modal__overlay" onClick={handleCloseAssetStore} />
+          <div className="asset-store-modal__panel">
+            <header className="asset-store-modal__header">
+              <div>
+                <p className="asset-store-modal__eyebrow">Faction Store</p>
+                <h3 id="asset-store-title">{faction.name} Procurement</h3>
+                <p className="asset-store-modal__subtitle">
+                  Available FacCreds: {faction.facCreds} • Homeworld: {getSystemName(faction.homeworld)}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="asset-store-modal__close"
+                onClick={handleCloseAssetStore}
+                aria-label="Close asset store"
+              >
+                ×
+              </button>
+            </header>
+            <div className="asset-store-modal__body">
+              <AssetList
+                factionId={factionId}
+                onPurchase={(assetDefinitionId) => {
+                  if (onPurchaseAsset) {
+                    onPurchaseAsset(assetDefinitionId);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

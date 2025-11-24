@@ -79,6 +79,20 @@ const forceAssets: AssetDefinition[] = [
     maintenance: 0,
     specialFlags: { hasAction: false, hasSpecial: false, requiresPermission: true },
   },
+  {
+    id: 'force_1_gengineered_slaves',
+    name: 'Gengineered Slaves',
+    category: 'Force',
+    requiredRating: 1,
+    hp: 4,
+    cost: 3,
+    techLevel: 3,
+    type: 'Military Unit',
+    attack: parseAttackPattern('Force vs. Force, 1d6 damage'),
+    counterattack: parseCounterattack('1d4 damage'),
+    maintenance: 0,
+    specialFlags: { hasAction: false, hasSpecial: true, requiresPermission: false },
+  },
   // Force 2
   {
     id: 'force_2_heavy_drop_assets',
