@@ -303,7 +303,7 @@ export default function FactionManager() {
                   role="button"
                   tabIndex={0}
                   onClick={() => handleCardSelect(faction.id)}
-                  onKeyDown={(event) => handleCardKeyDown(event, faction.id)}
+                  onKeyDown={(event: React.KeyboardEvent<HTMLElement>) => handleCardKeyDown(event as React.KeyboardEvent<HTMLDivElement>, faction.id)}
                   aria-pressed={selectedFactionId === faction.id}
                 >
                   <div className="faction-card__header">

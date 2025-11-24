@@ -45,7 +45,6 @@ export default function MainMenu() {
         wealth: 4,
         hp: 20,
         maxHp: 20,
-        exp: 0,
       };
       // Ensure they have some credits to buy assets
       playerFaction.facCreds = 10;

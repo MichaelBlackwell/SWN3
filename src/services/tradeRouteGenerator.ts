@@ -17,7 +17,7 @@
  * - Tech Differential: Tech flows from high to low tech worlds
  */
 
-import type { StarSystem, Route } from '../types/sector';
+import type { StarSystem } from '../types/sector';
 import { getWorldEconomicProfile } from './worldGenerator';
 
 interface TradeScore {

@@ -83,7 +83,7 @@ export default function FactionCreationForm() {
 
   const handleInputChange = (
     field: keyof FormData,
-    value: string | FactionTag[]
+    value: string | FactionTag[] | boolean
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing

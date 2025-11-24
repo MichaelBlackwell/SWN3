@@ -541,7 +541,7 @@ const FACTION_TEMPLATES: Record<string, FactionTemplate> = {
   'Militant Order': {
     name: 'Militant Order',
     description: 'A knighthood or warrior society dedicated to martial perfection and honor.',
-    type: 'Military Group',
+    type: 'Mercenary Group',
     attributes: { hp: 25, maxHp: 25, force: 6, cunning: 3, wealth: 3 },
     assets: [
       { id: 'force_6_pretech_infantry' },

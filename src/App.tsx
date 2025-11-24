@@ -16,7 +16,6 @@ import { setSector } from './store/slices/sectorSlice';
 import { clearAllFactions, addFaction } from './store/slices/factionsSlice';
 import { resetTurnState } from './store/slices/turnSlice';
 import { setCurrentView, returnToMenu } from './store/slices/gameModeSlice';
-import type { Faction } from './types/faction';
 import { generateRandomFactionForSystem } from './services/factionGenerator';
 import './App.css';
 import './styles/layout.css';
