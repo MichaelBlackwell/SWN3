@@ -1,0 +1,379 @@
+/* Faction Goals Tab Styles */
+
+.faction-goals-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.goals-tab-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  color: var(--text-secondary);
+}
+
+/* Section Styles */
+.goals-section {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+}
+
+.goals-section h3 {
+  margin: 0 0 var(--spacing-3) 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+/* XP Display */
+.xp-display {
+  background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-primary) 100%);
+}
+
+.xp-container {
+  text-align: center;
+}
+
+.xp-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-2);
+}
+
+.xp-value {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--accent-primary);
+  margin-bottom: var(--spacing-2);
+  font-family: var(--font-mono);
+}
+
+.xp-hint {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Goal Card */
+.active-goal {
+  min-height: 200px;
+}
+
+.goal-card {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-3);
+  position: relative;
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
+.goal-type-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.goal-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+  cursor: help;
+}
+
+.goal-icon:hover {
+  transform: scale(1.15);
+}
+
+.goal-type {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.goal-reward {
+  background: var(--accent-primary);
+  color: var(--surface-primary);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.goal-description {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-3);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  cursor: help;
+}
+
+.goal-progress {
+  margin-top: var(--spacing-3);
+}
+
+.progress-bar {
+  height: 24px;
+  background: var(--surface-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  transition: width 0.3s ease;
+  border-radius: var(--radius-sm);
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: var(--spacing-2);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.goal-completed-badge {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  background: var(--success-color);
+  color: white;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.no-goal {
+  text-align: center;
+  padding: var(--spacing-6) var(--spacing-3);
+  color: var(--text-secondary);
+}
+
+.no-goal p {
+  margin: 0;
+}
+
+.no-goal-hint {
+  font-size: 0.875rem;
+  font-style: italic;
+  margin-top: var(--spacing-2) !important;
+}
+
+/* Advancement Section */
+.advancement-hint {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 0 0 var(--spacing-4) 0;
+  line-height: 1.5;
+}
+
+.advancement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.advancement-card {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.advancement-header {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: center;
+}
+
+.advancement-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.force-icon {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.cunning-icon {
+  background: rgba(147, 51, 234, 0.1);
+}
+
+.wealth-icon {
+  background: rgba(234, 179, 8, 0.1);
+}
+
+.advancement-info {
+  flex: 1;
+}
+
+.advancement-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.advancement-current {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.max-badge {
+  background: var(--warning-color);
+  color: white;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  background: var(--accent-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.upgrade-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.upgrade-btn:disabled {
+  background: var(--surface-secondary);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.upgrade-cost {
+  font-size: 0.875rem;
+  font-weight: normal;
+  opacity: 0.9;
+}
+
+/* XP Cost Table */
+.xp-cost-table {
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.xp-cost-table summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary);
+  user-select: none;
+  padding: var(--spacing-2);
+}
+
+.xp-cost-table summary:hover {
+  color: var(--accent-primary);
+}
+
+.xp-cost-table table {
+  width: 100%;
+  margin-top: var(--spacing-3);
+  border-collapse: collapse;
+}
+
+.xp-cost-table th,
+.xp-cost-table td {
+  padding: var(--spacing-2);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.xp-cost-table th {
+  background: var(--surface-secondary);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.xp-cost-table td {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.xp-cost-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.xp-cost-table tbody tr:hover {
+  background: var(--surface-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .faction-goals-tab {
+    padding: var(--spacing-3);
+    gap: var(--spacing-3);
+  }
+
+  .xp-value {
+    font-size: 2.5rem;
+  }
+
+  .advancement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .goals-section {
+    padding: var(--spacing-3);
+  }
+}
+

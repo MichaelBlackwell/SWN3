@@ -1,0 +1,255 @@
+.phase-summary-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.phase-summary-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #4a9eff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.phase-summary-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 2px solid #4a9eff;
+  background: linear-gradient(90deg, #4a9eff20, transparent);
+}
+
+.phase-summary-modal .modal-header h2 {
+  margin: 0;
+  color: #4a9eff;
+  font-size: 24px;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+}
+
+.phase-summary-modal .close-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.phase-summary-modal .close-btn:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.phase-summary-modal .modal-content {
+  padding: 24px;
+}
+
+.phase-summary-modal .phase-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.phase-summary-modal .phase-section:hover {
+  transform: translateX(4px);
+}
+
+.phase-summary-modal .income-section {
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.15), rgba(74, 158, 255, 0.05));
+  border-color: rgba(74, 158, 255, 0.3);
+}
+
+.phase-summary-modal .maintenance-section {
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.15), rgba(255, 140, 0, 0.05));
+  border-color: rgba(255, 140, 0, 0.3);
+}
+
+.phase-summary-modal .news-section {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05));
+  border-color: rgba(155, 89, 182, 0.3);
+}
+
+.phase-summary-modal .phase-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-summary-modal .income-section h3 {
+  color: #4a9eff;
+}
+
+.phase-summary-modal .maintenance-section h3 {
+  color: #ff8c00;
+}
+
+.phase-summary-modal .news-section h3 {
+  color: #9b59b6;
+}
+
+.phase-summary-modal .faction-summaries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.phase-summary-modal .faction-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.phase-summary-modal .faction-summary:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+}
+
+.phase-summary-modal .faction-name {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.phase-summary-modal .income-amount {
+  color: #4ade80;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.phase-summary-modal .maintenance-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.phase-summary-modal .maintenance-cost {
+  color: #ff8c00;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.phase-summary-modal .failed-assets {
+  color: #ff4444;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.phase-summary-modal .news-content {
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.phase-summary-modal .news-content p {
+  margin: 0 0 8px 0;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.phase-summary-modal .news-content p:last-child {
+  margin-bottom: 0;
+}
+
+.phase-summary-modal .news-hint {
+  color: #9b59b6;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.phase-summary-modal .modal-footer {
+  padding: 20px 24px;
+  border-top: 2px solid #4a9eff;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(90deg, transparent, #4a9eff20);
+}
+
+.phase-summary-modal .modal-footer .btn {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.phase-summary-modal .modal-footer .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+}
+
+/* Scrollbar styling */
+.phase-summary-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.phase-summary-modal::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.phase-summary-modal::-webkit-scrollbar-thumb {
+  background: #4a9eff;
+  border-radius: 4px;
+}
+
+.phase-summary-modal::-webkit-scrollbar-thumb:hover {
+  background: #6bb3ff;
+}
+

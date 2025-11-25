@@ -1,0 +1,121 @@
+.keyword-tooltip-text {
+  color: inherit;
+}
+
+.keyword-tooltip-text--block {
+  line-height: 1.6;
+  margin: 0;
+}
+
+.keyword-tooltip-text--inline {
+  line-height: inherit;
+  display: inline;
+}
+
+.keyword-tooltip {
+  position: relative;
+  font-weight: 600;
+  cursor: help;
+  outline: none;
+  transition: color 0.2s ease;
+}
+
+.keyword-tooltip__label {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.2rem;
+}
+
+.keyword-tooltip__tooltip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -110%);
+  background: rgba(9, 11, 19, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  color: #f8fafc;
+  font-size: 0.82rem;
+  line-height: 1.3;
+  padding: 0.6rem 0.75rem;
+  width: max-content;
+  max-width: 240px;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  z-index: 500;
+}
+
+.keyword-tooltip__tooltip strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.keyword-tooltip:focus .keyword-tooltip__tooltip,
+.keyword-tooltip:hover .keyword-tooltip__tooltip {
+  opacity: 1;
+  transform: translate(-50%, -140%);
+}
+
+.keyword-tooltip:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.keyword-tooltip--force {
+  color: #f87171;
+}
+
+.keyword-tooltip--cunning {
+  color: #4ecdc4;
+}
+
+.keyword-tooltip--wealth {
+  color: #fbbf24;
+}
+
+.keyword-tooltip--asset {
+  color: #60a5fa;
+}
+
+.keyword-tooltip--tag {
+  color: #fbbf24;
+}
+
+.keyword-tooltip--force .keyword-tooltip__tooltip {
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.keyword-tooltip--cunning .keyword-tooltip__tooltip {
+  border-color: rgba(78, 205, 196, 0.45);
+}
+
+.keyword-tooltip--wealth .keyword-tooltip__tooltip {
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.keyword-tooltip--asset .keyword-tooltip__tooltip {
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.keyword-tooltip--tag .keyword-tooltip__tooltip {
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+@media (max-width: 600px) {
+  .keyword-tooltip__tooltip {
+    left: 0;
+    transform: translate(0, -110%);
+  }
+
+  .keyword-tooltip:focus .keyword-tooltip__tooltip,
+  .keyword-tooltip:hover .keyword-tooltip__tooltip {
+    transform: translate(0, -140%);
+  }
+}
+

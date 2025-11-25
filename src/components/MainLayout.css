@@ -1,0 +1,44 @@
+.main-layout {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.main-layout__background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.main-layout__gradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(76, 91, 255, 0.3), transparent 45%),
+    radial-gradient(circle at 80% 30%, rgba(91, 204, 255, 0.25), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(255, 132, 94, 0.2), transparent 40%);
+  filter: blur(80px);
+}
+
+.main-layout__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+}
+
+.app-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  backdrop-filter: blur(0);
+}
+
