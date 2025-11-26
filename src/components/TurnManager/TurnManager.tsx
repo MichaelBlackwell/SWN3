@@ -6,9 +6,12 @@ import { useTurnPhase } from '../../hooks/useTurnPhase';
 import { store } from '../../store/store';
 import { setPhase, setTurn } from '../../store/slices/turnSlice';
 import { processIncomePhase, processMaintenancePhase, selectFaction } from '../../store/slices/factionsSlice';
+import { selectIsAIProcessing } from '../../store/slices/aiTurnSlice';
 import type { Faction } from '../../types/faction';
 import { useSoundEffect } from '../../hooks/useAudio';
+import { useAITurnExecution } from '../../hooks/useAITurnExecution';
 import PhaseSummaryModal from './PhaseSummaryModal';
+import AITurnOverlay from '../AITurnOverlay';
 import './TurnManager.css';
 import { getFactionColor } from '../../utils/factionColors';
 
@@ -27,10 +30,12 @@ export default function TurnManager() {
   const factions = useSelector((state: RootState) => state.factions.factions);
   const selectedFactionId = useSelector((state: RootState) => state.factions.selectedFactionId);
   const gameMode = useSelector((state: RootState) => state.gameMode.mode);
+  const isAIProcessing = useSelector(selectIsAIProcessing);
   const [showSummary, setShowSummary] = useState(false);
   const playSound = useSoundEffect();
+  const { executeAITurns, hasAIFactions } = useAITurnExecution();
 
-  const handleAdvancePhase = () => {
+  const handleAdvancePhase = async () => {
     // Play phase transition sounds
     playSound('phase_income');
     
@@ -40,6 +45,15 @@ export default function TurnManager() {
     
     // Maintenance Phase
     dispatch(processMaintenancePhase());
+    
+    // Execute AI faction turns (in scenario or editor mode with AI factions)
+    if ((gameMode === 'scenario' || gameMode === 'editor') && hasAIFactions()) {
+      console.log('[TurnManager] Executing AI turns...');
+      await executeAITurns();
+      console.log('[TurnManager] AI turns complete');
+    } else {
+      console.log('[TurnManager] Skipping AI turns:', { gameMode, hasAI: hasAIFactions() });
+    }
     
     // News Phase (no processing needed, just for narrative)
     
@@ -75,12 +89,13 @@ export default function TurnManager() {
     <button
       onClick={handleAdvancePhase}
       className="btn-end-turn"
+      disabled={isAIProcessing}
     >
       <span className="btn-end-turn__glow"></span>
       <span className="btn-end-turn__scanlines"></span>
       <span className="btn-end-turn__content">
         <span className="btn-end-turn__icon">⟫</span>
-        <span className="btn-end-turn__text">End Turn</span>
+        <span className="btn-end-turn__text">{isAIProcessing ? 'AI Turn...' : 'End Turn'}</span>
         <span className="btn-end-turn__icon">⟪</span>
       </span>
       <span className="btn-end-turn__border"></span>
@@ -143,6 +158,9 @@ export default function TurnManager() {
 
   return (
     <>
+      {/* AI Turn Overlay */}
+      <AITurnOverlay />
+
       {/* Phase Summary Modal */}
       {showSummary && (
         <PhaseSummaryModal

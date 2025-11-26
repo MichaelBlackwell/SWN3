@@ -114,6 +114,11 @@
   border-color: rgba(155, 89, 182, 0.3);
 }
 
+.phase-summary-modal .ai-section {
+  background: linear-gradient(135deg, rgba(0, 200, 150, 0.15), rgba(0, 200, 150, 0.05));
+  border-color: rgba(0, 200, 150, 0.3);
+}
+
 .phase-summary-modal .phase-section h3 {
   margin: 0 0 16px 0;
   font-size: 18px;
@@ -133,6 +138,10 @@
 
 .phase-summary-modal .news-section h3 {
   color: #9b59b6;
+}
+
+.phase-summary-modal .ai-section h3 {
+  color: #00c896;
 }
 
 .phase-summary-modal .faction-summaries {
@@ -211,6 +220,77 @@
   color: #9b59b6;
   font-style: italic;
   font-size: 13px;
+}
+
+/* AI Actions Section */
+.phase-summary-modal .ai-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.phase-summary-modal .ai-faction-actions {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.phase-summary-modal .ai-faction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-left: 3px solid;
+}
+
+.phase-summary-modal .ai-faction-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.phase-summary-modal .ai-action-count {
+  color: #888;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.phase-summary-modal .ai-action-items {
+  list-style: none;
+  margin: 0;
+  padding: 8px 16px 12px;
+}
+
+.phase-summary-modal .ai-action-item {
+  padding: 6px 0;
+  color: #ccc;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  padding-left: 16px;
+}
+
+.phase-summary-modal .ai-action-item::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #00c896;
+  font-size: 10px;
+}
+
+.phase-summary-modal .ai-action-item:last-child {
+  border-bottom: none;
+}
+
+.phase-summary-modal .ai-no-actions {
+  color: #888;
+  font-style: italic;
+  font-size: 13px;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  margin: 0;
 }
 
 .phase-summary-modal .modal-footer {

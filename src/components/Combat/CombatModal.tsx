@@ -11,13 +11,29 @@ import {
   type CombatResult,
 } from '../../utils/combatResolver';
 import { inflictDamage } from '../../store/slices/factionsSlice';
-import { stageAction, markActionUsed, selectCurrentPhase, selectUsedActionType } from '../../store/slices/turnSlice';
+import { 
+  stageAction, 
+  markActionUsed, 
+  markAssetAttacked,
+  selectCurrentPhase, 
+  selectUsedActionType, 
+  selectCurrentTurn,
+  selectAssetsAttackedThisTurn,
+} from '../../store/slices/turnSlice';
 import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromTargetFaction, createNarrativeContextFromSystem } from '../../utils/narrativeHelpers';
 import type { Faction, FactionAsset } from '../../types/faction';
 import type { StarSystem } from '../../types/sector';
 import { useSoundEffect } from '../../hooks/useAudio';
+import { canAssetAct } from '../../utils/assetEligibility';
 import CombatAnimation from './CombatAnimation';
 import './CombatModal.css';
+
+// Combat flow phases per SWN rules:
+// Phase 1: Attacker selects their faction, asset, and target FACTION
+// Phase 2: DEFENDER chooses which asset will defend
+// Phase 3: Combat preview and resolution
+// Phase 4 (conditional): Damage redirect choice if defender has Base of Influence
+type CombatPhase = 'attacker-selection' | 'defender-selection' | 'preview' | 'damage-redirect';
 
 interface CombatModalProps {
   isOpen: boolean;
@@ -45,20 +61,32 @@ export default function CombatModal({
   );
   const currentPhase = useSelector(selectCurrentPhase);
   const usedActionType = useSelector(selectUsedActionType);
+  const currentTurn = useSelector(selectCurrentTurn);
+  const assetsAttackedThisTurn = useSelector(selectAssetsAttackedThisTurn);
   const playSound = useSoundEffect();
 
+  // Combat flow phase tracking
+  // Per SWN rules: "Each attacking asset is matched against a defending asset chosen by the defender"
+  const [combatFlowPhase, setCombatFlowPhase] = useState<CombatPhase>('attacker-selection');
+  
   const [selectedAttackerFactionId, setSelectedAttackerFactionId] = useState<string>(
     attackerFactionId || ''
   );
   const [selectedAttackerAssetId, setSelectedAttackerAssetId] = useState<string>('');
   const [selectedTargetFactionId, setSelectedTargetFactionId] = useState<string>('');
-  const [selectedTargetAssetId, setSelectedTargetAssetId] = useState<string>('');
+  // Per SWN rules: Defender chooses which asset defends, not the attacker
+  const [selectedDefenderAssetId, setSelectedDefenderAssetId] = useState<string>('');
   const [showAnimation, setShowAnimation] = useState(false);
   const [combatResult, setCombatResult] = useState<CombatResult | null>(null);
   const [hpBefore, setHpBefore] = useState<{
     attacker: { asset: number; faction: number };
     defender: { asset: number; faction: number };
   } | null>(null);
+  // For the Base of Influence damage redirect option
+  // Per SWN rules: "If the defender has a Base of Influence on the world, the defender may opt 
+  // to let the damage bypass the asset and hit the Base of Influence instead"
+  const [showDamageRedirectChoice, setShowDamageRedirectChoice] = useState(false);
+  const [_redirectDamageToBase, setRedirectDamageToBase] = useState(false);
 
   // Play modal open sound when modal opens
   useEffect(() => {
@@ -73,10 +101,13 @@ export default function CombatModal({
       setSelectedAttackerFactionId(attackerFactionId || '');
       setSelectedAttackerAssetId('');
       setSelectedTargetFactionId('');
-      setSelectedTargetAssetId('');
+      setSelectedDefenderAssetId('');
       setShowAnimation(false);
       setCombatResult(null);
       setHpBefore(null);
+      setCombatFlowPhase('attacker-selection');
+      setShowDamageRedirectChoice(false);
+      setRedirectDamageToBase(false);
     }
   }, [isOpen, attackerFactionId]);
 
@@ -84,18 +115,24 @@ export default function CombatModal({
   useEffect(() => {
     setSelectedAttackerAssetId('');
     setSelectedTargetFactionId('');
-    setSelectedTargetAssetId('');
+    setSelectedDefenderAssetId('');
+    setCombatFlowPhase('attacker-selection');
   }, [selectedAttackerFactionId]);
 
   // Reset target selections when attacker asset changes
   useEffect(() => {
     setSelectedTargetFactionId('');
-    setSelectedTargetAssetId('');
+    setSelectedDefenderAssetId('');
+    setCombatFlowPhase('attacker-selection');
   }, [selectedAttackerAssetId]);
 
-  // Reset target asset when target faction changes
+  // Reset defender asset when target faction changes
   useEffect(() => {
-    setSelectedTargetAssetId('');
+    setSelectedDefenderAssetId('');
+    // If we're in defender selection phase, stay there; otherwise stay in attacker selection
+    if (combatFlowPhase !== 'preview') {
+      setCombatFlowPhase(selectedTargetFactionId ? 'defender-selection' : 'attacker-selection');
+    }
   }, [selectedTargetFactionId]);
 
   // Get selected attacker faction
@@ -115,14 +152,20 @@ export default function CombatModal({
     return getAssetById(attackerAsset.definitionId);
   }, [attackerAsset]);
 
-  // Get available attacking assets (must have attack pattern and be at same location)
+  // Get available attacking assets (must have attack pattern, be at same location, not newly purchased/refitted, and not already attacked this turn)
+  // Per SWN rules: "Each attacking asset can attack only once per turn"
   const availableAttackerAssets = useMemo(() => {
     if (!attackerFaction) return [];
     return attackerFaction.assets.filter((asset: FactionAsset) => {
       const assetDef = getAssetById(asset.definitionId);
-      return assetDef && assetDef.attack !== null; // Must be able to attack
+      if (!assetDef || assetDef.attack === null) return false; // Must be able to attack
+      // Check if asset can act (not newly purchased or refitted)
+      if (!canAssetAct(asset, currentTurn)) return false;
+      // Check if asset has already attacked this turn
+      if (assetsAttackedThisTurn.includes(asset.id)) return false;
+      return true;
     });
-  }, [attackerFaction]);
+  }, [attackerFaction, currentTurn, assetsAttackedThisTurn]);
 
   // Get target system (automatically set to attacker asset's location)
   const targetSystemId = useMemo(() => {
@@ -151,25 +194,53 @@ export default function CombatModal({
     });
   }, [factions, targetSystemId, selectedAttackerFactionId]);
 
-  // Get available target assets (non-stealthed assets in target system for target faction)
-  const availableTargetAssets = useMemo(() => {
+  // Get available defender assets (non-stealthed assets in target system for target faction)
+  // 
+  // IMPORTANT - Multi-Defend Rule Implementation:
+  // Per SWN rules: "A defending asset can defend as many times as the defender wishes, 
+  // assuming it can survive multiple conflicts."
+  // 
+  // Unlike attacking assets (which can only attack once per turn), defending assets have 
+  // NO restriction on how many times they can be selected to defend. This is intentional:
+  // - We do NOT track which assets have defended (unlike assetsAttackedThisTurn for attackers)
+  // - We do NOT filter out previously-selected defenders
+  // - The only restrictions are: location (same world) and stealth status (non-stealthed)
+  // 
+  // Note: Defending assets CAN be newly purchased - the turn eligibility rule only prevents 
+  // attacking and using abilities, not defending.
+  const availableDefenderAssets = useMemo(() => {
     if (!targetFaction || !targetSystemId) return [];
+    // Filter only by location and stealth - NO restriction on previous defends
     return targetFaction.assets.filter(
       (asset: FactionAsset) => asset.location === targetSystemId && !asset.stealthed
     );
   }, [targetFaction, targetSystemId]);
 
-  // Get target asset
-  const targetAsset = useMemo(() => {
-    if (!targetFaction || !selectedTargetAssetId) return null;
-    return targetFaction.assets.find((a: FactionAsset) => a.id === selectedTargetAssetId) || null;
-  }, [targetFaction, selectedTargetAssetId]);
+  // Get defender asset (chosen by the defending faction)
+  const defenderAsset = useMemo(() => {
+    if (!targetFaction || !selectedDefenderAssetId) return null;
+    return targetFaction.assets.find((a: FactionAsset) => a.id === selectedDefenderAssetId) || null;
+  }, [targetFaction, selectedDefenderAssetId]);
 
-  // Get target asset definition
-  const targetAssetDef = useMemo(() => {
-    if (!targetAsset) return null;
-    return getAssetById(targetAsset.definitionId);
-  }, [targetAsset]);
+  // Get defender asset definition
+  const defenderAssetDef = useMemo(() => {
+    if (!defenderAsset) return null;
+    return getAssetById(defenderAsset.definitionId);
+  }, [defenderAsset]);
+
+  // Check if defender has a Base of Influence on the target world (for damage redirect option)
+  // Per SWN rules: "If the defender has a Base of Influence on the world, the defender may opt 
+  // to let the damage bypass the asset and hit the Base of Influence instead"
+  const defenderBaseOfInfluence = useMemo(() => {
+    if (!targetFaction || !targetSystemId) return null;
+    // Find Base of Influence asset on this world that is NOT the defending asset
+    return targetFaction.assets.find((asset: FactionAsset) => {
+      if (asset.location !== targetSystemId) return false;
+      if (asset.id === selectedDefenderAssetId) return false; // Can't redirect to itself
+      const assetDef = getAssetById(asset.definitionId);
+      return assetDef?.name === 'Base of Influence';
+    }) || null;
+  }, [targetFaction, targetSystemId, selectedDefenderAssetId]);
 
   // Calculate combat odds and expected damage
   const combatPreview = useMemo(() => {
@@ -178,13 +249,13 @@ export default function CombatModal({
       !attackerAssetDef ||
       !attackerAssetDef.attack ||
       !targetFaction ||
-      !targetAssetDef
+      !defenderAssetDef
     ) {
       return null;
     }
 
     const attackPattern = attackerAssetDef.attack;
-    const counterattackPattern = targetAssetDef.counterattack;
+    const counterattackPattern = defenderAssetDef.counterattack;
 
     // Get attribute values
     const attackerAttributeValue =
@@ -224,22 +295,52 @@ export default function CombatModal({
       defenderAttribute: attackPattern.defenderAttribute,
       defenderAttributeValue,
     };
-  }, [attackerFaction, attackerAssetDef, targetFaction, targetAssetDef]);
+  }, [attackerFaction, attackerAssetDef, targetFaction, defenderAssetDef]);
+
+  // Handle proceeding to defender selection phase
+  const handleProceedToDefenderSelection = () => {
+    if (
+      !selectedAttackerFactionId ||
+      !selectedAttackerAssetId ||
+      !selectedTargetFactionId ||
+      !targetSystemId
+    ) {
+      return;
+    }
+    setCombatFlowPhase('defender-selection');
+  };
+
+  // Handle proceeding to preview phase
+  const handleProceedToPreview = () => {
+    if (!selectedDefenderAssetId) {
+      return;
+    }
+    setCombatFlowPhase('preview');
+  };
+
+  // Handle going back to previous phase
+  const handleGoBack = () => {
+    if (combatFlowPhase === 'defender-selection') {
+      setCombatFlowPhase('attacker-selection');
+    } else if (combatFlowPhase === 'preview') {
+      setCombatFlowPhase('defender-selection');
+    }
+  };
 
   const handleConfirm = () => {
     if (
       !selectedAttackerFactionId ||
       !selectedAttackerAssetId ||
       !selectedTargetFactionId ||
-      !selectedTargetAssetId ||
+      !selectedDefenderAssetId ||
       !targetSystemId ||
       !attackerFaction ||
       !attackerAsset ||
       !attackerAssetDef ||
       !attackerAssetDef.attack ||
       !targetFaction ||
-      !targetAsset ||
-      !targetAssetDef
+      !defenderAsset ||
+      !defenderAssetDef
     ) {
       return;
     }
@@ -256,7 +357,7 @@ export default function CombatModal({
     // Store HP before combat
     const attackerAssetHpBefore = attackerAsset.hp;
     const attackerFactionHpBefore = attackerFaction.attributes.hp;
-    const defenderAssetHpBefore = targetAsset.hp;
+    const defenderAssetHpBefore = defenderAsset.hp;
     const defenderFactionHpBefore = targetFaction.attributes.hp;
 
     setHpBefore({
@@ -266,7 +367,7 @@ export default function CombatModal({
 
     // Resolve combat
     const attackPattern = attackerAssetDef.attack;
-    const counterattackPattern = targetAssetDef.counterattack;
+    const counterattackPattern = defenderAssetDef.counterattack;
 
     const attackerAttributeValue =
       attackPattern.attackerAttribute === 'Force'
@@ -291,10 +392,10 @@ export default function CombatModal({
         attackerFaction,
         defenderFaction: targetFaction,
         attackerAssetTechLevel: attackerAssetDef.techLevel,
-        defenderAssetTechLevel: targetAssetDef.techLevel,
+        defenderAssetTechLevel: defenderAssetDef.techLevel,
         defenderIsOnHomeworld: targetSystemId === targetFaction.homeworld,
         attackerAssetDefinitionId: attackerAssetDef.id,
-        defenderAssetDefinitionId: targetAssetDef.id,
+        defenderAssetDefinitionId: defenderAssetDef.id,
       },
       attackPattern,
       counterattackPattern
@@ -310,11 +411,35 @@ export default function CombatModal({
   const handleAnimationComplete = () => {
     if (!combatResult || !hpBefore) return;
 
-    const attackerFaction = factions.find((f: Faction) => f.id === selectedAttackerFactionId);
-    const targetFaction = factions.find((f: Faction) => f.id === selectedTargetFactionId);
-    const targetSystem = systems.find((s: StarSystem) => s.id === targetSystemId);
-    const attackerAssetDef = attackerAsset ? getAssetById(attackerAsset.definitionId) : null;
-    const targetAssetDef = targetAsset ? getAssetById(targetAsset.definitionId) : null;
+    // Check if defender can redirect damage to Base of Influence
+    // Per SWN rules: "If the defender has a Base of Influence on the world, the defender may opt 
+    // to let the damage bypass the asset and hit the Base of Influence instead"
+    const canRedirectDamage = 
+      combatResult.attackDamage > 0 && 
+      defenderBaseOfInfluence !== null &&
+      defenderAssetDef?.name !== 'Base of Influence'; // Can't redirect FROM a Base to another Base
+
+    if (canRedirectDamage) {
+      // Show damage redirect choice
+      setShowAnimation(false);
+      setShowDamageRedirectChoice(true);
+      setCombatFlowPhase('damage-redirect');
+      return;
+    }
+
+    // No redirect option available, apply damage directly
+    applyDamageAndFinish(false);
+  };
+
+  // Apply damage to the appropriate target and finish combat
+  const applyDamageAndFinish = (redirectToBase: boolean) => {
+    if (!combatResult || !hpBefore) return;
+
+    const attackerFactionRef = factions.find((f: Faction) => f.id === selectedAttackerFactionId);
+    const targetFactionRef = factions.find((f: Faction) => f.id === selectedTargetFactionId);
+    const targetSystemRef = systems.find((s: StarSystem) => s.id === targetSystemId);
+    const attackerAssetDefRef = attackerAsset ? getAssetById(attackerAsset.definitionId) : null;
+    const defenderAssetDefRef = defenderAsset ? getAssetById(defenderAsset.definitionId) : null;
 
     // Determine attack result for narrative
     const attackResult = combatResult.rollResult.success
@@ -323,16 +448,31 @@ export default function CombatModal({
         ? 'Tie'
         : 'Failure';
 
-    // Apply attack damage to defender asset
+    // Apply attack damage to defender asset OR Base of Influence
     if (combatResult.attackDamage > 0) {
-      dispatch(
-        inflictDamage({
-          factionId: selectedTargetFactionId,
-          assetId: selectedTargetAssetId,
-          damage: combatResult.attackDamage,
-          sourceFactionId: selectedAttackerFactionId,
-        })
-      );
+      if (redirectToBase && defenderBaseOfInfluence) {
+        // Redirect damage to Base of Influence
+        // Per SWN rules: Damage to Base of Influence also damages faction HP
+        dispatch(
+          inflictDamage({
+            factionId: selectedTargetFactionId,
+            assetId: defenderBaseOfInfluence.id,
+            damage: combatResult.attackDamage,
+            damageToBase: true, // Flag for Base of Influence special handling
+            sourceFactionId: selectedAttackerFactionId,
+          })
+        );
+      } else {
+        // Apply damage to defending asset
+        dispatch(
+          inflictDamage({
+            factionId: selectedTargetFactionId,
+            assetId: selectedDefenderAssetId,
+            damage: combatResult.attackDamage,
+            sourceFactionId: selectedAttackerFactionId,
+          })
+        );
+      }
     }
 
     // Apply counterattack damage to attacker asset (if counterattack occurred)
@@ -358,47 +498,59 @@ export default function CombatModal({
 
     const getSystem = (systemId: string) => systems.find((s: StarSystem) => s.id === systemId);
 
-    const actorContext = createNarrativeContextFromFaction(attackerFaction, getSystemName, getSystem);
-    const targetContext = createNarrativeContextFromTargetFaction(targetFaction, getSystemName, getSystem);
-    const systemContext = createNarrativeContextFromSystem(targetSystem);
+    const actorContext = createNarrativeContextFromFaction(attackerFactionRef, getSystemName, getSystem);
+    const targetContext = createNarrativeContextFromTargetFaction(targetFactionRef, getSystemName, getSystem);
+    const systemContext = createNarrativeContextFromSystem(targetSystemRef);
 
     dispatchNarrativeEntry(dispatch, 'Attack', {
       ...actorContext,
       ...targetContext,
       ...systemContext,
-      assetName: attackerAssetDef?.name,
+      assetName: attackerAssetDefRef?.name,
       damage: combatResult.attackDamage,
       result: attackResult,
       relatedEntityIds: [
         selectedAttackerFactionId,
         selectedTargetFactionId,
         selectedAttackerAssetId,
-        selectedTargetAssetId,
+        redirectToBase && defenderBaseOfInfluence ? defenderBaseOfInfluence.id : selectedDefenderAssetId,
         targetSystemId || '',
       ].filter(Boolean),
     });
 
-    // If asset was destroyed, generate a separate narrative entry
-    // Check if damage would have destroyed the asset (using hpBefore which was captured before damage)
+    // If asset/base was destroyed, generate a separate narrative entry
     if (hpBefore && combatResult.attackDamage > 0) {
-      const defenderAssetHPBefore = hpBefore.defender.asset;
-      if (combatResult.attackDamage >= defenderAssetHPBefore && targetAssetDef) {
-        dispatchNarrativeEntry(dispatch, 'AssetDestroyed', {
-          ...targetContext,
-          assetName: targetAssetDef.name,
-          result: 'Success',
-          relatedEntityIds: [selectedTargetFactionId, selectedTargetAssetId].filter(Boolean),
-        });
+      if (redirectToBase && defenderBaseOfInfluence) {
+        // Check if Base of Influence was destroyed
+        if (combatResult.attackDamage >= defenderBaseOfInfluence.hp) {
+          dispatchNarrativeEntry(dispatch, 'AssetDestroyed', {
+            ...targetContext,
+            assetName: 'Base of Influence',
+            result: 'Success',
+            relatedEntityIds: [selectedTargetFactionId, defenderBaseOfInfluence.id].filter(Boolean),
+          });
+        }
+      } else {
+        // Check if defending asset was destroyed
+        const defenderAssetHPBefore = hpBefore.defender.asset;
+        if (combatResult.attackDamage >= defenderAssetHPBefore && defenderAssetDefRef) {
+          dispatchNarrativeEntry(dispatch, 'AssetDestroyed', {
+            ...targetContext,
+            assetName: defenderAssetDefRef.name,
+            result: 'Success',
+            relatedEntityIds: [selectedTargetFactionId, selectedDefenderAssetId].filter(Boolean),
+          });
+        }
       }
     }
     
     // If counterattack damaged attacker asset and destroyed it
-    if (hpBefore && combatResult.counterattackDamage > 0 && attackerAssetDef) {
+    if (hpBefore && combatResult.counterattackDamage > 0 && attackerAssetDefRef) {
       const attackerAssetHPBefore = hpBefore.attacker.asset;
       if (combatResult.counterattackDamage >= attackerAssetHPBefore) {
         dispatchNarrativeEntry(dispatch, 'AssetDestroyed', {
           ...actorContext,
-          assetName: attackerAssetDef.name,
+          assetName: attackerAssetDefRef.name,
           result: 'Success',
           relatedEntityIds: [selectedAttackerFactionId, selectedAttackerAssetId].filter(Boolean),
         });
@@ -406,9 +558,10 @@ export default function CombatModal({
     }
     
     // If faction took damage (from overflow or base damage), generate narrative
-    if (hpBefore && targetFaction) {
+    // Note: For Base of Influence, faction damage is handled by the inflictDamage reducer
+    if (hpBefore && targetFactionRef && !redirectToBase) {
       const factionHPBefore = hpBefore.defender.faction;
-      const factionHPAfter = targetFaction.attributes.hp;
+      const factionHPAfter = targetFactionRef.attributes.hp;
       if (factionHPAfter < factionHPBefore) {
         const factionDamage = factionHPBefore - factionHPAfter;
         dispatchNarrativeEntry(dispatch, 'FactionDamaged', {
@@ -425,21 +578,44 @@ export default function CombatModal({
     // that action type with multiple assets
     dispatch(markActionUsed('Attack'));
 
+    // Mark that this specific asset has attacked this turn
+    // Per SWN rules: "Each attacking asset can attack only once per turn"
+    dispatch(markAssetAttacked(selectedAttackerAssetId));
+
     // Call the original onConfirm callback
     onConfirm({
       attackerFactionId: selectedAttackerFactionId,
       attackerAssetId: selectedAttackerAssetId,
       targetFactionId: selectedTargetFactionId,
-      targetAssetId: selectedTargetAssetId,
+      targetAssetId: redirectToBase && defenderBaseOfInfluence ? defenderBaseOfInfluence.id : selectedDefenderAssetId,
       targetSystemId: targetSystemId!,
     });
 
     // Close modal
     setShowAnimation(false);
+    setShowDamageRedirectChoice(false);
     onClose();
   };
 
-  // Can only attack if no other action type has been used this turn
+  // Handle damage redirect choice
+  const handleDamageRedirectChoice = (redirect: boolean) => {
+    setRedirectDamageToBase(redirect);
+    applyDamageAndFinish(redirect);
+  };
+
+  // Can proceed to defender selection phase
+  const canProceedToDefenderSelection =
+    currentPhase === 'Action' &&
+    (!usedActionType || usedActionType === 'Attack') &&
+    selectedAttackerFactionId &&
+    selectedAttackerAssetId &&
+    selectedTargetFactionId &&
+    targetSystemId;
+
+  // Can proceed to preview phase
+  const canProceedToPreview = selectedDefenderAssetId !== '';
+
+  // Can confirm the attack (final phase)
   // Per SWN rules: One action TYPE per turn, but can perform multiple of same type
   const canConfirm =
     currentPhase === 'Action' &&
@@ -447,10 +623,64 @@ export default function CombatModal({
     selectedAttackerFactionId &&
     selectedAttackerAssetId &&
     selectedTargetFactionId &&
-    selectedTargetAssetId &&
-    targetSystemId;
+    selectedDefenderAssetId &&
+    targetSystemId &&
+    combatFlowPhase === 'preview';
 
   if (!isOpen) return null;
+
+  // Show damage redirect choice dialog
+  // Per SWN rules: "If the defender has a Base of Influence on the world, the defender may opt 
+  // to let the damage bypass the asset and hit the Base of Influence instead"
+  if (showDamageRedirectChoice && combatResult && defenderBaseOfInfluence && defenderAssetDef) {
+    return (
+      <div className="combat-modal-overlay">
+        <div className="combat-modal combat-modal-redirect">
+          <div className="combat-modal-header">
+            <h2>Redirect Damage?</h2>
+          </div>
+          <div className="combat-modal-content">
+            <div className="combat-form-section">
+              <div className="form-hint combat-rule-hint">
+                <strong>Per SWN Rules:</strong> The defender may redirect attack damage to their 
+                Base of Influence instead of the defending asset.
+                <br /><br />
+                <strong>Warning:</strong> Damage to a Base of Influence also damages faction HP!
+              </div>
+              <div className="damage-redirect-info">
+                <div className="damage-redirect-row">
+                  <span className="damage-label">Attack Damage:</span>
+                  <span className="damage-value">{combatResult.attackDamage}</span>
+                </div>
+                <div className="damage-redirect-row">
+                  <span className="damage-label">Defending Asset:</span>
+                  <span className="damage-value">{defenderAssetDef.name} (HP: {defenderAsset?.hp}/{defenderAsset?.maxHp})</span>
+                </div>
+                <div className="damage-redirect-row">
+                  <span className="damage-label">Base of Influence:</span>
+                  <span className="damage-value">HP: {defenderBaseOfInfluence.hp}/{defenderBaseOfInfluence.maxHp}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="combat-modal-footer damage-redirect-footer">
+            <button 
+              className="combat-modal-cancel"
+              onClick={() => handleDamageRedirectChoice(false)}
+            >
+              Take Damage to {defenderAssetDef.name}
+            </button>
+            <button 
+              className="combat-modal-confirm combat-redirect-btn"
+              onClick={() => handleDamageRedirectChoice(true)}
+            >
+              Redirect to Base of Influence
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Show animation overlay if combat is resolving
   if (
@@ -460,10 +690,10 @@ export default function CombatModal({
     attackerFaction &&
     targetFaction &&
     attackerAssetDef &&
-    targetAssetDef &&
+    defenderAssetDef &&
     combatPreview &&
     attackerAsset &&
-    targetAsset
+    defenderAsset
   ) {
     // Calculate HP after damage (for animation display)
     // Note: Actual damage application happens after animation via Redux
@@ -492,7 +722,7 @@ export default function CombatModal({
         attackerMaxHp={attackerAsset?.maxHp || 1}
         defenderHpBefore={hpBefore.defender.asset}
         defenderHpAfter={defenderAssetHpAfter}
-        defenderMaxHp={targetAsset?.maxHp || 1}
+        defenderMaxHp={defenderAsset?.maxHp || 1}
         onComplete={handleAnimationComplete}
       />
     );
@@ -556,9 +786,9 @@ export default function CombatModal({
             )}
           </div>
 
-          {/* Target Selection */}
+          {/* Target Faction Selection (Step 1) */}
           <div className="combat-form-section">
-            <h3>Target</h3>
+            <h3>Target Faction</h3>
             {attackerAsset && targetSystem ? (
               <>
                 <div className="form-group">
@@ -575,7 +805,7 @@ export default function CombatModal({
                     id="target-faction"
                     value={selectedTargetFactionId}
                     onChange={(e) => setSelectedTargetFactionId(e.target.value)}
-                    disabled={availableTargetFactions.length === 0}
+                    disabled={availableTargetFactions.length === 0 || combatFlowPhase !== 'attacker-selection'}
                   >
                     <option value="">
                       {availableTargetFactions.length === 0
@@ -589,35 +819,6 @@ export default function CombatModal({
                     ))}
                   </select>
                 </div>
-
-                {selectedTargetFactionId && (
-                  <div className="form-group">
-                    <label htmlFor="target-asset">Target Asset</label>
-                    <select
-                      id="target-asset"
-                      value={selectedTargetAssetId}
-                      onChange={(e) => setSelectedTargetAssetId(e.target.value)}
-                      disabled={availableTargetAssets.length === 0}
-                    >
-                      <option value="">
-                        {availableTargetAssets.length === 0
-                          ? 'No visible assets to target'
-                          : 'Select asset...'}
-                      </option>
-                      {availableTargetAssets.map((asset: FactionAsset) => {
-                        const assetDef = getAssetById(asset.definitionId);
-                        return (
-                          <option key={asset.id} value={asset.id}>
-                            {assetDef?.name || asset.definitionId} (HP: {asset.hp}/{asset.maxHp})
-                          </option>
-                        );
-                      })}
-                    </select>
-                    <div className="form-hint">
-                      Only non-stealthed assets can be targeted
-                    </div>
-                  </div>
-                )}
               </>
             ) : (
               <div className="form-hint">
@@ -626,8 +827,45 @@ export default function CombatModal({
             )}
           </div>
 
-          {/* Combat Preview */}
-          {combatPreview && (
+          {/* Defender Selection (Step 2) - Per SWN rules: Defender chooses which asset defends */}
+          {(combatFlowPhase === 'defender-selection' || combatFlowPhase === 'preview') && selectedTargetFactionId && (
+            <div className="combat-form-section combat-defender-section">
+              <h3>Defender's Choice</h3>
+              <div className="form-hint combat-rule-hint">
+                <strong>Per SWN Rules:</strong> The defending faction chooses which asset will defend against the attack.
+                <br />A defending asset can defend multiple times per turn, assuming it survives.
+              </div>
+              <div className="form-group">
+                <label htmlFor="defender-asset">Defending Asset (Defender's Choice)</label>
+                <select
+                  id="defender-asset"
+                  value={selectedDefenderAssetId}
+                  onChange={(e) => setSelectedDefenderAssetId(e.target.value)}
+                  disabled={availableDefenderAssets.length === 0 || combatFlowPhase === 'preview'}
+                >
+                  <option value="">
+                    {availableDefenderAssets.length === 0
+                      ? 'No visible assets to defend'
+                      : 'Select defending asset...'}
+                  </option>
+                  {availableDefenderAssets.map((asset: FactionAsset) => {
+                    const assetDef = getAssetById(asset.definitionId);
+                    return (
+                      <option key={asset.id} value={asset.id}>
+                        {assetDef?.name || asset.definitionId} (HP: {asset.hp}/{asset.maxHp})
+                      </option>
+                    );
+                  })}
+                </select>
+                <div className="form-hint">
+                  Only non-stealthed assets can defend. Newly purchased assets CAN defend.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Combat Preview - Only shown in preview phase */}
+          {combatPreview && combatFlowPhase === 'preview' && (
             <div className="combat-preview-section">
               <h3>Combat Preview</h3>
               <div className="combat-preview-grid">
@@ -674,17 +912,52 @@ export default function CombatModal({
               Combat can only be initiated during the Action phase. Current phase: {currentPhase}
             </div>
           )}
-          <button className="combat-modal-cancel" onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            className="combat-modal-confirm"
-            onClick={handleConfirm}
-            disabled={!canConfirm}
-            title={currentPhase !== 'Action' ? 'Combat can only be initiated during the Action phase' : ''}
-          >
-            Confirm Attack
-          </button>
+          {usedActionType && usedActionType !== 'Attack' && (
+            <div className="combat-phase-warning">
+              Already used {usedActionType} action this turn (one action type per turn)
+            </div>
+          )}
+          
+          {/* Cancel / Back button */}
+          {combatFlowPhase === 'attacker-selection' ? (
+            <button className="combat-modal-cancel" onClick={onClose}>
+              Cancel
+            </button>
+          ) : (
+            <button className="combat-modal-cancel" onClick={handleGoBack}>
+              ← Back
+            </button>
+          )}
+
+          {/* Forward / Confirm button */}
+          {combatFlowPhase === 'attacker-selection' && (
+            <button
+              className="combat-modal-confirm"
+              onClick={handleProceedToDefenderSelection}
+              disabled={!canProceedToDefenderSelection}
+              title={currentPhase !== 'Action' ? 'Combat can only be initiated during the Action phase' : ''}
+            >
+              Proceed to Defender Selection →
+            </button>
+          )}
+          {combatFlowPhase === 'defender-selection' && (
+            <button
+              className="combat-modal-confirm"
+              onClick={handleProceedToPreview}
+              disabled={!canProceedToPreview}
+            >
+              Preview Combat →
+            </button>
+          )}
+          {combatFlowPhase === 'preview' && (
+            <button
+              className="combat-modal-confirm"
+              onClick={handleConfirm}
+              disabled={!canConfirm}
+            >
+              Confirm Attack
+            </button>
+          )}
         </div>
       </div>
     </div>

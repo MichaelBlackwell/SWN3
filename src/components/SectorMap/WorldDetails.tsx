@@ -25,6 +25,7 @@ import { inflictDamage, addAsset } from '../../store/slices/factionsSlice';
 import { resolveCombat } from '../../utils/combatResolver';
 import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromTargetFaction, createNarrativeContextFromSystem } from '../../utils/narrativeHelpers';
 import ExpandInfluenceButton from '../FactionManager/ExpandInfluenceButton';
+import SeizePlanetModal from '../FactionManager/SeizePlanetModal';
 import { getWorldEconomicProfile } from '../../services/worldGenerator';
 import { getSystemTradeInfo } from '../../services/tradeRouteGenerator';
 import { tutorialEventOccurred } from '../../store/slices/tutorialSlice';
@@ -171,6 +172,8 @@ export default function WorldDetails() {
   const movementMode = useSelector(selectMovementMode);
   const [storeFactionId, setStoreFactionId] = useState<string | null>(null);
   const [storeLocationId, setStoreLocationId] = useState<string | null>(null);
+  const [showSeizePlanetModal, setShowSeizePlanetModal] = useState(false);
+  const [seizePlanetSystemId, setSeizePlanetSystemId] = useState<string | null>(null);
 
   // Focus management for accessibility
   useEffect(() => {
@@ -973,6 +976,39 @@ export default function WorldDetails() {
                           />
                         </div>
                       )}
+
+                      {/* Seize Planet Button - only for selected faction with assets here */}
+                      {isSelectedFactionHomeworld && (
+                        <div style={{ marginTop: '10px' }}>
+                          <button
+                            onClick={() => {
+                              setSeizePlanetSystemId(system.id);
+                              setShowSeizePlanetModal(true);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '8px 12px',
+                              background: faction.seizePlanetCampaign?.targetSystemId === system.id
+                                ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                                : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                              border: 'none',
+                              borderRadius: '6px',
+                              color: '#fff',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                            }}
+                            title={faction.seizePlanetCampaign?.targetSystemId === system.id
+                              ? 'View seizure campaign progress'
+                              : 'Begin campaign to seize this planet'}
+                          >
+                            {faction.seizePlanetCampaign?.targetSystemId === system.id
+                              ? `⚔️ Seizure: ${faction.seizePlanetCampaign.phase === 'clearing' ? 'Clearing' : `Holding (${faction.seizePlanetCampaign.turnsHeld}/3)`}`
+                              : '⚔️ Seize Planet'}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -1610,6 +1646,19 @@ export default function WorldDetails() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Seize Planet Modal */}
+      {showSeizePlanetModal && seizePlanetSystemId && selectedFactionId && (
+        <SeizePlanetModal
+          isOpen={showSeizePlanetModal}
+          onClose={() => {
+            setShowSeizePlanetModal(false);
+            setSeizePlanetSystemId(null);
+          }}
+          factionId={selectedFactionId}
+          systemId={seizePlanetSystemId}
+        />
       )}
     </>
   );

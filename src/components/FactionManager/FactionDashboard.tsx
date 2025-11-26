@@ -7,6 +7,9 @@ import type { FactionTag } from '../../types/faction';
 import AssetList from './AssetList';
 import AssetCardCompact from './AssetCardCompact';
 import RepairModal from './RepairModal';
+import SellAssetModal from './SellAssetModal';
+import RefitAssetModal from './RefitAssetModal';
+import ChangeHomeworldModal from './ChangeHomeworldModal';
 import ExpandInfluenceButton from './ExpandInfluenceButton';
 import FactionGoalsTab from './FactionGoalsTab';
 import { stageActionWithPayload, cancelMovementMode, selectCanStageAction, selectMovementMode } from '../../store/slices/turnSlice';
@@ -35,6 +38,11 @@ const FactionDashboard = forwardRef<FactionDashboardRef, FactionDashboardProps>(
 }, ref) => {
   const [isAssetStoreOpen, setIsAssetStoreOpen] = useState(false);
   const [showRepairModal, setShowRepairModal] = useState(false);
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [sellAssetId, setSellAssetId] = useState<string | null>(null);
+  const [showRefitModal, setShowRefitModal] = useState(false);
+  const [refitAssetId, setRefitAssetId] = useState<string | null>(null);
+  const [showChangeHomeworldModal, setShowChangeHomeworldModal] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const dispatch = useDispatch();
   const factions = useSelector((state: RootState) => state.factions.factions);
@@ -120,6 +128,34 @@ const FactionDashboard = forwardRef<FactionDashboardRef, FactionDashboardProps>(
     showNotification('Repair action staged. Commit to execute.', 'info');
   };
 
+  const handleOpenSellModal = (assetId: string) => {
+    setSellAssetId(assetId);
+    setShowSellModal(true);
+  };
+
+  const handleCloseSellModal = () => {
+    setShowSellModal(false);
+    setSellAssetId(null);
+  };
+
+  const handleOpenRefitModal = (assetId: string) => {
+    setRefitAssetId(assetId);
+    setShowRefitModal(true);
+  };
+
+  const handleCloseRefitModal = () => {
+    setShowRefitModal(false);
+    setRefitAssetId(null);
+  };
+
+  const handleOpenChangeHomeworldModal = () => {
+    setShowChangeHomeworldModal(true);
+  };
+
+  const handleCloseChangeHomeworldModal = () => {
+    setShowChangeHomeworldModal(false);
+  };
+
   const handleOpenAssetStore = useCallback(() => {
     setIsAssetStoreOpen(true);
     dispatch(tutorialEventOccurred({ eventId: 'assetTutorial.openStore' }));
@@ -189,6 +225,30 @@ const FactionDashboard = forwardRef<FactionDashboardRef, FactionDashboardProps>(
               <div className="resource-label">FacCreds</div>
               <div className="resource-value">{faction.facCreds}</div>
             </div>
+          </div>
+
+          <div className="dashboard-section">
+            <h3>Homeworld</h3>
+            <div className="dashboard-homeworld">
+              <div className="homeworld-name">{getSystemName(faction.homeworld)}</div>
+              {faction.homeworldTransition && (
+                <div className="homeworld-transition-badge">
+                  Relocating ({faction.homeworldTransition.turnsRemaining} turns left)
+                </div>
+              )}
+            </div>
+            {canStageAction && factionId && (
+              <div className="dashboard-actions">
+                <button
+                  className="change-homeworld-btn"
+                  onClick={handleOpenChangeHomeworldModal}
+                  title="Change faction homeworld (requires Base of Influence on destination)"
+                  disabled={!!faction.homeworldTransition}
+                >
+                  {faction.homeworldTransition ? 'Relocating...' : 'Change Homeworld'}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="dashboard-section">
@@ -275,6 +335,8 @@ const FactionDashboard = forwardRef<FactionDashboardRef, FactionDashboardProps>(
                     key={asset.id}
                     asset={asset}
                     systemName={getSystemName(asset.location)}
+                    onSell={handleOpenSellModal}
+                    onRefit={handleOpenRefitModal}
                   />
                 ))}
               </div>
@@ -322,6 +384,29 @@ const FactionDashboard = forwardRef<FactionDashboardRef, FactionDashboardProps>(
           factionId={factionId}
           onClose={() => setShowRepairModal(false)}
           onConfirm={handleRepairConfirm}
+        />
+      )}
+      {showSellModal && factionId && sellAssetId && (
+        <SellAssetModal
+          isOpen={showSellModal}
+          onClose={handleCloseSellModal}
+          factionId={factionId}
+          assetId={sellAssetId}
+        />
+      )}
+      {showRefitModal && factionId && refitAssetId && (
+        <RefitAssetModal
+          isOpen={showRefitModal}
+          onClose={handleCloseRefitModal}
+          factionId={factionId}
+          assetId={refitAssetId}
+        />
+      )}
+      {showChangeHomeworldModal && factionId && (
+        <ChangeHomeworldModal
+          isOpen={showChangeHomeworldModal}
+          onClose={handleCloseChangeHomeworldModal}
+          factionId={factionId}
         />
       )}
       {isAssetStoreOpen && factionId && (

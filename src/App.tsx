@@ -21,8 +21,10 @@ import { returnToMenu, setPlayerFaction } from './store/slices/gameModeSlice';
 import { startTutorialModule } from './store/slices/tutorialSlice';
 import FactionSelectionModal from './components/FactionSelectionModal/FactionSelectionModal';
 import { Encyclopedia } from './components/Encyclopedia';
+import VictoryModal from './components/VictoryModal';
 import { generateRandomFactionForSystem } from './services/factionGenerator';
 import { useGameMusic, useAudio } from './hooks/useAudio';
+import { resetGameState } from './store/slices/gameStateSlice';
 import './App.css';
 import './styles/layout.css';
 import './components/AppHeader.css';
@@ -128,6 +130,7 @@ function App() {
       // Clear existing data
       dispatch(clearAllFactions());
       dispatch(resetTurnState());
+      dispatch(resetGameState());
       
       // Generate new sector and factions with scenario config
       const { sector: newSector, factions: newFactions } = generateSectorWithConfig(currentScenario);
@@ -156,8 +159,9 @@ function App() {
     const newSector = generateSector();
     dispatch(setSector(newSector));
     
-    // Reset turn state
+    // Reset turn state and game state
     dispatch(resetTurnState());
+    dispatch(resetGameState());
     
     // Create 2 test factions using template-based generation
     if (newSector.systems.length > 0) {
@@ -302,6 +306,7 @@ function App() {
         </div>
       </div>
       <TutorialManager />
+      <VictoryModal />
       <SystemOptionsMenu
         isOpen={isSystemMenuOpen}
         onClose={() => setIsSystemMenuOpen(false)}

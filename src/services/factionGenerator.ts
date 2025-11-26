@@ -15,6 +15,92 @@ interface FactionTemplate {
   suitability?: (system: StarSystem) => boolean;
 }
 
+type AttributeFocus = 'force' | 'cunning' | 'wealth';
+
+const ATTRIBUTE_PRESETS: Record<AttributeFocus, Pick<FactionAttributes, 'force' | 'cunning' | 'wealth'>> = {
+  force: { force: 2, cunning: 1, wealth: 1 },
+  cunning: { force: 1, cunning: 2, wealth: 1 },
+  wealth: { force: 1, cunning: 1, wealth: 2 }
+};
+
+const DEFAULT_LEVEL_ONE_ASSETS: Record<AttributeFocus, string> = {
+  force: 'force_1_security_personnel',
+  cunning: 'cunning_1_informers',
+  wealth: 'wealth_1_harvesters'
+};
+
+const TAG_FOCUS_OVERRIDES: Partial<Record<FactionTag, AttributeFocus>> = {
+  Warlike: 'force',
+  'Mercenary Group': 'force',
+  Imperialists: 'force',
+  Pirates: 'force',
+  Savage: 'force',
+  Fanatical: 'force',
+  'Planetary Government': 'force',
+  Secretive: 'cunning',
+  Machiavellian: 'cunning',
+  'Perimeter Agency': 'cunning',
+  'Psychic Academy': 'cunning',
+  Theocratic: 'cunning',
+  'Preceptor Archive': 'cunning',
+  Colonists: 'wealth',
+  'Deep Rooted': 'wealth',
+  Plutocratic: 'wealth',
+  'Exchange Consulate': 'wealth',
+  'Technical Expertise': 'wealth'
+};
+
+const TYPE_FOCUS_OVERRIDES: Partial<Record<FactionType, AttributeFocus>> = {
+  Government: 'force',
+  Corporation: 'wealth',
+  Religion: 'cunning',
+  'Criminal Organization': 'cunning',
+  'Mercenary Group': 'force',
+  'Rebel Movement': 'force',
+  'Eugenics Cult': 'force',
+  Colony: 'wealth',
+  'Regional Hegemon': 'force',
+  Other: 'cunning'
+};
+
+const LEVEL_ONE_PATTERN = /_1_/;
+
+function pickAttributeFocus(template: FactionTemplate): AttributeFocus {
+  const { force, cunning, wealth } = template.attributes;
+  const highest = Math.max(force, cunning, wealth);
+  const candidates: AttributeFocus[] = [];
+
+  if (force === highest) candidates.push('force');
+  if (cunning === highest) candidates.push('cunning');
+  if (wealth === highest) candidates.push('wealth');
+
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
+
+  for (const tag of template.tags) {
+    const tagFocus = TAG_FOCUS_OVERRIDES[tag];
+    if (tagFocus && candidates.includes(tagFocus)) {
+      return tagFocus;
+    }
+  }
+
+  const typeFocus = TYPE_FOCUS_OVERRIDES[template.type];
+  if (typeFocus && candidates.includes(typeFocus)) {
+    return typeFocus;
+  }
+
+  return candidates[0];
+}
+
+function selectLevelOneAsset(template: FactionTemplate, focus: AttributeFocus): string {
+  const existingLevelOne = template.assets.find(asset => LEVEL_ONE_PATTERN.test(asset.id));
+  if (existingLevelOne) {
+    return existingLevelOne.id;
+  }
+  return DEFAULT_LEVEL_ONE_ASSETS[focus];
+}
+
 const FACTION_TEMPLATES: Record<string, FactionTemplate> = {
   // ============================================================================
   // TIER 1: WEAK FACTIONS (HP 15, Low Resources)
@@ -896,6 +982,21 @@ const FACTION_TEMPLATES: Record<string, FactionTemplate> = {
   }
 };
 
+Object.values(FACTION_TEMPLATES).forEach((template) => {
+  const { hp, maxHp } = template.attributes;
+  const focus = pickAttributeFocus(template);
+  template.attributes = {
+    hp,
+    maxHp,
+    ...ATTRIBUTE_PRESETS[focus]
+  };
+  template.assets = [
+    {
+      id: selectLevelOneAsset(template, focus)
+    }
+  ];
+});
+
 /**
  * Generate a faction based on a template name and starting system
  */
@@ -927,6 +1028,16 @@ export function generateFactionFromTemplate(
   // Create assets
   const factionAssets: FactionAsset[] = [];
   
+  // All factions start with a Base of Influence (20 HP) on their homeworld
+  factionAssets.push({
+    id: crypto.randomUUID(),
+    definitionId: 'base_of_influence',
+    location: homeworld.id,
+    hp: 20,
+    maxHp: 20,
+    stealthed: false
+  });
+  
   template.assets.forEach(assetItem => {
     const assetDef = getAssetById(assetItem.id);
     if (assetDef) {
@@ -944,37 +1055,13 @@ export function generateFactionFromTemplate(
     }
   });
 
-  // Add Base of Influence (all factions need one on their homeworld usually, 
-  // though the prompt didn't explicitly list it in the assets, it's implied for functionality in many SWN games. 
-  // However, looking at the specific examples, they list assets. 
-  // I will stick strictly to the prompt's list for now, but in a real game context, a base of influence is often required.)
-  // Checking standard rules: Factions usually start with a Base of Influence.
-  // I'll check if the existing code assumes a base of influence.
-  // In src/data/assetLibrary.ts there is a 'base_of_influence' handling.
-  // I'll add it to be safe as it's usually fundamental.
-  const boiDef = getAssetById('base_of_influence');
-  if (boiDef) {
-     factionAssets.push({
-        id: crypto.randomUUID(),
-        definitionId: 'base_of_influence',
-        location: homeworld.id,
-        hp: template.attributes.hp, // BoI usually shares HP logic or is distinct? In SWN Revised, BoI HP = Faction HP usually?
-        // Actually BoI HP is usually equal to the faction's HP in some rule variants or tracks faction health.
-        // In this codebase's `getAssetById` for 'base_of_influence', it says "HP is set dynamically when created".
-        // Let's assume standard SWN rules where losing BoI is bad.
-        // For now, let's set it to a reasonable default or matching faction HP.
-        maxHp: template.attributes.hp,
-        stealthed: false
-     });
-  }
-
   return {
     id: crypto.randomUUID(),
     name: factionName,
     type: template.type,
     homeworld: homeworld.id,
     attributes: { ...template.attributes },
-    facCreds: 10, // Default starting credits? Prompt says Wealth attribute, but doesn't specify current credits.
+    facCreds: 5,
     xp: 0, // Experience points start at 0
     tags: [...template.tags],
     goal: null, // To be determined by AI or user

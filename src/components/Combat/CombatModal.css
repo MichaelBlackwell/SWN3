@@ -222,6 +222,81 @@
   text-align: center;
 }
 
+/* Defender selection section - highlighted to show it's the defender's choice */
+.combat-defender-section {
+  background-color: rgba(var(--accent-primary-rgb, 74, 158, 255), 0.1);
+  border: 1px solid var(--accent-primary, #4a9eff);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.combat-defender-section h3 {
+  color: var(--accent-primary, #4a9eff);
+  border-bottom-color: var(--accent-primary, #4a9eff);
+}
+
+/* Rule hint styling for important game rules */
+.combat-rule-hint {
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid #ff9800;
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+.combat-rule-hint strong {
+  color: #ff9800;
+}
+
+/* Damage redirect choice styling */
+.combat-modal-redirect {
+  max-width: 500px;
+}
+
+.damage-redirect-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+.damage-redirect-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.damage-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.damage-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.damage-redirect-footer {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.damage-redirect-footer button {
+  width: 100%;
+}
+
+.combat-redirect-btn {
+  background-color: #ff9800 !important;
+}
+
+.combat-redirect-btn:hover:not(:disabled) {
+  background-color: #f57c00 !important;
+}
+
 @media (max-width: 768px) {
   .combat-modal {
     max-width: 100%;

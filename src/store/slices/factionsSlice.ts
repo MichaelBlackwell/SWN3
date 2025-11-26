@@ -250,6 +250,50 @@ const factionsSlice = createSlice({
       // Update the asset with provided fields
       Object.assign(asset, updates);
     },
+    /**
+     * Refit an asset to a different asset of the same category
+     * Per SWN rules:
+     * - Pay the price difference if the new asset is more expensive
+     * - No refund if downgrading to a cheaper asset
+     * - The refitted asset cannot act until the faction's next turn
+     */
+    refitAsset: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        assetId: string;
+        newAssetDefinitionId: string;
+        cost: number; // Pre-calculated cost (difference in price)
+        currentTurn: number;
+      }>
+    ) => {
+      const { factionId, assetId, newAssetDefinitionId, cost, currentTurn } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      const asset = faction.assets.find((a) => a.id === assetId);
+      if (!asset) return;
+
+      const newAssetDef = getAssetById(newAssetDefinitionId);
+      if (!newAssetDef) return;
+
+      // Deduct cost from faction credits
+      if (cost > 0) {
+        faction.facCreds -= cost;
+      }
+
+      // Update the asset to the new type
+      asset.definitionId = newAssetDefinitionId;
+      asset.hp = newAssetDef.hp; // Reset to new max HP (definition hp = max hp)
+      asset.maxHp = newAssetDef.hp;
+      asset.refittedTurn = currentTurn; // Mark as refitted this turn (can't act)
+      asset.stealthed = false; // Refit removes stealth
+
+      // Clean up failed maintenance tracking for this asset
+      if (state.assetsFailedMaintenance[assetId]) {
+        delete state.assetsFailedMaintenance[assetId];
+      }
+    },
     moveAsset: (
       state,
       action: PayloadAction<{
@@ -821,7 +865,7 @@ const factionsSlice = createSlice({
         }
       }
     },
-    // Change a faction's homeworld
+    // Change a faction's homeworld (immediate - used internally)
     // This has special implications for tags like 'Deep Rooted' which is lost
     // if the faction ever changes homeworld
     changeHomeworld: (
@@ -848,6 +892,170 @@ const factionsSlice = createSlice({
       if (deepRootedIndex !== -1) {
         faction.tags.splice(deepRootedIndex, 1);
       }
+
+      // Clear any transition state
+      faction.homeworldTransition = undefined;
+    },
+    /**
+     * Start a multi-turn homeworld transition
+     * Per SWN: Takes 1 turn + 1 turn per hex of distance
+     * Faction cannot take any other actions during this time
+     */
+    startHomeworldTransition: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        targetSystemId: string;
+        turnsRequired: number;
+        currentTurn: number;
+      }>
+    ) => {
+      const { factionId, targetSystemId, turnsRequired, currentTurn } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      // Don't allow starting if already in transition
+      if (faction.homeworldTransition) return;
+
+      // Set up the transition
+      faction.homeworldTransition = {
+        targetSystemId,
+        turnsRemaining: turnsRequired,
+        startedTurn: currentTurn,
+      };
+    },
+    /**
+     * Process homeworld transitions at the start of each turn
+     * Decrements turns remaining and completes the transition when done
+     */
+    processHomeworldTransitions: (state) => {
+      state.factions.forEach((faction) => {
+        if (!faction.homeworldTransition) return;
+
+        // Decrement turns remaining
+        faction.homeworldTransition.turnsRemaining -= 1;
+
+        // If transition is complete, update the homeworld
+        if (faction.homeworldTransition.turnsRemaining <= 0) {
+          const newHomeworldId = faction.homeworldTransition.targetSystemId;
+
+          // Update the homeworld
+          faction.homeworld = newHomeworldId;
+
+          // Deep Rooted tag is lost when homeworld changes (per SWN rules)
+          const deepRootedIndex = faction.tags.indexOf('Deep Rooted');
+          if (deepRootedIndex !== -1) {
+            faction.tags.splice(deepRootedIndex, 1);
+          }
+
+          // Clear the transition
+          faction.homeworldTransition = undefined;
+        }
+      });
+    },
+    /**
+     * Cancel an in-progress homeworld transition
+     */
+    cancelHomeworldTransition: (
+      state,
+      action: PayloadAction<{ factionId: string }>
+    ) => {
+      const faction = state.factions.find((f) => f.id === action.payload.factionId);
+      if (!faction) return;
+
+      faction.homeworldTransition = undefined;
+    },
+    /**
+     * Start a Seize Planet campaign
+     * Per SWN: Faction must clear all enemy unstealthed assets, then hold for 3 turns
+     */
+    startSeizePlanetCampaign: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        targetSystemId: string;
+        currentTurn: number;
+        skipClearing?: boolean; // If true, start in holding phase (planet already clear)
+      }>
+    ) => {
+      const { factionId, targetSystemId, currentTurn, skipClearing } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      // Don't allow starting if already in a campaign
+      if (faction.seizePlanetCampaign) return;
+
+      // Set up the campaign
+      faction.seizePlanetCampaign = {
+        targetSystemId,
+        phase: skipClearing ? 'holding' : 'clearing',
+        turnsHeld: 0,
+        startedTurn: currentTurn,
+      };
+    },
+    /**
+     * Advance seize planet campaign to holding phase
+     */
+    advanceSeizureToHolding: (
+      state,
+      action: PayloadAction<{ factionId: string }>
+    ) => {
+      const faction = state.factions.find((f) => f.id === action.payload.factionId);
+      if (!faction || !faction.seizePlanetCampaign) return;
+
+      if (faction.seizePlanetCampaign.phase === 'clearing') {
+        faction.seizePlanetCampaign.phase = 'holding';
+        faction.seizePlanetCampaign.turnsHeld = 0;
+      }
+    },
+    /**
+     * Process seize planet campaigns at the start of each turn
+     * Increments turns held for campaigns in holding phase
+     */
+    processSeizePlanetCampaigns: (state) => {
+      state.factions.forEach((faction) => {
+        if (!faction.seizePlanetCampaign) return;
+
+        // Only increment turns held if in holding phase
+        if (faction.seizePlanetCampaign.phase === 'holding') {
+          faction.seizePlanetCampaign.turnsHeld += 1;
+        }
+      });
+    },
+    /**
+     * Complete a seize planet campaign (grants Planetary Government tag)
+     */
+    completeSeizePlanetCampaign: (
+      state,
+      action: PayloadAction<{ factionId: string; targetSystemId: string }>
+    ) => {
+      const { factionId, targetSystemId: _targetSystemId } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction || !faction.seizePlanetCampaign) return;
+
+      // Remove Planetary Government tag from any other faction that has it for this system
+      // (In a full implementation, we'd track which system each PG tag applies to)
+      // For now, we just add the tag to the conquering faction
+
+      // Add Planetary Government tag if not already present
+      if (!faction.tags.includes('Planetary Government')) {
+        faction.tags.push('Planetary Government');
+      }
+
+      // Clear the campaign
+      faction.seizePlanetCampaign = undefined;
+    },
+    /**
+     * Cancel/fail a seize planet campaign
+     */
+    cancelSeizePlanetCampaign: (
+      state,
+      action: PayloadAction<{ factionId: string }>
+    ) => {
+      const faction = state.factions.find((f) => f.id === action.payload.factionId);
+      if (!faction) return;
+
+      faction.seizePlanetCampaign = undefined;
     },
   },
 });
@@ -862,6 +1070,7 @@ export const {
   addAsset,
   removeAsset,
   updateAsset,
+  refitAsset,
   moveAsset,
   processIncomePhase,
   processMaintenancePhase,
@@ -881,7 +1090,17 @@ export const {
   addFactionTag,
   removeFactionTag,
   setPlanetaryGovernmentStatus,
+  // Homeworld management
   changeHomeworld,
+  startHomeworldTransition,
+  processHomeworldTransitions,
+  cancelHomeworldTransition,
+  // Seize Planet management
+  startSeizePlanetCampaign,
+  advanceSeizureToHolding,
+  processSeizePlanetCampaigns,
+  completeSeizePlanetCampaign,
+  cancelSeizePlanetCampaign,
 } = factionsSlice.actions;
 export default factionsSlice.reducer;
 

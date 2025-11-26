@@ -76,6 +76,12 @@
   gap: var(--spacing-2);
 }
 
+.asset-item-actions {
+  display: flex;
+  gap: var(--spacing-1);
+  flex-shrink: 0;
+}
+
 .asset-ability-btn {
   padding: var(--spacing-1) var(--spacing-3);
   background-color: #9b59b6;
@@ -107,6 +113,31 @@
 
 .asset-ability-btn.free-action:hover:not(:disabled) {
   background-color: #229954;
+}
+
+.asset-sell-btn {
+  padding: var(--spacing-1) var(--spacing-2);
+  background-color: #d4a574;
+  color: #1a1a1a;
+  border: none;
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.asset-sell-btn:hover:not(:disabled) {
+  background-color: #c17f59;
+}
+
+.asset-sell-btn:disabled {
+  background-color: #555;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .owned-asset-special-features {

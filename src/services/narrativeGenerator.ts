@@ -18,6 +18,11 @@ export type ActionType =
   | 'Maintenance'
   | 'AssetDestroyed'
   | 'FactionDamaged'
+  | 'ChangeHomeworld'
+  | 'Refit'
+  | 'SeizePlanet'
+  | 'SeizePlanetComplete'
+  | 'Sell'
   | 'Unknown';
 
 /**
@@ -39,6 +44,12 @@ export interface NarrativeContext {
   actorTags?: FactionTag[]; // Tags of the faction performing the action
   targetTags?: FactionTag[]; // Tags of the target faction
   worldTags?: string[]; // World tags of the system/location where action occurs
+  // Extended properties for specific actions
+  oldHomeworldName?: string; // For ChangeHomeworld action
+  newHomeworldName?: string; // For ChangeHomeworld action
+  turnsRequired?: number; // For ChangeHomeworld action
+  phase?: string; // For SeizePlanet action
+  enemyAssetCount?: number; // For SeizePlanet action
 }
 
 /**
@@ -400,6 +411,56 @@ const narrativeTemplates: Record<
       '{TargetName} was damaged',
     ],
   },
+  ChangeHomeworld: {
+    Success: [
+      '{ActorName} relocated their headquarters to {SystemName}',
+      '{ActorName} established a new homeworld at {SystemName}',
+      '{ActorName} moved their center of operations to {SystemName}',
+    ],
+    default: [
+      '{ActorName} changed their homeworld',
+    ],
+  },
+  Refit: {
+    Success: [
+      '{ActorName} refitted {AssetName} into a new configuration',
+      '{ActorName} upgraded {AssetName}',
+      '{AssetName} was transformed through refit operations',
+    ],
+    default: [
+      '{ActorName} refitted an asset',
+    ],
+  },
+  SeizePlanet: {
+    Success: [
+      '{ActorName} began a campaign to seize control of {SystemName}',
+      '{ActorName} initiated planetary seizure operations at {SystemName}',
+      '{ActorName} launched a takeover of {SystemName}',
+    ],
+    default: [
+      '{ActorName} started a planetary seizure campaign',
+    ],
+  },
+  SeizePlanetComplete: {
+    Success: [
+      '{ActorName} successfully seized control of {SystemName}',
+      '{ActorName} completed their conquest of {SystemName}',
+      '{SystemName} fell under {ActorName} control',
+    ],
+    default: [
+      '{ActorName} completed a planetary seizure',
+    ],
+  },
+  Sell: {
+    Success: [
+      '{ActorName} sold {AssetName} for {Credits} FacCreds',
+      '{ActorName} liquidated {AssetName}',
+      '{AssetName} was sold by {ActorName}',
+    ],
+    default: [
+      '{ActorName} sold an asset',
+    ],
+  },
   Unknown: {
     default: [
       '{ActorName} performed an action',
@@ -459,15 +520,20 @@ function getLogType(actionType: ActionType): NarrativeLogType {
     case 'Attack':
     case 'AssetDestroyed':
     case 'FactionDamaged':
+    case 'SeizePlanet':
+    case 'SeizePlanetComplete':
       return 'combat';
     case 'Buy':
     case 'Income':
     case 'Maintenance':
+    case 'Sell':
       return 'economic';
     case 'Move':
     case 'ExpandInfluence':
+    case 'ChangeHomeworld':
       return 'movement';
     case 'UseAbility':
+    case 'Refit':
       return 'general';
     case 'Repair':
       return 'system';

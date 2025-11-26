@@ -76,6 +76,28 @@ export interface FactionAsset {
   maxHp: number; // Maximum hit points
   stealthed: boolean; // Whether asset is hidden
   purchasedTurn?: number; // Optional: track when purchased for turn-based rules
+  refittedTurn?: number; // Optional: track when refitted (asset can't act until next turn)
+}
+
+/**
+ * State for a multi-turn homeworld transition
+ * During transition, the faction cannot take any other actions
+ */
+export interface HomeworldTransition {
+  targetSystemId: string; // Destination system
+  turnsRemaining: number; // Turns left until transition completes
+  startedTurn: number; // Turn when transition began
+}
+
+/**
+ * State for a multi-turn Seize Planet campaign
+ * During seizure, the faction must continue attacking until complete or withdraw
+ */
+export interface SeizePlanetCampaign {
+  targetSystemId: string; // Planet being seized
+  phase: 'clearing' | 'holding'; // Current phase of seizure
+  turnsHeld: number; // Turns held after clearing (need 3 to complete)
+  startedTurn: number; // Turn when seizure began
 }
 
 export interface Faction {
@@ -90,5 +112,8 @@ export interface Faction {
   tags: FactionTag[];
   goal: FactionGoal | null; // Current active goal (factions pursue one goal at a time per SWN rules)
   assets: FactionAsset[];
+  // Multi-turn action states
+  homeworldTransition?: HomeworldTransition; // Active homeworld change
+  seizePlanetCampaign?: SeizePlanetCampaign; // Active planet seizure
 }
 

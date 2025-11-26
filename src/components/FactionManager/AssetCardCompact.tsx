@@ -8,9 +8,11 @@ interface AssetCardCompactProps {
   asset: FactionAsset;
   systemName: string;
   onClick?: () => void;
+  onSell?: (assetId: string) => void;
+  onRefit?: (assetId: string) => void;
 }
 
-export default function AssetCardCompact({ asset, systemName, onClick }: AssetCardCompactProps) {
+export default function AssetCardCompact({ asset, systemName, onClick, onSell, onRefit }: AssetCardCompactProps) {
   const assetDef = getAssetById(asset.definitionId);
   
   if (!assetDef) {
@@ -87,6 +89,36 @@ export default function AssetCardCompact({ asset, systemName, onClick }: AssetCa
       {specialFeatures.length > 0 && (
         <div className="asset-card-compact__badge">
           ⚡ {specialFeatures.length} Special
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      {(onSell || onRefit) && (
+        <div className="asset-card-compact__actions">
+          {onRefit && (
+            <button
+              className="asset-card-compact__refit-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRefit(asset.id);
+              }}
+              title="Transform this asset into a different asset of the same category"
+            >
+              Refit
+            </button>
+          )}
+          {onSell && (
+            <button
+              className="asset-card-compact__sell-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSell(asset.id);
+              }}
+              title={`Sell for ${Math.floor(assetDef.cost / 2)} FacCreds`}
+            >
+              Sell ({Math.floor(assetDef.cost / 2)} FC)
+            </button>
+          )}
         </div>
       )}
     </div>

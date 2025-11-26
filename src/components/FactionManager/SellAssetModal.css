@@ -1,0 +1,207 @@
+.sell-asset-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.sell-asset-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+  border: 1px solid #3a3a5a;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.sell-asset-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #3a3a5a;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sell-asset-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sell-asset-modal-close {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.sell-asset-modal-close:hover {
+  color: #fff;
+}
+
+.sell-asset-modal-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sell-asset-info {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #3a3a5a;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.sell-asset-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.sell-asset-category {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.sell-asset-location,
+.sell-asset-hp {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+.sell-asset-transaction {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #3a3a5a;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.sell-transaction-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.sell-transaction-label {
+  color: #888;
+}
+
+.sell-transaction-value {
+  color: #ddd;
+  font-weight: 500;
+}
+
+.sell-transaction-highlight {
+  background: rgba(78, 205, 196, 0.1);
+  margin: 4px -14px;
+  padding: 10px 14px;
+  border-radius: 4px;
+}
+
+.sell-refund-amount {
+  color: #4ecdc4 !important;
+  font-weight: 600 !important;
+  font-size: 15px;
+}
+
+.sell-transaction-new-balance {
+  border-top: 1px solid #3a3a5a;
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.sell-transaction-new-balance .sell-transaction-value {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sell-asset-warning {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #ff8080;
+}
+
+.sell-asset-warning strong {
+  color: #ff6b6b;
+}
+
+.sell-asset-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #3a3a5a;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sell-phase-warning {
+  flex: 1;
+  font-size: 11px;
+  color: #ff8080;
+  text-align: left;
+}
+
+.sell-asset-modal-cancel {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #aaa;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sell-asset-modal-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #777;
+  color: #fff;
+}
+
+.sell-asset-modal-confirm {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #d4a574 0%, #c17f59 100%);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sell-asset-modal-confirm:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e0b080 0%, #cc8a65 100%);
+  transform: translateY(-1px);
+}
+
+.sell-asset-modal-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+

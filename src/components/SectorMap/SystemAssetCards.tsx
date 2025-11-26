@@ -11,7 +11,8 @@ import { FACTION_TAG_METADATA } from '../../data/factionTagMetadata';
 import TagBadge from '../common/TagBadge';
 import AssetStoreModal from './AssetStoreModal';
 import { BASE_OF_INFLUENCE_ID } from '../../utils/expandInfluence';
-import { selectCanStageAction, selectMovementMode, stageAction, markActionUsed, stageActionWithPayload, startMovementMode } from '../../store/slices/turnSlice';
+import { selectCanStageAction, selectMovementMode, selectCurrentTurn, stageAction, markActionUsed, stageActionWithPayload, startMovementMode } from '../../store/slices/turnSlice';
+import { canAssetUseAbility, getAssetIneligibilityReason } from '../../utils/assetEligibility';
 import { inflictDamage } from '../../store/slices/factionsSlice';
 import { showNotification } from '../NotificationContainer';
 import { resolveCombat } from '../../utils/combatResolver';
@@ -41,6 +42,7 @@ export default function SystemAssetCards() {
   const selectedFactionId = useSelector((state: RootState) => state.factions.selectedFactionId);
   const canStageAction = useSelector(selectCanStageAction);
   const movementMode = useSelector(selectMovementMode);
+  const currentTurn = useSelector(selectCurrentTurn);
 
   // State for asset store modal
   const [assetStoreOpen, setAssetStoreOpen] = useState(false);
@@ -444,7 +446,8 @@ const handleActivateAbility = (faction: Faction, asset: FactionAsset) => {
       {homeworldFactions.map((faction: Faction) => {
         const factionColor = getFactionColor(faction.id) || '#4a9eff';
         const hpPercent = faction.attributes.maxHp > 0 ? (faction.attributes.hp / faction.attributes.maxHp) * 100 : 100;
-        const hpColor = hpPercent > 60 ? '#4ecdc4' : hpPercent > 30 ? '#ffe66d' : '#ff6b6b';
+        // hpPercent used for potential future visual indicators
+        void hpPercent;
         const storeLocked = Boolean(playerFactionId && faction.id !== playerFactionId);
         const homeworldClasses = [
           'system-asset-card',
@@ -498,22 +501,6 @@ const handleActivateAbility = (faction: Faction, asset: FactionAsset) => {
 
               {/* Faction Type */}
               <p className="system-asset-card__faction-type">{faction.type}</p>
-
-              {/* HP Bar */}
-              <div className="system-asset-card__hp-container">
-                <div className="system-asset-card__hp-bar">
-                  <div 
-                    className="system-asset-card__hp-fill"
-                    style={{ 
-                      width: `${hpPercent}%`,
-                      backgroundColor: hpColor
-                    }}
-                  />
-                </div>
-                <span className="system-asset-card__hp-text">
-                  {faction.attributes.hp}/{faction.attributes.maxHp}
-                </span>
-              </div>
 
               {/* Faction Tags */}
               {faction.tags && faction.tags.length > 0 && (
@@ -602,6 +589,12 @@ const handleActivateAbility = (faction: Faction, asset: FactionAsset) => {
               if (isUserFaction) {
                 // Check if asset has a special ability
                 if (assetHasAbility(asset.definitionId)) {
+                  // Check if asset can act (not newly purchased or refitted)
+                  if (!canAssetUseAbility(asset, currentTurn)) {
+                    const reason = getAssetIneligibilityReason(asset, currentTurn);
+                    showNotification(`Cannot use ability: ${reason}`, 'error');
+                    return;
+                  }
                   // Prime the ability for execution
                   setPrimedAbility({
                     factionId: faction.id,
@@ -637,6 +630,12 @@ const handleActivateAbility = (faction: Faction, asset: FactionAsset) => {
                   e.preventDefault();
                   // Check if asset has a special ability
                   if (assetHasAbility(asset.definitionId)) {
+                    // Check if asset can act (not newly purchased or refitted)
+                    if (!canAssetUseAbility(asset, currentTurn)) {
+                      const reason = getAssetIneligibilityReason(asset, currentTurn);
+                      showNotification(`Cannot use ability: ${reason}`, 'error');
+                      return;
+                    }
                     // Prime the ability for execution
                     setPrimedAbility({
                       factionId: faction.id,

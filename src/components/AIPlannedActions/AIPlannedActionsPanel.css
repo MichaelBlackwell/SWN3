@@ -1,0 +1,615 @@
+/**
+ * AI Planned Actions Panel Styles
+ * 
+ * A sleek, futuristic panel showing AI faction strategic plans.
+ * Designed to match the game's sci-fi aesthetic with faction-colored accents.
+ */
+
+/* ============================================================================
+   PANEL CONTAINER
+   ============================================================================ */
+
+.ai-plan-panel {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  width: 420px;
+  max-width: 100vw;
+  height: calc(100vh - 60px);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 20, 30, 0.98) 0%,
+    rgba(25, 35, 50, 0.98) 100%
+  );
+  border-left: 1px solid rgba(100, 150, 200, 0.3);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.ai-plan-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(50, 80, 120, 0.3) 0%,
+    transparent 100%
+  );
+  border-bottom: 1px solid rgba(100, 150, 200, 0.2);
+}
+
+.ai-plan-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e8f0ff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ai-plan-panel__title-icon {
+  font-size: 1.5rem;
+}
+
+.ai-plan-panel__close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.ai-plan-panel__close:hover {
+  color: #fff;
+  background: rgba(255, 100, 100, 0.3);
+}
+
+/* ============================================================================
+   TABS
+   ============================================================================ */
+
+.ai-plan-panel__tabs {
+  display: flex;
+  padding: 0 12px;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(100, 150, 200, 0.15);
+}
+
+.ai-plan-panel__tab {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ai-plan-panel__tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(100, 150, 200, 0.1);
+}
+
+.ai-plan-panel__tab.active {
+  color: #4fc3f7;
+  border-bottom-color: #4fc3f7;
+}
+
+/* ============================================================================
+   CONTENT AREA
+   ============================================================================ */
+
+.ai-plan-panel__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.ai-plan-panel__content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-plan-panel__content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ai-plan-panel__content::-webkit-scrollbar-thumb {
+  background: rgba(100, 150, 200, 0.3);
+  border-radius: 3px;
+}
+
+.ai-plan-panel__content::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 150, 200, 0.5);
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.ai-plan-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ai-plan-panel__empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.ai-plan-panel__empty p {
+  margin: 4px 0;
+}
+
+.ai-plan-panel__empty-hint {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* ============================================================================
+   FACTION CARD
+   ============================================================================ */
+
+.ai-plan__faction-card {
+  background: rgba(30, 40, 55, 0.6);
+  border: 1px solid rgba(100, 150, 200, 0.2);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.ai-plan__faction-card:hover {
+  background: rgba(35, 45, 60, 0.7);
+}
+
+.ai-plan__faction-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  user-select: none;
+}
+
+.ai-plan__faction-indicator {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+}
+
+.ai-plan__faction-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-plan__faction-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.ai-plan__faction-summary {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ai-plan__faction-confidence {
+  flex-shrink: 0;
+}
+
+.ai-plan__confidence-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.ai-plan__confidence-ring::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: rgba(20, 30, 40, 0.9);
+  border-radius: 50%;
+}
+
+.ai-plan__confidence-value {
+  position: relative;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.ai-plan__expand-icon {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.ai-plan__expand-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.ai-plan__faction-content {
+  border-top: 1px solid rgba(100, 150, 200, 0.1);
+  overflow: hidden;
+}
+
+/* ============================================================================
+   SECTIONS
+   ============================================================================ */
+
+.ai-plan__section {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(100, 150, 200, 0.08);
+}
+
+.ai-plan__section:last-child {
+  border-bottom: none;
+}
+
+.ai-plan__section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 10px 0;
+}
+
+.ai-plan__section--reasoning {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================================================
+   OBJECTIVES
+   ============================================================================ */
+
+.ai-plan__objective {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.ai-plan__objective-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.ai-plan__objective-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-plan__objective-description {
+  display: block;
+  font-size: 0.85rem;
+  color: #e0e8f0;
+  margin-bottom: 6px;
+}
+
+.ai-plan__objective-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-plan__objective-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(100, 150, 200, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ai-plan__objective-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4fc3f7, #29b6f6);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.ai-plan__objective-eta {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+}
+
+.ai-plan__objective-priority {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(100, 150, 200, 0.2);
+}
+
+.ai-plan__objective-priority[data-priority='primary'] {
+  color: #4fc3f7;
+  background: rgba(79, 195, 247, 0.15);
+}
+
+.ai-plan__objective-priority[data-priority='secondary'] {
+  color: #81c784;
+  background: rgba(129, 199, 132, 0.15);
+}
+
+.ai-plan__objective-priority[data-priority='opportunistic'] {
+  color: #fff176;
+  background: rgba(255, 241, 118, 0.15);
+}
+
+/* ============================================================================
+   TURN PLANNING
+   ============================================================================ */
+
+.ai-plan__turn {
+  margin-bottom: 12px;
+}
+
+.ai-plan__turn:last-child {
+  margin-bottom: 0;
+}
+
+.ai-plan__turn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(100, 150, 200, 0.15);
+}
+
+.ai-plan__turn-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4fc3f7;
+}
+
+.ai-plan__turn-budget {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ai-plan__no-actions {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+/* ============================================================================
+   ACTIONS
+   ============================================================================ */
+
+.ai-plan__action {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(50, 70, 100, 0.2);
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.ai-plan__action:last-child {
+  margin-bottom: 0;
+}
+
+.ai-plan__action-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.ai-plan__action-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-plan__action-description {
+  display: block;
+  font-size: 0.85rem;
+  color: #e0e8f0;
+}
+
+.ai-plan__action-target {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 150, 100, 0.8);
+  margin-top: 2px;
+}
+
+.ai-plan__action-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ai-plan__action-confidence {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ai-plan__action-priority {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* ============================================================================
+   THREATS & OPPORTUNITIES
+   ============================================================================ */
+
+.ai-plan__threat,
+.ai-plan__opportunity {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(100, 150, 200, 0.08);
+}
+
+.ai-plan__threat:last-child,
+.ai-plan__opportunity:last-child {
+  border-bottom: none;
+}
+
+.ai-plan__threat-severity,
+.ai-plan__opportunity-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.ai-plan__threat-content,
+.ai-plan__opportunity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-plan__threat-description,
+.ai-plan__opportunity-description {
+  display: block;
+  font-size: 0.85rem;
+  color: #e0e8f0;
+}
+
+.ai-plan__threat-response,
+.ai-plan__opportunity-action {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.ai-plan__opportunity-value {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.ai-plan__opportunity-value[data-value='high'] {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.15);
+}
+
+.ai-plan__opportunity-value[data-value='medium'] {
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.15);
+}
+
+.ai-plan__opportunity-value[data-value='low'] {
+  color: #9e9e9e;
+  background: rgba(158, 158, 158, 0.15);
+}
+
+/* ============================================================================
+   REASONING
+   ============================================================================ */
+
+.ai-plan__reasoning-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ai-plan__reasoning-item {
+  position: relative;
+  padding: 4px 0 4px 16px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+}
+
+.ai-plan__reasoning-item::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: #4fc3f7;
+}
+
+/* ============================================================================
+   TIMELINE VIEW
+   ============================================================================ */
+
+.ai-plan-panel__timeline {
+  padding: 8px 0;
+}
+
+.ai-plan-panel__timeline-turn {
+  margin-bottom: 20px;
+}
+
+.ai-plan-panel__timeline-turn:last-child {
+  margin-bottom: 0;
+}
+
+.ai-plan-panel__timeline-turn-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4fc3f7;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(79, 195, 247, 0.2);
+}
+
+.ai-plan-panel__timeline-faction {
+  margin-bottom: 12px;
+  padding-left: 12px;
+  border-left: 3px solid rgba(100, 150, 200, 0.3);
+}
+
+.ai-plan-panel__timeline-faction-header {
+  margin-bottom: 8px;
+}
+
+.ai-plan-panel__timeline-faction-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 480px) {
+  .ai-plan-panel {
+    width: 100%;
+  }
+}
+
+

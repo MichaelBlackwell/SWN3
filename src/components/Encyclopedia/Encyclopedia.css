@@ -304,6 +304,11 @@
   border-left: 3px solid var(--category-color, rgba(255, 255, 255, 0.2));
 }
 
+.encyclopedia-card--asset[data-has-mobility='true'] {
+  border-left-color: rgba(59, 130, 246, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.18);
+}
+
 .encyclopedia-card--goal {
   border-left: 3px solid var(--goal-color, rgba(255, 255, 255, 0.2));
 }
@@ -312,6 +317,13 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+}
+
+.encyclopedia-card__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-shrink: 0;
 }
 
 .encyclopedia-card__icon {
@@ -351,6 +363,32 @@
 .encyclopedia-card__cost {
   font-weight: 600;
   color: #fde047;
+}
+
+.movement-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--border-radius-full);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.15);
+  color: #bfdbfe;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.movement-indicator__icon {
+  line-height: 1;
+}
+
+.movement-indicator__range {
+  padding-left: 0.25rem;
+  border-left: 1px solid rgba(191, 219, 254, 0.4);
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
 }
 
 .encyclopedia-card__description {
@@ -397,6 +435,53 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.encyclopedia-card__movement {
+  margin-bottom: var(--spacing-3);
+  padding: var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.movement-details__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-2);
+}
+
+.movement-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 120px;
+}
+
+.movement-description {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.movement-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+
+.movement-tag {
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--border-radius-full);
+  background: rgba(59, 130, 246, 0.15);
+  color: #bfdbfe;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .encyclopedia-card__attack,

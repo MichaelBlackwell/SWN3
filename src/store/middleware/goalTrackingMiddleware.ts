@@ -13,6 +13,7 @@
  * - Expand Influence: Place Base of Influence on new planet
  * - Inside Enemy Territory: Stealth assets on enemy worlds
  * - Destroy the Foe: Destroy rival faction
+ * - Planetary Seizure: Complete planet seizure campaign
  */
 
 import type { AnyAction, Middleware } from '@reduxjs/toolkit';
@@ -251,6 +252,41 @@ function handleAssetStealth(
 }
 
 /**
+ * Track planet seizure completion for Planetary Seizure goal
+ */
+function handlePlanetSeizure(
+  state: RootState,
+  factionId: string,
+  targetSystemId: string
+): ReturnType<typeof updateGoalProgress>[] {
+  const actions: ReturnType<typeof updateGoalProgress>[] = [];
+  
+  const faction = state.factions.factions.find((faction: Faction) => faction.id === factionId);
+  if (!faction || !faction.goal || faction.goal.isCompleted) {
+    return actions;
+  }
+  
+  const goal = faction.goal;
+  
+  // Planetary Seizure: Seize a planet as planetary government
+  if (goal.type === 'Planetary Seizure') {
+    actions.push(
+      updateGoalProgress({
+        factionId,
+        current: 1, // This goal completes immediately upon seizure
+        metadata: {
+          ...goal.progress.metadata,
+          seizedPlanetId: targetSystemId,
+          goalCompleted: true,
+        },
+      })
+    );
+  }
+  
+  return actions;
+}
+
+/**
  * Track faction destruction for Destroy the Foe goal
  */
 function handleFactionDestruction(
@@ -367,6 +403,16 @@ export const goalTrackingMiddleware: Middleware<{}, RootState> = (storeAPI) => (
       // Faction destruction (check stateBefore to see if goal targeted this faction)
       const destroyedFactionId = typedAction.payload as string;
       goalUpdateActions = handleFactionDestruction(stateBefore, destroyedFactionId);
+      break;
+    }
+    
+    case 'factions/completeSeizePlanetCampaign': {
+      // Planet seizure completion
+      const { factionId, targetSystemId } = typedAction.payload as { 
+        factionId: string; 
+        targetSystemId: string;
+      };
+      goalUpdateActions = handlePlanetSeizure(stateAfter, factionId, targetSystemId);
       break;
     }
     

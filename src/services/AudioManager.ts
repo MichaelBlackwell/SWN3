@@ -18,6 +18,8 @@ export type SoundEffectId =
   | 'ui_hover'
   | 'ui_modal_open'
   | 'ui_modal_close'
+  | 'ui_confirm'
+  | 'ui_cancel'
   // Phase sounds
   | 'phase_income'
   | 'phase_maintenance'
@@ -89,6 +91,8 @@ const SFX_FILES: Record<SoundEffectId, string> = {
   ui_hover: '/assets/audio/sfx/ui_hover.mp3',
   ui_modal_open: '/assets/audio/sfx/ui_modal_open.mp3',
   ui_modal_close: '/assets/audio/sfx/ui_modal_close.mp3',
+  ui_confirm: '/assets/audio/sfx/ui_click.mp3',  // Reuse click sound for confirm
+  ui_cancel: '/assets/audio/sfx/ui_click.mp3',   // Reuse click sound for cancel
   // Phase sounds
   phase_income: '/assets/audio/sfx/phase_income.mp3',
   phase_maintenance: '/assets/audio/sfx/phase_maintenance.mp3',

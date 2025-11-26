@@ -13,6 +13,16 @@ export interface TurnState {
   // Per SWN rules: "A faction can only take one type of action per round,
   // but they can perform that action on as many worlds as they wish."
   usedActionType: string | null;
+  // Track if an asset has been purchased this turn (special rule: only ONE asset per turn)
+  // Per SWN rules: "Only one asset can be purchased by a faction per turn."
+  assetPurchasedThisTurn: boolean;
+  // Track which assets have attacked this turn (each asset can only attack once)
+  // Per SWN rules: "Each attacking asset can attack only once per turn."
+  // 
+  // NOTE: We intentionally do NOT track which assets have DEFENDED.
+  // Per SWN rules: "A defending asset can defend as many times as the defender wishes,
+  // assuming it can survive multiple conflicts."
+  assetsAttackedThisTurn: string[];
   // Movement mode state
   movementMode: {
     active: boolean;
@@ -44,6 +54,8 @@ const initialState: TurnState = {
   actionCommitted: false,
   stagedActionType: null,
   usedActionType: null,
+  assetPurchasedThisTurn: false,
+  assetsAttackedThisTurn: [],
   movementMode: {
     active: false,
     assetId: null,
@@ -87,6 +99,8 @@ const turnSlice = createSlice({
         state.actionCommitted = false;
         state.stagedActionType = null;
         state.usedActionType = null;
+        state.assetPurchasedThisTurn = false;
+        state.assetsAttackedThisTurn = [];
         // Clear movement mode when leaving Action phase
         state.movementMode = {
           active: false,
@@ -110,6 +124,8 @@ const turnSlice = createSlice({
         state.actionCommitted = false;
         state.stagedActionType = null;
         state.usedActionType = null;
+        state.assetPurchasedThisTurn = false;
+        state.assetsAttackedThisTurn = [];
         // Clear movement mode when leaving Action phase
         state.movementMode = {
           active: false,
@@ -262,6 +278,26 @@ const turnSlice = createSlice({
       };
     },
 
+    // Mark that an asset has been purchased this turn
+    // Per SWN rules: "Only one asset can be purchased by a faction per turn."
+    markAssetPurchased: (state) => {
+      if (state.phase !== 'Action') {
+        return;
+      }
+      state.assetPurchasedThisTurn = true;
+    },
+
+    // Mark that an asset has attacked this turn
+    // Per SWN rules: "Each attacking asset can attack only once per turn."
+    markAssetAttacked: (state, action: PayloadAction<string>) => {
+      if (state.phase !== 'Action') {
+        return;
+      }
+      if (!state.assetsAttackedThisTurn.includes(action.payload)) {
+        state.assetsAttackedThisTurn.push(action.payload);
+      }
+    },
+
     // Save a snapshot of faction state for Undo/Redo
     saveHistorySnapshot: (state, action: PayloadAction<unknown>) => {
       if (state.phase !== 'Action') {
@@ -328,6 +364,8 @@ const turnSlice = createSlice({
       state.actionCommitted = false;
       state.stagedActionType = null;
       state.usedActionType = null;
+      state.assetPurchasedThisTurn = false;
+      state.assetsAttackedThisTurn = [];
       state.stagedActionPayload = null;
       state.movementMode = {
         active: false,
@@ -353,6 +391,8 @@ export const {
   cancelStagedAction,
   startMovementMode,
   cancelMovementMode,
+  markAssetPurchased,
+  markAssetAttacked,
   saveHistorySnapshot,
   undo,
   redo,
@@ -419,6 +459,22 @@ export const selectCurrentHistorySnapshot = (state: RootState) => {
 };
 
 export const selectMovementMode = (state: RootState) => state.turn.movementMode;
+
+// Selector for asset purchase tracking
+// Per SWN rules: "Only one asset can be purchased by a faction per turn."
+export const selectAssetPurchasedThisTurn = (state: RootState) => state.turn.assetPurchasedThisTurn;
+
+// Selector for assets that have attacked this turn
+// Per SWN rules: "Each attacking asset can attack only once per turn."
+export const selectAssetsAttackedThisTurn = (state: RootState) => state.turn.assetsAttackedThisTurn;
+
+// Check if a specific asset has already attacked this turn
+export const selectHasAssetAttackedThisTurn = (assetId: string) => (state: RootState) => 
+  state.turn.assetsAttackedThisTurn.includes(assetId);
+
+// Check if purchase is allowed (only one per turn)
+export const selectCanPurchaseAsset = (state: RootState) => 
+  state.turn.phase === 'Action' && !state.turn.assetPurchasedThisTurn && !state.turn.actionCommitted;
 
 export default turnSlice.reducer;
 

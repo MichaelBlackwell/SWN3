@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { calculateTurnIncome } from '../../utils/factionCalculations';
 import { getAssetById } from '../../data/assetLibrary';
+import { selectAIActionLog, selectAICompletedFactions } from '../../store/slices/aiTurnSlice';
+import { getFactionColor } from '../../utils/factionColors';
 import type { Faction } from '../../types/faction';
 import { useSoundEffect } from '../../hooks/useAudio';
 import './PhaseSummaryModal.css';
@@ -15,7 +17,21 @@ interface PhaseSummaryModalProps {
 export default function PhaseSummaryModal({ onClose, turnNumber }: PhaseSummaryModalProps) {
   const factions = useSelector((state: RootState) => state.factions.factions);
   const failedAssets = useSelector((state: RootState) => state.factions.assetsFailedMaintenance);
+  const aiActionLog = useSelector(selectAIActionLog);
+  const aiCompletedFactions = useSelector(selectAICompletedFactions);
   const playSound = useSoundEffect();
+
+  // Group AI actions by faction
+  const aiActionsByFaction = aiActionLog.reduce((acc, action) => {
+    if (!acc[action.factionId]) {
+      acc[action.factionId] = {
+        factionName: action.factionName,
+        actions: [],
+      };
+    }
+    acc[action.factionId].actions.push(action.action);
+    return acc;
+  }, {} as Record<string, { factionName: string; actions: string[] }>);
 
   // Play modal open sound on mount
   useEffect(() => {
@@ -82,6 +98,46 @@ export default function PhaseSummaryModal({ onClose, turnNumber }: PhaseSummaryM
               })}
             </div>
           </div>
+
+          {/* AI Actions Summary */}
+          {aiCompletedFactions.length > 0 && (
+            <div className="phase-section ai-section">
+              <h3>🤖 AI Faction Actions</h3>
+              <div className="ai-actions-list">
+                {Object.entries(aiActionsByFaction).map(([factionId, data]) => {
+                  const factionColor = getFactionColor(factionId);
+                  return (
+                    <div key={factionId} className="ai-faction-actions">
+                      <div 
+                        className="ai-faction-header"
+                        style={{ borderLeftColor: factionColor }}
+                      >
+                        <span 
+                          className="ai-faction-name"
+                          style={{ color: factionColor }}
+                        >
+                          {data.factionName}
+                        </span>
+                        <span className="ai-action-count">
+                          {data.actions.length} action{data.actions.length !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                      <ul className="ai-action-items">
+                        {data.actions.map((action, idx) => (
+                          <li key={idx} className="ai-action-item">
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+                {Object.keys(aiActionsByFaction).length === 0 && aiCompletedFactions.length > 0 && (
+                  <p className="ai-no-actions">AI factions took no actions this turn.</p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* News Phase Summary */}
           <div className="phase-section news-section">

@@ -1,0 +1,261 @@
+/* AITurnOverlay - Sci-fi themed overlay for AI faction turns */
+
+.ai-turn-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ai-turn-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+/* Main card */
+.ai-turn-overlay__card {
+  position: relative;
+  width: min(90vw, 420px);
+  padding: 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 20, 35, 0.95) 0%,
+    rgba(8, 12, 25, 0.98) 100%
+  );
+  border: 1px solid;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Header */
+.ai-turn-overlay__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.ai-turn-overlay__faction-indicator {
+  width: 4px;
+  height: 40px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ai-turn-overlay__title {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-turn-overlay__label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.ai-turn-overlay__faction-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 20px currentColor;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ai-turn-overlay__faction-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Phase indicator */
+.ai-turn-overlay__phase {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ai-turn-overlay__phase-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.ai-turn-overlay__phase-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.03em;
+}
+
+/* Progress bar */
+.ai-turn-overlay__progress-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.ai-turn-overlay__progress-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ai-turn-overlay__progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  position: relative;
+}
+
+.ai-turn-overlay__progress-glow {
+  position: absolute;
+  top: 0;
+  width: 20%;
+  height: 100%;
+  opacity: 0.5;
+  animation: progress-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+.ai-turn-overlay__progress-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  min-width: 3ch;
+  text-align: right;
+}
+
+/* Current action */
+.ai-turn-overlay__action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.ai-turn-overlay__action-icon {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ai-turn-overlay__action-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scanner animation */
+.ai-turn-overlay__scanner {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.ai-turn-overlay__scanner-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+/* Corner decorations */
+.ai-turn-overlay__corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ai-turn-overlay__corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-style: solid;
+  border-width: 2px;
+  opacity: 0.5;
+}
+
+.ai-turn-overlay__corner--tl {
+  top: 10%;
+  left: 5%;
+  border-right: none;
+  border-bottom: none;
+}
+
+.ai-turn-overlay__corner--tr {
+  top: 10%;
+  right: 5%;
+  border-left: none;
+  border-bottom: none;
+}
+
+.ai-turn-overlay__corner--bl {
+  bottom: 10%;
+  left: 5%;
+  border-right: none;
+  border-top: none;
+}
+
+.ai-turn-overlay__corner--br {
+  bottom: 10%;
+  right: 5%;
+  border-left: none;
+  border-top: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .ai-turn-overlay__card {
+    padding: 1rem;
+  }
+
+  .ai-turn-overlay__faction-name {
+    font-size: 1.1rem;
+  }
+
+  .ai-turn-overlay__phase {
+    padding: 0.5rem;
+  }
+
+  .ai-turn-overlay__phase-icon {
+    font-size: 1.25rem;
+  }
+}
+
+

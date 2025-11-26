@@ -1564,84 +1564,66 @@ Government tag for legitimate world governments.
 tend to have weak colonial governments concerned 
 chiefly with issues of basic survival rather than expan
 sion or intrigue.
- Attributes: Force 4, Cunning 3, Wealth 1
- Hit Points: 15
- Assets: Guerrilla Populace/Force 2 and Saboteurs/Cun
-ning 2
+ Attributes: Force 2, Cunning 1, Wealth 1
+ Hit Points: 8
+ Assets: Security Personnel/Force 1
  Tags: Colonists
  Lost World
  Primitive and barbaric by the standards of the space go
 ing worlds, a lost world lacks the technical resources of 
 their neighbors, but may well have substantial advan
 tages in population and cultural cohesion depending on 
-the world’s habitability.
- Attributes: Force 4, Cunning 1, Wealth 3
- Hit Points: 15
- Assets: Zealots/Force 3, Harvesters/Wealth 1
+the world's habitability.
+ Attributes: Force 2, Cunning 1, Wealth 1
+ Hit Points: 8
+ Assets: Militia Unit/Force 1
  Tags: Savage
- Backwater Planet
- Perhaps this world was important once, but disaster, 
-ennui, or the Scream has left it a sleepy planet disinter
-ested in the wider galaxy. Most worlds with ordinary 
-levels of technology in a sector will fit this template.
- Attributes: Force 6, Cunning 3, Wealth 5
- Hit Points: 29
- Assets: Postech Infantry/Force 4, Planetary Defenses/
- Force 6, Informers/Cunning 1, Bank/Wealth 4
- Tags: Deep Rooted
- Zealous Faith
- This religious organization is a powerful force in the 
-sector, likely with major congregations on several 
-worlds. 
-Attributes: Force 3, Cunning 6, Wealth 5
- Hit Points: 29
- Assets: Demagogue/Cunning 6, Organization Moles/
- Cunning 5, Zealots/Force 3, Marketers/Wealth 5
- Tags: Theocratic
- Regional Hegemon
- This world is the mightiest military power in the sector 
-and leads a half-dozen neighboring worlds in a “volun
-tary confederation” that it ever seeks to expand.
- Attributes: Force 8, Cunning 5, Wealth 7
- Hit Points: 49
- Assets: Space Marines/Force 7, Planetary Defenses/
- Force 6, Blockade Fleet/Force 5, Extended The
-ater/Force 4, Pretech Manufactory/Wealth 7, 
-Shipping Combine/Wealth 4, Tripwire Cells/
- Cunning 4, Cyberninjas/Cunning 3
- Tags: Imperialists
- Mercantile Combine
- A star-spanning consortium of merchants might oper
-ate out of one particular world, but their final loyalty 
-is always to their credit balance.
- Attributes: Force 3, Cunning 5, Wealth 6
- Hit Points: 29
- Assets: Venture Capital/Wealth 6, Shipping Combine/
- Wealth 4, Hardened Personnel/Forces 2, Black
-mail/Cunning 2
+ Trade Guild
+ A modest merchant organization focused on controlling 
+local commerce and building economic influence within 
+their home system.
+ Attributes: Wealth 2, Force 1, Cunning 1
+ Hit Points: 8
+ Assets: Harvesters/Wealth 1
  Tags: Plutocratic
- Eugenics Cult
- Some people are born to rule- literally. These eugenics 
-cults believe that superior breeds of humanity can be 
-successfully engineered, and that good genetic back
-ground legitimizes rule over less “advanced” humans. 
-Such cults are widely loathed, but the experimental 
-medical treatment they offer to those who can find 
-them makes unwilling converts of some.
- Attributes: Force 3, Cunning 6, Wealth 5
- Hit Points: 29
- Assets: Boltholes/Cunning 5, Demagogue/Cunning 6, 
-Laboratory/Wealth 3, Gengineered Slaves/Force 
-1
- Tags: Eugenics Cult
- Rebel Freedom Fighters
- Even in the most tyrannical corners of the galaxy, the 
-human heart yearns for freedom. These factions spring 
-up in the shadow of oppressive governments. For each 
-one that is crushed, a new one rises in time.
- Attributes: Force 3, Cunning 4, Wealth 1
- Hit Points: 15
- Assets: Seditionists/Cunning 4, Zealots/Force 3
+ Secret Society
+ A clandestine organization that operates in the shadows, 
+using infiltration and manipulation rather than direct 
+force to achieve its goals.
+ Attributes: Cunning 2, Force 1, Wealth 1
+ Hit Points: 8
+ Assets: Informers/Cunning 1
+ Tags: Secretive
+ Military Junta
+ A faction built around martial strength and discipline, 
+whether a planetary militia, mercenary company, or 
+warrior culture.
+ Attributes: Force 2, Wealth 1, Cunning 1
+ Hit Points: 8
+ Assets: Hitmen/Force 1
+ Tags: Warlike
+ Information Brokers
+ An intelligence-focused group specializing in espionage, 
+data collection, and the buying and selling of secrets.
+ Attributes: Cunning 2, Wealth 1, Force 1
+ Hit Points: 8
+ Assets: Informers/Cunning 1
+ Tags: Machiavellian
+ Salvage Collective
+ A faction that has built its foundation on reclaiming and 
+repurposing the debris of fallen civilizations and failed 
+ventures.
+ Attributes: Wealth 2, Cunning 1, Force 1
+ Hit Points: 8
+ Assets: Harvesters/Wealth 1
+ Tags: Scavengers
+ Underground Movement
+ A grassroots resistance or revolutionary cell working to 
+undermine established powers through stealth and sub
+version.
+ Attributes: Cunning 2, Force 1, Wealth 1
+ Hit Points: 8
+ Assets: Informers/Cunning 1
  Tags: Secretive
 228• examPle of faCtion Play
  an eXamPle of faCTIon Play

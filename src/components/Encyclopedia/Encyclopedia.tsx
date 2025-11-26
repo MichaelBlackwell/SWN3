@@ -4,6 +4,8 @@ import { FACTION_TAG_METADATA } from '../../data/factionTagMetadata';
 import { GOAL_METADATA, getGoalsByCategory } from '../../data/goalMetadata';
 import { getAbilityDescription } from '../../utils/assetAbilities';
 import { getSpecialFeatureDescription } from '../../utils/assetSpecialFeatures';
+import { getMovementAbility } from '../../utils/movementAbilities';
+import type { MovementAbilityConfig } from '../../utils/movementAbilities';
 import type { AssetCategory, AssetDefinition } from '../../types/asset';
 import type { FactionTag, FactionGoalType } from '../../types/faction';
 import './Encyclopedia.css';
@@ -16,6 +18,44 @@ interface FlagDetail {
   label: string;
   description: string;
   className: string;
+}
+
+function formatHexRange(range: number): string {
+  return `${range}`;
+}
+
+function formatMovementCost(config: MovementAbilityConfig): string {
+  if (config.costPerAsset <= 0) {
+    return 'No cost';
+  }
+
+  if (config.canMoveMultiple) {
+    return `${config.costPerAsset} FC / asset`;
+  }
+
+  return `${config.costPerAsset} FC / move`;
+}
+
+function formatMovementAction(config: MovementAbilityConfig): string {
+  return config.requiresAction ? 'Consumes action' : 'Free action';
+}
+
+function getMovementHighlights(config: MovementAbilityConfig): string[] {
+  const highlights: string[] = [];
+
+  if (config.canMoveMultiple) {
+    highlights.push('Moves multiple assets');
+  }
+
+  if (!config.requiresAction) {
+    highlights.push('Free action');
+  }
+
+  if (config.ignoresPermission) {
+    highlights.push('Ignores permission');
+  }
+
+  return highlights;
 }
 
 function getFlagDetails(asset: AssetDefinition): FlagDetail[] {
@@ -131,6 +171,8 @@ export default function Encyclopedia() {
   const renderAssetCard = (asset: AssetDefinition) => {
     const isSelected = selectedAsset?.id === asset.id;
     const flagDetails = getFlagDetails(asset);
+    const movementConfig = getMovementAbility(asset.id);
+    const movementHighlights = movementConfig ? getMovementHighlights(movementConfig) : [];
     
     return (
       <button
@@ -139,11 +181,27 @@ export default function Encyclopedia() {
         className={`encyclopedia-card encyclopedia-card--asset ${isSelected ? 'encyclopedia-card--selected' : ''}`}
         onClick={() => setSelectedAsset(isSelected ? null : asset)}
         style={{ '--category-color': getCategoryColor(asset.category) } as React.CSSProperties}
+        data-has-mobility={movementConfig ? 'true' : 'false'}
       >
         <div className="encyclopedia-card__header">
           <span className="encyclopedia-card__icon">{getCategoryIcon(asset.category)}</span>
           <span className="encyclopedia-card__name">{asset.name}</span>
-          <span className="encyclopedia-card__rating">Lvl {asset.requiredRating}</span>
+          <div className="encyclopedia-card__badges">
+            {movementConfig && (
+              <span
+                className="movement-indicator"
+                title="This asset's special ability enables movement"
+                aria-label="Movement ability"
+              >
+                <span className="movement-indicator__icon" aria-hidden="true">
+                  🧭
+                </span>
+                <span className="movement-indicator__label">Mobility</span>
+                <span className="movement-indicator__range">{formatHexRange(movementConfig.range)}</span>
+              </span>
+            )}
+            <span className="encyclopedia-card__rating">Lvl {asset.requiredRating}</span>
+          </div>
         </div>
         <div className="encyclopedia-card__meta">
           <span className="encyclopedia-card__type">{asset.type}</span>
@@ -167,6 +225,34 @@ export default function Encyclopedia() {
                 </div>
               )}
             </div>
+            {movementConfig && (
+              <div className="encyclopedia-card__movement">
+                <div className="movement-details__metrics">
+                  <div className="movement-metric">
+                    <span className="stat-label">Range</span>
+                    <span className="stat-value">{formatHexRange(movementConfig.range)}</span>
+                  </div>
+                  <div className="movement-metric">
+                    <span className="stat-label">Cost</span>
+                    <span className="stat-value">{formatMovementCost(movementConfig)}</span>
+                  </div>
+                  <div className="movement-metric">
+                    <span className="stat-label">Action</span>
+                    <span className="stat-value">{formatMovementAction(movementConfig)}</span>
+                  </div>
+                </div>
+                <p className="movement-description">{movementConfig.description}</p>
+                {movementHighlights.length > 0 && (
+                  <div className="movement-highlights">
+                    {movementHighlights.map((highlight) => (
+                      <span key={highlight} className="movement-tag">
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             {asset.attack && (
               <div className="encyclopedia-card__attack">
                 <span className="attack-label">Attack:</span>
@@ -413,4 +499,5 @@ export default function Encyclopedia() {
     </div>
   );
 }
+
 

@@ -8,7 +8,14 @@ import { getAllAssetsForFaction } from '../../data/assetLibrary';
 import { addAsset } from '../../store/slices/factionsSlice';
 import { getFactionColor } from '../../utils/factionColors';
 import { withAlpha } from '../../utils/colorUtils';
-import { selectCurrentTurn } from '../../store/slices/turnSlice';
+import { 
+  selectCurrentTurn, 
+  selectCanPurchaseAsset,
+  selectUsedActionType,
+  markActionUsed,
+  markAssetPurchased,
+  stageAction,
+} from '../../store/slices/turnSlice';
 import {
   assetHasSpecialFeatures,
   getSpecialFeaturesForDisplay,
@@ -34,12 +41,18 @@ export default function AssetStoreModal({
   const dispatch = useDispatch();
   const currentTurn = useSelector(selectCurrentTurn);
   const currentPhase = useSelector((state: RootState) => state.turn.phase);
+  const canPurchaseAsset = useSelector(selectCanPurchaseAsset);
+  const usedActionType = useSelector(selectUsedActionType);
   const latestFaction = useSelector((state: RootState) =>
     state.factions.factions.find((f) => f.id === faction.id),
   );
 
   // Always use the freshest faction data from the store so FacCreds and assets reflect purchases
   const activeFaction = latestFaction ?? faction;
+  
+  // Per SWN rules: "Only one asset can be purchased by a faction per turn."
+  // Also check if another action type was already used (can only do one action TYPE per turn)
+  const purchaseBlocked = !canPurchaseAsset || (usedActionType !== null && usedActionType !== 'BUY_ASSET');
   
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -87,18 +100,27 @@ export default function AssetStoreModal({
   
   const meetsTechLevel = (asset: AssetDefinition) => systemTechLevel >= asset.techLevel;
 
+  // Per SWN rules: "Only one asset can be purchased by a faction per turn."
   const canPurchase = (asset: AssetDefinition) => 
-    canAfford(asset) && meetsTechLevel(asset) && currentPhase === 'Action';
+    canAfford(asset) && meetsTechLevel(asset) && currentPhase === 'Action' && !purchaseBlocked;
 
   const handlePurchase = (asset: AssetDefinition) => {
     if (!canPurchase(asset)) return;
 
+    // Stage the BUY_ASSET action
+    dispatch(stageAction('BUY_ASSET'));
+
+    // Execute the purchase
     dispatch(addAsset({
       factionId: activeFaction.id,
       assetDefinitionId: asset.id,
       location: systemId,
       purchasedTurn: currentTurn,
     }));
+
+    // Mark the action type as used and that an asset was purchased
+    dispatch(markActionUsed('BUY_ASSET'));
+    dispatch(markAssetPurchased());
   };
 
   const getCategoryColor = (category: AssetCategory) => {
@@ -171,6 +193,16 @@ export default function AssetStoreModal({
         {currentPhase !== 'Action' && (
           <div className="asset-store-phase-warning">
             ⚠️ Asset purchases can only be made during the Action phase
+          </div>
+        )}
+        {currentPhase === 'Action' && purchaseBlocked && usedActionType === 'BUY_ASSET' && (
+          <div className="asset-store-phase-warning">
+            ⚠️ Already purchased an asset this turn (limit: 1 per turn)
+          </div>
+        )}
+        {currentPhase === 'Action' && usedActionType !== null && usedActionType !== 'BUY_ASSET' && (
+          <div className="asset-store-phase-warning">
+            ⚠️ Already used {usedActionType} action this turn (one action type per turn)
           </div>
         )}
 
@@ -388,9 +420,13 @@ export default function AssetStoreModal({
               >
                 {currentPhase !== 'Action' 
                   ? 'Wait for Action Phase' 
-                  : canPurchase(selectedAsset) 
-                    ? `Purchase for ${selectedAsset.cost} FacCreds`
-                    : 'Cannot Purchase'
+                  : purchaseBlocked && usedActionType === 'BUY_ASSET'
+                    ? 'Already Purchased (1 per turn)'
+                    : purchaseBlocked && usedActionType !== null
+                      ? `Used ${usedActionType} This Turn`
+                      : canPurchase(selectedAsset) 
+                        ? `Purchase for ${selectedAsset.cost} FacCreds`
+                        : 'Cannot Purchase'
                 }
               </button>
             </div>

@@ -3,11 +3,12 @@ import type { RootState } from '../../store/store';
 import type { FactionAsset } from '../../types/faction';
 import { getAssetById } from '../../data/assetLibrary';
 import { assetHasAbility, isFreeAction, executeAbility } from '../../utils/assetAbilities';
-import { stageActionWithPayload, selectCanStageAction } from '../../store/slices/turnSlice';
+import { stageActionWithPayload, selectCanStageAction, selectCurrentTurn } from '../../store/slices/turnSlice';
 import {
   assetHasSpecialFeatures,
   getSpecialFeaturesForDisplay,
 } from '../../utils/assetSpecialFeatures';
+import { canAssetUseAbility, getAssetIneligibilityReason } from '../../utils/assetEligibility';
 import { showNotification } from '../NotificationContainer';
 import './OwnedAssetItem.css';
 
@@ -16,6 +17,7 @@ interface OwnedAssetItemProps {
   assetName: string;
   systemName: string;
   factionId: string;
+  onSell?: (assetId: string) => void;
 }
 
 export default function OwnedAssetItem({
@@ -23,9 +25,11 @@ export default function OwnedAssetItem({
   assetName,
   systemName,
   factionId,
+  onSell,
 }: OwnedAssetItemProps) {
   const dispatch = useDispatch();
   const canStageAction = useSelector(selectCanStageAction);
+  const currentTurn = useSelector(selectCurrentTurn);
   const faction = useSelector((state: RootState) =>
     state.factions.factions.find((f: { id: string }) => f.id === factionId)
   );
@@ -34,10 +38,20 @@ export default function OwnedAssetItem({
   const assetDef = getAssetById(asset.definitionId);
   const hasAbility = assetDef && assetHasAbility(asset.definitionId);
   const freeAction = hasAbility && isFreeAction(asset.definitionId);
+  
+  // Check if asset can act (not newly purchased or refitted)
+  const assetCanAct = canAssetUseAbility(asset, currentTurn);
+  const ineligibilityReason = getAssetIneligibilityReason(asset, currentTurn);
 
   const handleUseAbility = () => {
     if (!faction) {
       showNotification('Faction not found', 'error');
+      return;
+    }
+
+    // Check if asset can act (not newly purchased or refitted)
+    if (!assetCanAct) {
+      showNotification(`Cannot use ability: ${ineligibilityReason}`, 'error');
       return;
     }
 
@@ -86,20 +100,40 @@ export default function OwnedAssetItem({
     }
   };
 
+  // Calculate refund amount for display
+  const refundAmount = assetDef ? Math.floor(assetDef.cost / 2) : 0;
+
   return (
     <div className="owned-asset-item">
       <div className="asset-item-header">
         <div className="asset-item-name">{assetName}</div>
-        {hasAbility && (
-          <button
-            className={`asset-ability-btn ${freeAction ? 'free-action' : ''}`}
-            onClick={handleUseAbility}
-            disabled={!freeAction && !canStageAction}
-            title={freeAction ? 'Free action (does not consume action slot)' : 'Use special ability'}
-          >
-            {freeAction ? '⚡ Ability' : 'Ability'}
-          </button>
-        )}
+        <div className="asset-item-actions">
+          {hasAbility && (
+            <button
+              className={`asset-ability-btn ${freeAction ? 'free-action' : ''}`}
+              onClick={handleUseAbility}
+              disabled={!assetCanAct || (!freeAction && !canStageAction)}
+              title={
+                !assetCanAct
+                  ? ineligibilityReason || 'Asset cannot act this turn'
+                  : freeAction
+                    ? 'Free action (does not consume action slot)'
+                    : 'Use special ability'
+              }
+            >
+              {freeAction ? '⚡ Ability' : 'Ability'}
+            </button>
+          )}
+          {onSell && (
+            <button
+              className="asset-sell-btn"
+              onClick={() => onSell(asset.id)}
+              title={`Sell for ${refundAmount} FacCreds (half of original cost)`}
+            >
+              Sell
+            </button>
+          )}
+        </div>
       </div>
       <div className="asset-item-location">Location: {systemName}</div>
       <div className="asset-item-hp">
