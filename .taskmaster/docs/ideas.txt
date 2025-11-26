@@ -1,0 +1,48 @@
+implement (s) special features for assets
+
+scenarios
+	
+	realistic sector generation
+	realistic faction generation
+	choose from a set of factions at the start, using the rules as examples
+change naming to be something similar to the planet atmosphere
+	-"Bald Rock" for uninhabitable
+	-"Lush Greens" for habitable
+
+Clean up UI
+
+
+
+
+multiplayer
+	accounts
+	asynchronous
+	implement defender choose feature during battles
+	
+
+
+Upgrade the tutorial to have a LLM answer questions in a RAG style knowing only the rules
+
+Double check to see if all assets/tags/data from the rulebook have been included
+
+Tutorial
+	go over
+		systems
+		connections
+		assets
+		buying assets
+		attacking assets
+		moving assets
+		spreading influence
+
+
+parallax star background
+
+fix all actions
+
+cancel current  by clicking anywhere irrelevant on the map
+
+let base of influence buy assets
+only allow one type of action a turn. Lock the rest out after one has been completed
+prevent additional moves by the same asset after it has done an action
+make sure faction colors are distinct from the map and other factions

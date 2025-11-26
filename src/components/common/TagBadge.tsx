@@ -7,6 +7,7 @@ type TagBadgeTone = 'faction' | 'world';
 interface TagBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   label: string;
   description?: string;
+  effects?: string[];
   tone?: TagBadgeTone;
   interactive?: boolean;
 }
@@ -24,6 +25,7 @@ const toneThemeClass: Record<TagBadgeTone, string> = {
 export default function TagBadge({
   label,
   description,
+  effects,
   tone = 'faction',
   className = '',
   interactive = true,
@@ -47,6 +49,13 @@ export default function TagBadge({
       <span className="keyword-tooltip__tooltip" role="tooltip">
         <strong>{label}</strong>
         <span>{tooltipCopy}</span>
+        {effects && effects.length > 0 && (
+          <ul className="tag-badge__effects">
+            {effects.map((effect) => (
+              <li key={`${label}-${effect}`}>{effect}</li>
+            ))}
+          </ul>
+        )}
       </span>
     </span>
   );

@@ -20,3 +20,4 @@ export function dispatchOpenAssetStoreEvent(factionId?: string | null) {
   window.dispatchEvent(event);
 }
 
+

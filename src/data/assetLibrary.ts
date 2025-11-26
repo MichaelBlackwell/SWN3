@@ -525,7 +525,7 @@ const cunningAssets: AssetDefinition[] = [
     attack: null,
     counterattack: null,
     maintenance: 0,
-    specialFlags: { hasAction: true, hasSpecial: true, requiresPermission: false },
+    specialFlags: { hasAction: false, hasSpecial: true, requiresPermission: false },
   },
   // Cunning 4
   {
@@ -1074,7 +1074,7 @@ const wealthAssets: AssetDefinition[] = [
     attack: parseAttackPattern('Wealth vs. Wealth, 2d10+4 damage'),
     counterattack: parseCounterattack('2d10 damage'),
     maintenance: 2,
-    specialFlags: { hasAction: true, hasSpecial: false, requiresPermission: false },
+    specialFlags: { hasAction: true, hasSpecial: true, requiresPermission: false },
   },
 ];
 

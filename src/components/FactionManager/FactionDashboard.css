@@ -4,8 +4,10 @@
   padding: 0;
   gap: 0;
   overflow-x: hidden;
-  overflow-y: visible;
-  background-color: transparent;
+  overflow-y: auto;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(100, 108, 255, 0.05) 0%, transparent 50%),
+    var(--bg-primary);
   height: 100%;
   max-height: 100%;
   max-width: 100%;
@@ -48,35 +50,36 @@
 .faction-dashboard-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid var(--border-color);
-  background-color: var(--bg-layer-2);
+  border-bottom: 1px solid rgba(100, 108, 255, 0.2);
+  background: linear-gradient(180deg, rgba(26, 26, 26, 0.95) 0%, rgba(26, 26, 26, 0.8) 100%);
   padding: 0 var(--spacing-6);
   flex-shrink: 0;
 }
 
 .tab-button {
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-5);
   background: none;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   color: var(--text-secondary);
   font-size: 0.9375rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  margin-bottom: -2px;
+  margin-bottom: -1px;
 }
 
 .tab-button:hover {
   color: var(--text-primary);
-  background-color: var(--bg-tertiary);
+  background: rgba(100, 108, 255, 0.05);
 }
 
 .tab-button.active {
   color: var(--accent-primary);
   border-bottom-color: var(--accent-primary);
   font-weight: 600;
+  background: rgba(100, 108, 255, 0.08);
 }
 
 .tab-button:focus-visible {
@@ -158,27 +161,27 @@
 .faction-dashboard-content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3);
+  gap: var(--spacing-4);
   flex: 1;
   min-height: 0;
   overflow-x: hidden;
-  overflow-y: visible;
-  padding: var(--spacing-3);
-  background-color: var(--bg-layer-2);
+  overflow-y: auto;
+  padding: var(--spacing-5);
+  background: transparent;
   max-width: 100%;
   box-sizing: border-box;
 }
 
 .faction-dashboard-sidebar {
-  background-color: var(--bg-layer-1);
-  border: var(--card-border-width) solid var(--border-color);
-  border-radius: var(--card-border-radius);
-  padding: var(--spacing-3);
+  background: linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(26, 26, 26, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: var(--spacing-4);
   overflow-x: hidden;
   overflow-y: visible;
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-3);
+  gap: var(--spacing-4);
   flex-shrink: 0;
   max-width: 100%;
   box-sizing: border-box;
@@ -260,27 +263,31 @@
 }
 
 .repair-btn {
-  padding: 0.375rem 0.75rem;
-  background-color: #28a745;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   width: 100%;
-  margin-top: 0.375rem;
+  margin-top: var(--spacing-2);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 .repair-btn:hover {
-  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
 }
 
 .repair-btn:disabled {
-  background-color: #555;
+  background: #444;
   color: #888;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .movement-mode-indicator {
@@ -307,22 +314,26 @@
 .dashboard-section {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   flex-shrink: 0;
-  min-width: 180px;
-  max-width: 240px;
+  min-width: 200px;
+  max-width: 260px;
+  padding: var(--spacing-4);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .dashboard-section:last-child {
   flex: 1 1 auto;
-  min-width: 280px;
+  min-width: 300px;
   max-width: none;
 }
 
 .dashboard-section--assets {
   max-width: none;
   flex: 1 1 auto;
-  min-width: 320px;
+  min-width: 340px;
 }
 
 .dashboard-section__header {
@@ -333,29 +344,29 @@
 
 .dashboard-section h3 {
   margin: 0;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: var(--spacing-1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  padding-bottom: var(--spacing-2);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid rgba(100, 108, 255, 0.2);
 }
 
 .dashboard-resource {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  transition: border-color 0.2s, background-color 0.2s;
+  padding: var(--spacing-3);
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(234, 179, 8, 0.05) 100%);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .dashboard-resource:hover {
-  border-color: var(--accent-primary);
-  background-color: var(--bg-secondary);
+  border-color: rgba(234, 179, 8, 0.4);
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.1);
 }
 
 .resource-label {
@@ -364,67 +375,74 @@
 }
 
 .resource-value {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--accent-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #eab308;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  text-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
 }
 
 .dashboard-attributes {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
+  gap: var(--spacing-2);
 }
 
 .attribute-item {
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 0.625rem;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  padding: var(--spacing-3);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
   text-align: center;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .attribute-item:hover {
-  border-color: var(--accent-primary);
-  background-color: var(--bg-secondary);
+  border-color: rgba(100, 108, 255, 0.3);
+  background: rgba(100, 108, 255, 0.05);
 }
 
 .attribute-label {
   font-size: 0.6875rem;
   color: var(--text-secondary);
-  margin-bottom: 0.125rem;
+  margin-bottom: var(--spacing-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .attribute-value {
-  font-size: 0.9375rem;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 700;
   color: var(--text-primary);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .dashboard-goal {
-  padding: 0.5rem;
-  background-color: var(--bg-tertiary);
-  border-radius: 4px;
+  padding: var(--spacing-3);
+  background: linear-gradient(135deg, rgba(100, 108, 255, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%);
+  border: 1px solid rgba(100, 108, 255, 0.2);
+  border-radius: 8px;
   color: var(--text-primary);
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .dashboard-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--spacing-2);
 }
 
 .dashboard-tag {
-  padding: 0.25rem 0.5rem;
-  background-color: var(--accent-primary);
-  color: white;
-  border-radius: 4px;
+  padding: 0.25rem 0.625rem;
+  background: rgba(100, 108, 255, 0.15);
+  border: 1px solid rgba(100, 108, 255, 0.3);
+  color: var(--text-primary);
+  border-radius: 6px;
   font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .dashboard-asset-count {
@@ -700,12 +718,21 @@
 
 .faction-dashboard-empty {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
   color: var(--text-secondary);
   text-align: center;
-  padding: 2rem;
+  padding: var(--spacing-8);
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(100, 108, 255, 0.05) 0%, transparent 60%),
+    transparent;
+}
+
+.faction-dashboard-empty p {
+  margin: 0;
+  font-size: 1rem;
 }
 
 /* Scrollbar removed from sidebar - only carousel scrolls */

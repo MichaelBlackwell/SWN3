@@ -30,7 +30,7 @@ import {
   selectHistoryIndex,
   type TurnPhase,
 } from '../store/slices/turnSlice';
-import { moveAsset, updateFaction, repairMultipleAssets, repairFactionHp, executeAssetAbility, addBaseOfInfluence } from '../store/slices/factionsSlice';
+import { repairMultipleAssets, repairFactionHp, executeAssetAbility, addBaseOfInfluence } from '../store/slices/factionsSlice';
 
 /**
  * Hook for accessing and managing turn phase state
@@ -99,28 +99,9 @@ export function useTurnPhase() {
     const currentStagedActionPayload = state.turn.stagedActionPayload;
 
     // Execute the action before committing
-    if (currentStagedActionType === 'MOVE_ASSET' && currentStagedActionPayload) {
-      const { assetId, destination, factionId } = currentStagedActionPayload as {
-        assetId: string;
-        destination: string;
-        factionId: string;
-      };
-
-      const faction = state.factions.factions.find((f: { id: string }) => f.id === factionId);
-      if (faction && faction.facCreds >= 1) {
-        // Deduct movement cost (1 FacCred)
-        dispatch(updateFaction({
-          ...faction,
-          facCreds: faction.facCreds - 1,
-        }));
-        // Execute movement
-        dispatch(moveAsset({
-          factionId,
-          assetId,
-          newLocation: destination,
-        }));
-      }
-    } else if (currentStagedActionType === 'REPAIR' && currentStagedActionPayload) {
+    // Note: Movement is now handled via USE_ABILITY (asset movement abilities)
+    // and is executed in SectorMap.tsx when destination is clicked
+    if (currentStagedActionType === 'REPAIR' && currentStagedActionPayload) {
       const { factionId, assetRepairs, factionRepair } = currentStagedActionPayload as {
         factionId: string;
         assetRepairs?: Array<{ assetId: string; hpHealed: number; cost: number }>;

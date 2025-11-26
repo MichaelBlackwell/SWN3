@@ -8,14 +8,16 @@
   width: 400px;
   background-color: var(--bg-layer-1);
   border-left: var(--border-width-thin) solid var(--border-color);
-  overflow-y: auto;
+  overflow: visible;
   z-index: 100;
   box-shadow: var(--shadow-lg);
   outline: none;
   transition: transform 0.3s ease-in-out;
 }
 
-.world-details-panel__content {
+.world-details-panel__scroll {
+  height: 100%;
+  overflow-y: auto;
   padding: var(--spacing-5);
 }
 
@@ -68,7 +70,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible; /* Allow tooltips to extend beyond card */
 }
 
 .world-details-planet-card__glow {

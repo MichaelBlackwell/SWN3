@@ -2,6 +2,7 @@ import type { Faction, FactionAsset } from '../types/faction';
 import { getAssetById } from '../data/assetLibrary';
 import { rollDiceExpression } from './combatResolver';
 import type { RootState } from '../store/store';
+import { getMovementAbility } from './movementAbilities';
 
 /**
  * Result of executing an asset ability
@@ -13,6 +14,8 @@ export interface AbilityResult {
   facCredsGained?: number; // FacCreds gained (if any)
   facCredsLost?: number; // FacCreds lost (if any)
   requiresAction: boolean; // Whether this ability consumes the turn's action slot
+  isMovementAbility?: boolean; // Whether this is a movement ability that needs destination selection
+  movementConfig?: ReturnType<typeof getMovementAbility>; // Movement configuration if applicable
   data?: Record<string, unknown>; // Additional result data
 }
 
@@ -40,33 +43,51 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   'cunning_1_smugglers': (_context) => {
     // Smugglers: For one FacCred, transport itself and/or any one Special Forces unit
     // to a planet up to two hexes away.
-    // This is a movement ability - handled separately in movement system
+    const movementConfig = getMovementAbility('cunning_1_smugglers')!;
     return {
-      success: false,
-      message: 'Smugglers transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 2 hexes to move Smugglers and/or Special Forces unit',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
+    };
+  },
+
+  'cunning_2_seductress': (_context) => {
+    // Seductress: As an action, can travel to any world within one hex
+    const movementConfig = getMovementAbility('cunning_2_seductress')!;
+    return {
+      success: true,
+      message: 'Click a destination within 1 hex to move Seductress',
+      requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'cunning_3_covert_shipping': (_context) => {
     // Covert Shipping: Any one Special Forces unit can be moved between any worlds
     // within three hexes at the cost of one FacCred.
-    // This is a movement ability - handled separately
+    const movementConfig = getMovementAbility('cunning_3_covert_shipping')!;
     return {
-      success: false,
-      message: 'Covert Shipping transport ability is handled through the movement system',
-      requiresAction: true,
+      success: true,
+      message: 'Click a destination within 3 hexes to move Special Forces unit',
+      requiresAction: false, // This doesn't use the action
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'cunning_6_covert_transit_net': (_context) => {
     // Covert Transit Net: As an action, any Special Forces assets can be moved
     // between any worlds within three hexes.
-    // This is a movement ability - handled separately
+    const movementConfig = getMovementAbility('cunning_6_covert_transit_net')!;
     return {
-      success: false,
-      message: 'Covert Transit Net transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 3 hexes to move Special Forces assets',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
@@ -82,33 +103,41 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
 
   // FORCE ASSETS
   'force_2_heavy_drop_assets': (_context) => {
-    // Heavy Drop Assets: As an action, may move any number of assets on the planet,
+    // Heavy Drop Assets: As an action, may move any number of non-Starship assets,
     // including itself, to any world within one hex at a cost of one FacCred per asset moved.
-    // This is a movement ability - handled separately
+    const movementConfig = getMovementAbility('force_2_heavy_drop_assets')!;
     return {
-      success: false,
-      message: 'Heavy Drop Assets transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 1 hex to move non-Starship assets',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'force_4_beachhead_landers': (_context) => {
     // Beachhead Landers: As an action, may move any number of assets on the planet,
     // including itself, to any world within one hex at a cost of one FacCred per asset moved.
+    const movementConfig = getMovementAbility('force_4_beachhead_landers')!;
     return {
-      success: false,
-      message: 'Beachhead Landers transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 1 hex to move assets',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'force_4_extended_theater': (_context) => {
     // Extended Theater: As an action, any one non-Starship asset, including itself,
     // can be moved between any two worlds within two hexes at a cost of 1 FacCred.
+    const movementConfig = getMovementAbility('force_4_extended_theater')!;
     return {
-      success: false,
-      message: 'Extended Theater transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 2 hexes to move one non-Starship asset',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
@@ -126,46 +155,61 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   'force_7_deep_strike_landers': (_context) => {
     // Deep Strike Landers: As an action, any one non-Starship asset, including itself,
     // can be moved between any two worlds within three hexes at a cost of 2 FacCreds.
+    const movementConfig = getMovementAbility('force_7_deep_strike_landers')!;
     return {
-      success: false,
-      message: 'Deep Strike Landers transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 3 hexes to move one non-Starship asset (ignores permission)',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'force_4_strike_fleet': (_context) => {
     // Strike Fleet: As an action, can move to any world within one hex.
+    const movementConfig = getMovementAbility('force_4_strike_fleet')!;
     return {
-      success: false,
-      message: 'Strike Fleet movement ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 1 hex to move Strike Fleet',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'force_5_blockade_fleet': (_context) => {
     // Blockade Fleet: As an action, may move itself to a world within one hex.
+    const movementConfig = getMovementAbility('force_5_blockade_fleet')!;
     return {
-      success: false,
-      message: 'Blockade Fleet movement ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 1 hex to move Blockade Fleet',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'force_7_space_marines': (_context) => {
     // Space Marines: As an action, can move to any world within one hex.
+    const movementConfig = getMovementAbility('force_7_space_marines')!;
     return {
-      success: false,
-      message: 'Space Marines movement ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 1 hex to move Space Marines (ignores permission)',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'force_8_capital_fleet': (_context) => {
     // Capital Fleet: As an action, may move to any world within three hexes.
+    const movementConfig = getMovementAbility('force_8_capital_fleet')!;
     return {
-      success: false,
-      message: 'Capital Fleet movement ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 3 hexes to move Capital Fleet',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
@@ -189,10 +233,25 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   'wealth_2_freighter_contract': (_context) => {
     // Freighter Contract: As an action, may move any one non-Force asset, including this one,
     // to any world within two hexes at a cost of one FacCred.
+    const movementConfig = getMovementAbility('wealth_2_freighter_contract')!;
     return {
-      success: false,
-      message: 'Freighter Contract transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 2 hexes to move one non-Force asset',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
+    };
+  },
+
+  'wealth_2_surveyors': (_context) => {
+    // Surveyors: As an action, can be moved to any world within two hexes
+    const movementConfig = getMovementAbility('wealth_2_surveyors')!;
+    return {
+      success: true,
+      message: 'Click a destination within 2 hexes to move Surveyors',
+      requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
@@ -232,10 +291,13 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   'wealth_4_shipping_combine': (_context) => {
     // Shipping Combine: As an action, may move any number of non-Force assets, including itself,
     // to any world within two hexes at a cost of one FacCred per asset.
+    const movementConfig = getMovementAbility('wealth_4_shipping_combine')!;
     return {
-      success: false,
-      message: 'Shipping Combine transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 2 hexes to move non-Force assets',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
@@ -266,10 +328,13 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
   'wealth_5_blockade_runners': (_context) => {
     // Blockade Runners: As an action, can transfer itself or any one Military Unit or
     // Special Forces to a world within three hexes for a cost of two FacCreds.
+    const movementConfig = getMovementAbility('wealth_5_blockade_runners')!;
     return {
-      success: false,
-      message: 'Blockade Runners transport ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 3 hexes to move Blockade Runners or Military/Special Forces (ignores permission)',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
@@ -336,42 +401,44 @@ const abilityRegistry: Record<string, AbilityExecutor> = {
     // may be moved between any two worlds within three hexes. This may be done freely
     // on the owner's turn so long as the fee can be paid, and using the ability doesn't
     // require an action (FREE ACTION).
+    const movementConfig = getMovementAbility('wealth_7_transit_web')!;
     return {
-      success: false,
-      message: 'Transit Web transport ability is handled through the movement system (free action)',
+      success: true,
+      message: 'Click a destination within 3 hexes to move non-starship Cunning/Wealth assets (free action)',
       requiresAction: false, // FREE ACTION
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'wealth_8_scavenger_fleet': (_context) => {
     // Scavenger Fleet: As an action, can be moved to any world within three hexes.
+    const movementConfig = getMovementAbility('wealth_8_scavenger_fleet')!;
     return {
-      success: false,
-      message: 'Scavenger Fleet movement ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 3 hexes to move Scavenger Fleet',
       requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 
   'wealth_3_mercenaries': (_context) => {
     // Mercenaries: As an action, can move to any world within one hex.
+    const movementConfig = getMovementAbility('wealth_3_mercenaries')!;
     return {
-      success: false,
-      message: 'Mercenaries movement ability is handled through the movement system',
+      success: true,
+      message: 'Click a destination within 1 hex to move Mercenaries (requires permission)',
       requiresAction: true,
-    };
-  },
-
-  'wealth_4_surveyors': (_context) => {
-    // Surveyors: As an action, can be moved to any world within two hexes.
-    return {
-      success: false,
-      message: 'Surveyors movement ability is handled through the movement system',
-      requiresAction: true,
+      isMovementAbility: true,
+      movementConfig,
     };
   },
 };
 
 const abilityDescriptions: Record<string, string> = {
+  'cunning_4_seditionists':
+    'Pay 1d4 FacCreds to attach to an enemy asset on the same planet. That asset cannot attack until the Seditionists move or attach elsewhere. If the target asset is destroyed, the Seditionists survive and can be reassigned.',
   'wealth_3_mercenaries': 'As an action, Mercenaries can move to any world within one hex of their current location.',
   'wealth_1_harvesters': 'As an action, roll 1d6. On 3+, gain 1 FacCred.',
   'wealth_3_postech_industry': 'As an action, roll 1d6. 1 = lose 1 FacCred (asset destroyed if you cannot pay), 2-4 = gain 1 FacCred, 5-6 = gain 2 FacCreds.',

@@ -14,8 +14,10 @@ import { getAssetById } from '../../data/assetLibrary';
 import { stageActionWithPayload, cancelMovementMode, selectMovementMode, markActionUsed } from '../../store/slices/turnSlice';
 import { getValidMovementDestinations } from '../../utils/movementUtils';
 import { getFactionColor, getAssetsBySystem, getFactionsWithHomeworld } from '../../utils/factionColors';
+import { getMovementModifierSummary, getMovementTollCharges } from '../../utils/tagModifiers';
 import SystemTooltip from './SystemTooltip';
-import WorldDetails from './WorldDetails';
+import WorldDetailsFloatingCard from './WorldDetailsFloatingCard';
+import SystemAssetCards from './SystemAssetCards';
 import SystemDropZone from './SystemDropZone';
 import { tutorialEventOccurred } from '../../store/slices/tutorialSlice';
 import { getPlanetSprite } from '../../utils/planetSpriteMapping';
@@ -101,7 +103,10 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
     }
 
     // Validate purchase
-    const validation = validateAssetPurchase(faction, assetDefinitionId);
+    const system = sector.systems.find((s: StarSystem) => s.id === systemId);
+    const validation = validateAssetPurchase(faction, assetDefinitionId, {
+      targetSystem: system,
+    });
     if (!validation.valid) {
       showNotification(validation.reason || 'Cannot purchase asset', 'error');
       return;
@@ -109,7 +114,6 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
 
     // Get asset definition for success message
     const assetDef = getAssetById(assetDefinitionId);
-    const system = sector.systems.find((s: StarSystem) => s.id === systemId);
     const systemName = system ? getSystemDisplayName(system.name) : 'Unknown System';
     
     // Dispatch the purchase
@@ -460,7 +464,19 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
       if (faction) {
         const asset = faction.assets.find((a: FactionAsset) => a.id === movementMode.assetId);
         if (asset) {
-          validDestinations = getValidMovementDestinations(asset.location, sector.systems);
+          // Use custom ability range if available, otherwise use default movement logic
+          let movementRange: number;
+          if (movementMode.abilityRange !== undefined) {
+            movementRange = movementMode.abilityRange;
+          } else {
+            const movementSummary = getMovementModifierSummary(faction);
+            movementRange = 1 + Math.max(0, movementSummary.movementRangeBonus);
+          }
+          validDestinations = getValidMovementDestinations(
+            asset.location,
+            sector.systems,
+            movementRange
+          );
         }
       }
     }
@@ -815,10 +831,21 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
               return;
             }
 
-            // Check if this system is a valid destination
-            const validDestinations = getValidMovementDestinations(asset.location, sector.systems);
+            // Use custom ability range if available, otherwise use default movement logic
+            let movementRange: number;
+            if (movementMode.abilityRange !== undefined) {
+              movementRange = movementMode.abilityRange;
+            } else {
+              const movementSummary = getMovementModifierSummary(faction);
+              movementRange = 1 + Math.max(0, movementSummary.movementRangeBonus);
+            }
+            const validDestinations = getValidMovementDestinations(
+              asset.location,
+              sector.systems,
+              movementRange
+            );
             if (!validDestinations.includes(system.id)) {
-              showNotification('Invalid destination: Must be adjacent hex or route-connected system', 'error');
+              showNotification(`Invalid destination: Must be within ${movementRange} hex${movementRange === 1 ? '' : 'es'}`, 'error');
               return;
             }
 
@@ -828,9 +855,25 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
               return;
             }
 
-            // Ensure faction still has resources for movement
-            if (faction.facCreds < 1) {
-              showNotification('Insufficient FacCreds: Movement costs 1 FacCred', 'error');
+            // Calculate movement costs (get summary for cost calculation)
+            const movementSummary = getMovementModifierSummary(faction);
+            const leavingHomeworld =
+              asset.location === faction.homeworld && system.id !== faction.homeworld;
+            let movementCost =
+              1 +
+              (movementSummary.movementCostModifier ?? 0) +
+              (leavingHomeworld ? movementSummary.homeworldDeparturePenalty ?? 0 : 0);
+            movementCost = Math.max(0, movementCost);
+
+            const tollCharges = getMovementTollCharges(factions, faction.id, system.id);
+            const totalToll = tollCharges.reduce((sum, charge) => sum + charge.amount, 0);
+            const totalCost = movementCost + totalToll;
+
+            if (faction.facCreds < totalCost) {
+              showNotification(
+                `Insufficient FacCreds: Movement requires ${totalCost} FacCred${totalCost === 1 ? '' : 's'}`,
+                'error'
+              );
               dispatch(cancelMovementMode());
               return;
             }
@@ -842,15 +885,28 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
             };
 
             dispatch(stageActionWithPayload({
-              type: 'MOVE_ASSET',
+              type: 'USE_ABILITY',
               payload: movementPayload,
             }));
 
             // Deduct FacCreds and move the asset immediately
-            dispatch(updateFaction({
-              ...faction,
-              facCreds: faction.facCreds - 1,
-            }));
+            dispatch(
+              updateFaction({
+                ...faction,
+                facCreds: faction.facCreds - totalCost,
+              })
+            );
+            tollCharges.forEach(({ factionId, amount }) => {
+              const recipient = factions.find((f) => f.id === factionId);
+              if (recipient && amount > 0) {
+                dispatch(
+                  updateFaction({
+                    ...recipient,
+                    facCreds: recipient.facCreds + amount,
+                  })
+                );
+              }
+            });
             dispatch(moveAsset({
               factionId: movementMode.factionId,
               assetId: movementMode.assetId,
@@ -876,10 +932,16 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
             });
 
             dispatch(cancelMovementMode());
-            // Mark that a Move action was used (allows more moves of same type)
-            dispatch(markActionUsed('MOVE_ASSET'));
+            // Mark that a Use Ability action was used (movement is via asset abilities)
+            dispatch(markActionUsed('USE_ABILITY'));
             dispatch(tutorialEventOccurred({ eventId: 'assetTutorial.assetMoveCompleted' }));
-            showNotification(`${assetDef?.name || 'Asset'} moved to ${systemDisplayName}`, 'success');
+            const costSummary =
+              totalCost > 0
+                ? ` (spent ${movementCost} FacCred${movementCost === 1 ? '' : 's'}${
+                    totalToll > 0 ? ` + ${totalToll} FacCred toll` : ''
+                  })`
+                : '';
+            showNotification(`${assetDef?.name || 'Asset'} moved to ${systemDisplayName}${costSummary}`, 'success');
             return;
           }
 
@@ -1068,7 +1130,8 @@ export default function SectorMap({ width = 800, height = 600 }: SectorMapProps)
         {/* SVG content is rendered via D3 - dimensions set by D3 based on container */}
       </svg>
       <SystemTooltip system={tooltipState.system} position={tooltipState.position} factions={factions} />
-      <WorldDetails />
+      <WorldDetailsFloatingCard />
+      <SystemAssetCards />
       {/* Render drop zones for each system */}
       {selectedFactionId && sector.systems.map((system: StarSystem) => {
         const position = systemPositions.get(system.id);

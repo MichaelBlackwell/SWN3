@@ -99,58 +99,10 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  min-height: 0;
-}
-
-/* Tabbed Interface */
-.sector-map-view__tabs {
-  display: flex;
-  background-color: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
-
-.sector-map-view__tab {
-  flex: 1;
-  padding: 0.875rem 1rem;
-  background-color: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--text-secondary);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.sector-map-view__tab:hover {
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-.sector-map-view__tab--active {
-  color: var(--accent-primary);
-  border-bottom-color: var(--accent-primary);
-  background-color: var(--bg-secondary);
-}
-
-.sector-map-view__tab-content {
-  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
   padding: 1.5rem;
-}
-
-.sector-map-view__tab-panel {
-  display: none;
-  height: 100%;
-}
-
-.sector-map-view__tab-panel--active {
-  display: block;
 }
 
 /* Responsive Design */
@@ -219,13 +171,7 @@
     transform: translateX(50%) translateY(100%);
   }
 
-  .sector-map-view__tab {
-    padding: 1rem;
-    font-size: 0.9375rem;
-    min-height: 44px;
-  }
-
-  .sector-map-view__tab-content {
+  .sector-map-view__sidebar-content {
     padding: 1.25rem;
   }
 }
@@ -245,31 +191,26 @@
     font-size: 1rem;
   }
 
-  .sector-map-view__tab {
-    padding: 0.875rem 0.75rem;
-    font-size: 0.875rem;
-  }
-
-  .sector-map-view__tab-content {
+  .sector-map-view__sidebar-content {
     padding: 1rem;
   }
 }
 
 /* Scrollbar styling */
-.sector-map-view__tab-content::-webkit-scrollbar {
+.sector-map-view__sidebar-content::-webkit-scrollbar {
   width: 8px;
 }
 
-.sector-map-view__tab-content::-webkit-scrollbar-track {
+.sector-map-view__sidebar-content::-webkit-scrollbar-track {
   background: var(--bg-secondary);
 }
 
-.sector-map-view__tab-content::-webkit-scrollbar-thumb {
+.sector-map-view__sidebar-content::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: 4px;
 }
 
-.sector-map-view__tab-content::-webkit-scrollbar-thumb:hover {
+.sector-map-view__sidebar-content::-webkit-scrollbar-thumb:hover {
   background: #444444;
 }
 

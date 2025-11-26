@@ -15,11 +15,13 @@ export interface ScenarioConfig {
 interface GameModeState {
   mode: GameMode;
   currentScenario: ScenarioConfig | null;
+  playerFactionId: string | null;
 }
 
 const initialState: GameModeState = {
   mode: 'menu',
   currentScenario: null,
+  playerFactionId: null,
 };
 
 const gameModeSlice = createSlice({
@@ -32,13 +34,17 @@ const gameModeSlice = createSlice({
     setScenario: (state, action: PayloadAction<ScenarioConfig | null>) => {
       state.currentScenario = action.payload;
     },
+    setPlayerFaction: (state, action: PayloadAction<string | null>) => {
+      state.playerFactionId = action.payload;
+    },
     returnToMenu: (state) => {
       state.mode = 'menu';
       state.currentScenario = null;
+      state.playerFactionId = null;
     },
   },
 });
 
-export const { setGameMode, setScenario, returnToMenu } = gameModeSlice.actions;
+export const { setGameMode, setScenario, setPlayerFaction, returnToMenu } = gameModeSlice.actions;
 export default gameModeSlice.reducer;
 

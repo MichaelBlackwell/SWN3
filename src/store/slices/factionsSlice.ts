@@ -7,6 +7,18 @@ import {
   applyPurchaseTimeEffects,
   getMaintenanceModifier,
 } from '../../utils/applySpecialFeatures';
+import {
+  applyIncomeModifiers,
+  canPurchaseExclusiveAsset,
+  factionHasTag,
+  getFactionMaintenanceModifier,
+} from '../../utils/tagModifiers';
+import {
+  assignColorToFaction,
+  assignColorsToFactions,
+  clearFactionColorRegistry,
+  removeFactionColor,
+} from '../../utils/factionColors';
 
 interface FactionsState {
   factions: Faction[];
@@ -41,6 +53,19 @@ export interface InflictDamagePayload {
   assetId: string;
   damage: number;
   damageToBase?: boolean; // If true, damage is being applied to a Base of Influence
+  sourceFactionId?: string; // Optional: faction that dealt the damage (for tag effects)
+}
+
+function applyGoalCompletionBonuses(faction: Faction) {
+  if (!faction.goal) return;
+
+  // Exchange Consulate: bonus XP on successful Peaceable Kingdom goal (on 4+)
+  if (faction.goal.type === 'Peaceable Kingdom' && factionHasTag(faction, 'Exchange Consulate')) {
+    const roll = Math.floor(Math.random() * 6) + 1;
+    if (roll >= 4) {
+      faction.xp += 1;
+    }
+  }
 }
 
 const factionsSlice = createSlice({
@@ -48,7 +73,8 @@ const factionsSlice = createSlice({
   initialState,
   reducers: {
     addFaction: (state, action: PayloadAction<Faction>) => {
-      state.factions.push(action.payload);
+      const factionWithColor = assignColorToFaction(action.payload, state.factions);
+      state.factions.push(factionWithColor);
     },
     removeFaction: (state, action: PayloadAction<string>) => {
       const faction = state.factions.find((f) => f.id === action.payload);
@@ -64,6 +90,7 @@ const factionsSlice = createSlice({
       if (state.selectedFactionId === action.payload) {
         state.selectedFactionId = null;
       }
+      removeFactionColor(action.payload);
     },
     updateFaction: (state, action: PayloadAction<Faction>) => {
       const index = state.factions.findIndex((f) => f.id === action.payload.id);
@@ -77,10 +104,13 @@ const factionsSlice = createSlice({
     clearAllFactions: (state) => {
       state.factions = [];
       state.selectedFactionId = null;
+      state.assetsFailedMaintenance = {};
+      clearFactionColorRegistry();
     },
     // Hydrate state from a save file
     hydrateFactions: (state, action: PayloadAction<Faction[]>) => {
-      state.factions = action.payload;
+      clearFactionColorRegistry();
+      state.factions = assignColorsToFactions(action.payload);
       // Reset selected faction when hydrating
       state.selectedFactionId = null;
       // Reset failed maintenance tracking when hydrating
@@ -95,6 +125,8 @@ const factionsSlice = createSlice({
       // Get asset definition from library
       const assetDef = getAssetById(assetDefinitionId);
       if (!assetDef) return;
+
+      if (!canPurchaseExclusiveAsset(faction, assetDefinitionId)) return;
 
       // Validate faction has enough credits
       if (faction.facCreds < assetDef.cost) return;
@@ -238,8 +270,9 @@ const factionsSlice = createSlice({
     // Process Income Phase: Calculate and distribute income to all factions
     processIncomePhase: (state) => {
       state.factions.forEach((faction) => {
-        const income = calculateTurnIncome(faction.attributes);
-        faction.facCreds += income;
+        const baseIncome = calculateTurnIncome(faction.attributes);
+        const modifiedIncome = applyIncomeModifiers(faction, baseIncome);
+        faction.facCreds += modifiedIncome;
       });
     },
     // Process Maintenance Phase: Calculate and deduct maintenance costs
@@ -293,6 +326,14 @@ const factionsSlice = createSlice({
           }
         });
 
+        const factionMaintenanceModifier = getFactionMaintenanceModifier(faction);
+        if (factionMaintenanceModifier !== 0) {
+          assetMaintenanceMap.forEach((cost, assetId) => {
+            const adjusted = Math.max(0, cost + factionMaintenanceModifier);
+            assetMaintenanceMap.set(assetId, adjusted);
+          });
+        }
+
         // Calculate total maintenance
         let totalMaintenance = 0;
         assetMaintenanceMap.forEach((cost) => {
@@ -344,7 +385,7 @@ const factionsSlice = createSlice({
     },
     // Inflict damage to an asset or Base of Influence
     inflictDamage: (state, action: PayloadAction<InflictDamagePayload>) => {
-      const { factionId, assetId, damage, damageToBase = false } = action.payload;
+      const { factionId, assetId, damage, damageToBase = false, sourceFactionId } = action.payload;
       const faction = state.factions.find((f) => f.id === factionId);
       if (!faction) return;
 
@@ -389,6 +430,19 @@ const factionsSlice = createSlice({
         // For bases, overflow damage is already excluded from faction damage above
         if (!isBaseOfInfluence && overflowDamage > 0) {
           faction.attributes.hp = Math.max(0, faction.attributes.hp - overflowDamage);
+        }
+
+        // Scavengers tag: Gain 1 FacCred when losing an asset
+        if (factionHasTag(faction, 'Scavengers')) {
+          faction.facCreds += 1;
+        }
+
+        // Award FacCred to attacking faction if they have Scavengers
+        if (sourceFactionId && sourceFactionId !== factionId) {
+          const sourceFaction = state.factions.find((f) => f.id === sourceFactionId);
+          if (sourceFaction && factionHasTag(sourceFaction, 'Scavengers')) {
+            sourceFaction.facCreds += 1;
+          }
         }
       }
     },
@@ -613,6 +667,7 @@ const factionsSlice = createSlice({
 
       // Award XP based on goal difficulty
       faction.xp += faction.goal.difficulty;
+      applyGoalCompletionBonuses(faction);
     },
     // Update goal progress
     updateGoalProgress: (
@@ -639,6 +694,7 @@ const factionsSlice = createSlice({
       if (current >= faction.goal.progress.target && !faction.goal.isCompleted) {
         faction.goal.isCompleted = true;
         faction.xp += faction.goal.difficulty;
+        applyGoalCompletionBonuses(faction);
       }
     },
     // Upgrade a faction attribute using XP
@@ -696,6 +752,103 @@ const factionsSlice = createSlice({
       faction.attributes.maxHp = newMaxHp;
       faction.attributes.hp += hpIncrease;
     },
+    // =========================================================================
+    // TAG MANAGEMENT REDUCERS
+    // =========================================================================
+    
+    // Add a tag to a faction
+    addFactionTag: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        tag: import('../../types/faction').FactionTag;
+      }>
+    ) => {
+      const { factionId, tag } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      // Don't add duplicate tags (except Planetary Government which can be held multiple times)
+      // Actually, per SWN rules, Planetary Government is acquired multiple times but stored once
+      // with the understanding that it applies to multiple planets. For simplicity, we allow
+      // adding it once and track controlled planets separately if needed.
+      if (!faction.tags.includes(tag)) {
+        faction.tags.push(tag);
+      }
+    },
+    // Remove a tag from a faction
+    removeFactionTag: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        tag: import('../../types/faction').FactionTag;
+      }>
+    ) => {
+      const { factionId, tag } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      const tagIndex = faction.tags.indexOf(tag);
+      if (tagIndex !== -1) {
+        faction.tags.splice(tagIndex, 1);
+      }
+    },
+    // Set Planetary Government status for a faction
+    // This handles the dynamic acquisition/loss of the Planetary Government tag
+    // based on whether the faction controls a planet as its legitimate government
+    setPlanetaryGovernmentStatus: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        hasPlanetaryGovernment: boolean;
+        planetId?: string; // Optional: track which planet (for future multi-planet support)
+      }>
+    ) => {
+      const { factionId, hasPlanetaryGovernment } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      const hasTag = faction.tags.includes('Planetary Government');
+
+      if (hasPlanetaryGovernment && !hasTag) {
+        // Gain Planetary Government tag
+        faction.tags.push('Planetary Government');
+      } else if (!hasPlanetaryGovernment && hasTag) {
+        // Lose Planetary Government tag
+        const tagIndex = faction.tags.indexOf('Planetary Government');
+        if (tagIndex !== -1) {
+          faction.tags.splice(tagIndex, 1);
+        }
+      }
+    },
+    // Change a faction's homeworld
+    // This has special implications for tags like 'Deep Rooted' which is lost
+    // if the faction ever changes homeworld
+    changeHomeworld: (
+      state,
+      action: PayloadAction<{
+        factionId: string;
+        newHomeworldId: string;
+      }>
+    ) => {
+      const { factionId, newHomeworldId } = action.payload;
+      const faction = state.factions.find((f) => f.id === factionId);
+      if (!faction) return;
+
+      const oldHomeworld = faction.homeworld;
+      
+      // Only process if homeworld is actually changing
+      if (oldHomeworld === newHomeworldId) return;
+
+      // Update the homeworld
+      faction.homeworld = newHomeworldId;
+
+      // Deep Rooted tag is lost when homeworld changes (per SWN rules)
+      const deepRootedIndex = faction.tags.indexOf('Deep Rooted');
+      if (deepRootedIndex !== -1) {
+        faction.tags.splice(deepRootedIndex, 1);
+      }
+    },
   },
 });
 
@@ -724,6 +877,11 @@ export const {
   completeGoal,
   updateGoalProgress,
   upgradeAttribute,
+  // Tag management
+  addFactionTag,
+  removeFactionTag,
+  setPlanetaryGovernmentStatus,
+  changeHomeworld,
 } = factionsSlice.actions;
 export default factionsSlice.reducer;
 

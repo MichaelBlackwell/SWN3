@@ -82,6 +82,7 @@ export interface Faction {
   id: string;
   name: string;
   type: FactionType;
+  color?: string;
   homeworld: string; // systemId
   attributes: FactionAttributes;
   facCreds: number;

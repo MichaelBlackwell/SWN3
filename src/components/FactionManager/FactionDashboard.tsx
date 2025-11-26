@@ -249,6 +249,7 @@ const FactionDashboard = forwardRef<FactionDashboardRef, FactionDashboardProps>(
                     key={tag}
                     label={tag}
                     description={FACTION_TAG_METADATA[tag]?.description}
+                    effects={FACTION_TAG_METADATA[tag]?.effects}
                   />
                 ))}
               </div>

@@ -1,6 +1,6 @@
 // Unit tests for factions slice, specifically combat damage actions
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import factionsReducer, {
   addFaction,
   addAsset,
@@ -11,9 +11,14 @@ import factionsReducer, {
   completeGoal,
   updateGoalProgress,
   upgradeAttribute,
+  addFactionTag,
+  removeFactionTag,
+  setPlanetaryGovernmentStatus,
+  changeHomeworld,
+  processIncomePhase,
   type FactionsState,
 } from './factionsSlice';
-import type { Faction, FactionGoal } from '../../types/faction';
+import type { Faction, FactionGoal, FactionTag } from '../../types/faction';
 
 describe('factionsSlice - Combat Damage', () => {
   let initialState: FactionsState;
@@ -240,8 +245,11 @@ describe('factionsSlice - Combat Damage', () => {
     });
 
     it('should not allow faction HP to go below 0', () => {
-      let state = factionsReducer(initialState, addFaction(testFaction));
-      state.factions[0].attributes.hp = 2; // Low HP
+      const lowHpFaction: Faction = {
+        ...testFaction,
+        attributes: { ...testFaction.attributes, hp: 2 },
+      };
+      let state = factionsReducer(initialState, addFaction(lowHpFaction));
       
       state = factionsReducer(
         state,
@@ -267,6 +275,85 @@ describe('factionsSlice - Combat Damage', () => {
       expect(state.factions[0].attributes.hp).toBe(0); // Not negative
       expect(state.factions[0].assets.length).toBe(0); // Asset destroyed
     });
+
+    it('awards FacCreds when a Scavengers faction loses an asset', () => {
+      const scavengerFaction: Faction = {
+        ...testFaction,
+        id: 'scavenger',
+        facCreds: 5,
+        tags: ['Scavengers'],
+      };
+
+      let state = factionsReducer(initialState, addFaction(scavengerFaction));
+      state = factionsReducer(
+        state,
+        addAsset({
+          factionId: 'scavenger',
+          assetDefinitionId: 'force_1_security_personnel',
+          location: 'system-1',
+        })
+      );
+
+      const assetId = state.factions[0].assets[0].id;
+
+      state = factionsReducer(
+        state,
+        inflictDamage({
+          factionId: 'scavenger',
+          assetId,
+          damage: 10,
+        })
+      );
+
+      expect(state.factions[0].facCreds).toBe(4);
+      expect(state.factions[0].assets.length).toBe(0);
+    });
+
+    it('awards FacCreds to Scavengers attackers when they destroy an enemy asset', () => {
+      const attacker: Faction = {
+        ...testFaction,
+        id: 'attacker',
+        name: 'Scavengers United',
+        tags: ['Scavengers'],
+        facCreds: 7,
+      };
+
+      const defender: Faction = {
+        ...testFaction,
+        id: 'defender',
+        name: 'Target Faction',
+        facCreds: 4,
+      };
+
+      let state = factionsReducer(initialState, addFaction(attacker));
+      state = factionsReducer(state, addFaction(defender));
+      state = factionsReducer(
+        state,
+        addAsset({
+          factionId: 'defender',
+          assetDefinitionId: 'force_1_security_personnel',
+          location: 'system-1',
+        })
+      );
+
+      const targetAssetId = state.factions.find((f) => f.id === 'defender')!.assets[0].id;
+
+      state = factionsReducer(
+        state,
+        inflictDamage({
+          factionId: 'defender',
+          assetId: targetAssetId,
+          damage: 10,
+          sourceFactionId: 'attacker',
+        })
+      );
+
+      const updatedAttacker = state.factions.find((f) => f.id === 'attacker');
+      const updatedDefender = state.factions.find((f) => f.id === 'defender');
+
+      expect(updatedAttacker?.facCreds).toBe(8);
+      expect(updatedDefender?.assets.length).toBe(0);
+    });
   });
 
   describe('inflictFactionDamage', () => {
@@ -286,8 +373,11 @@ describe('factionsSlice - Combat Damage', () => {
     });
 
     it('should not allow faction HP to go below 0', () => {
-      let state = factionsReducer(initialState, addFaction(testFaction));
-      state.factions[0].attributes.hp = 3;
+      const lowHpFaction: Faction = {
+        ...testFaction,
+        attributes: { ...testFaction.attributes, hp: 3 },
+      };
+      let state = factionsReducer(initialState, addFaction(lowHpFaction));
 
       state = factionsReducer(
         state,
@@ -316,11 +406,13 @@ describe('factionsSlice - Combat Damage', () => {
   describe('Special Features Integration', () => {
     describe('Purchase-time effects', () => {
       it('should automatically set Psychic Assassins as stealthed when purchased', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        // Ensure faction has enough credits and Force rating
-        state.factions[0].facCreds = 20;
-        state.factions[0].attributes.force = 5;
+        const psionicFaction: Faction = {
+          ...testFaction,
+          facCreds: 20,
+          tags: ['Psychic Academy'],
+          attributes: { ...testFaction.attributes, force: 5 },
+        };
+        let state = factionsReducer(initialState, addFaction(psionicFaction));
 
         state = factionsReducer(
           state,
@@ -338,10 +430,12 @@ describe('factionsSlice - Combat Damage', () => {
       });
 
       it('should not auto-stealth assets without purchase effects', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        state.factions[0].facCreds = 20;
-        state.factions[0].attributes.force = 3;
+        const standardFaction: Faction = {
+          ...testFaction,
+          facCreds: 20,
+          attributes: { ...testFaction.attributes, force: 3 },
+        };
+        let state = factionsReducer(initialState, addFaction(standardFaction));
 
         state = factionsReducer(
           state,
@@ -360,11 +454,12 @@ describe('factionsSlice - Combat Damage', () => {
 
     describe('Maintenance modifiers', () => {
       it('should apply additional maintenance cost for Capital Fleet', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        // Set up faction with enough credits and Force rating
-        state.factions[0].facCreds = 50;
-        state.factions[0].attributes.force = 8;
+        const capitalFaction: Faction = {
+          ...testFaction,
+          facCreds: 50,
+          attributes: { ...testFaction.attributes, force: 8 },
+        };
+        let state = factionsReducer(initialState, addFaction(capitalFaction));
 
         // Purchase Capital Fleet (cost 40, base maintenance 0, special +2)
         state = factionsReducer(
@@ -381,15 +476,17 @@ describe('factionsSlice - Combat Damage', () => {
         // Process maintenance phase
         state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
 
-        // Capital Fleet should cost 2 FacCreds maintenance (0 base + 2 special)
-        expect(state.factions[0].facCreds).toBe(8); // 10 - 2 = 8
+        // Capital Fleet maintenance: 2 base + 2 special = 4
+        expect(state.factions[0].facCreds).toBe(6); // 10 - 4 = 6
       });
 
       it('should apply additional maintenance cost for Mercenaries', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        state.factions[0].facCreds = 20;
-        state.factions[0].attributes.wealth = 3;
+        const mercFaction: Faction = {
+          ...testFaction,
+          facCreds: 20,
+          attributes: { ...testFaction.attributes, wealth: 3 },
+        };
+        let state = factionsReducer(initialState, addFaction(mercFaction));
 
         // Purchase Mercenaries (cost 8, base maintenance 0, special +1)
         state = factionsReducer(
@@ -406,15 +503,17 @@ describe('factionsSlice - Combat Damage', () => {
         // Process maintenance phase
         state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
 
-        // Mercenaries should cost 1 FacCred maintenance (0 base + 1 special)
-        expect(state.factions[0].facCreds).toBe(11); // 12 - 1 = 11
+        // Mercenaries maintenance: 1 base + 1 special = 2
+        expect(state.factions[0].facCreds).toBe(10); // 12 - 2 = 10
       });
 
       it('should apply additional maintenance cost for Pretech Researchers', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        state.factions[0].facCreds = 20;
-        state.factions[0].attributes.wealth = 5;
+        const researcherFaction: Faction = {
+          ...testFaction,
+          facCreds: 20,
+          attributes: { ...testFaction.attributes, wealth: 5 },
+        };
+        let state = factionsReducer(initialState, addFaction(researcherFaction));
 
         // Purchase Pretech Researchers (cost 14, base maintenance 0, special +1)
         state = factionsReducer(
@@ -431,15 +530,17 @@ describe('factionsSlice - Combat Damage', () => {
         // Process maintenance phase
         state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
 
-        // Pretech Researchers should cost 1 FacCred maintenance (0 base + 1 special)
-        expect(state.factions[0].facCreds).toBe(5); // 6 - 1 = 5
+        // Pretech Researchers maintenance: 1 base + 1 special = 2
+        expect(state.factions[0].facCreds).toBe(4); // 6 - 2 = 4
       });
 
       it('should apply additional maintenance cost for Scavenger Fleet', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        state.factions[0].facCreds = 40;
-        state.factions[0].attributes.wealth = 8;
+        const scavFaction: Faction = {
+          ...testFaction,
+          facCreds: 40,
+          attributes: { ...testFaction.attributes, wealth: 8 },
+        };
+        let state = factionsReducer(initialState, addFaction(scavFaction));
 
         // Purchase Scavenger Fleet (cost 30, base maintenance 0, special +2)
         state = factionsReducer(
@@ -456,15 +557,17 @@ describe('factionsSlice - Combat Damage', () => {
         // Process maintenance phase
         state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
 
-        // Scavenger Fleet should cost 2 FacCreds maintenance (0 base + 2 special)
-        expect(state.factions[0].facCreds).toBe(8); // 10 - 2 = 8
+        // Scavenger Fleet maintenance: 2 base + 2 special = 4
+        expect(state.factions[0].facCreds).toBe(6); // 10 - 4 = 6
       });
 
       it('should combine base maintenance with special feature modifiers', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        state.factions[0].facCreds = 50;
-        state.factions[0].attributes.force = 8;
+        const comboFaction: Faction = {
+          ...testFaction,
+          facCreds: 50,
+          attributes: { ...testFaction.attributes, force: 8 },
+        };
+        let state = factionsReducer(initialState, addFaction(comboFaction));
 
         // Purchase Capital Fleet and another asset with base maintenance
         state = factionsReducer(
@@ -479,16 +582,17 @@ describe('factionsSlice - Combat Damage', () => {
         // Process maintenance phase
         state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
 
-        // Should have paid 2 FacCreds for Capital Fleet maintenance
-        expect(state.factions[0].facCreds).toBe(8); // 10 (after purchase) - 2 = 8
+        // Should have paid 4 FacCreds for Capital Fleet maintenance
+        expect(state.factions[0].facCreds).toBe(6); // 10 (after purchase) - 4 = 6
       });
 
       it('should handle multiple assets with maintenance modifiers', () => {
-        let state = factionsReducer(initialState, addFaction(testFaction));
-        
-        state.factions[0].facCreds = 100;
-        state.factions[0].attributes.force = 8;
-        state.factions[0].attributes.wealth = 8;
+        const multiFaction: Faction = {
+          ...testFaction,
+          facCreds: 100,
+          attributes: { ...testFaction.attributes, force: 8, wealth: 8 },
+        };
+        let state = factionsReducer(initialState, addFaction(multiFaction));
 
         // Purchase Capital Fleet (2 maintenance) and Scavenger Fleet (2 maintenance)
         state = factionsReducer(
@@ -513,8 +617,34 @@ describe('factionsSlice - Combat Damage', () => {
         // Process maintenance phase
         state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
 
-        // Should have paid 4 FacCreds total (2 + 2)
-        expect(state.factions[0].facCreds).toBe(26); // 30 - 4 = 26
+        // Should have paid 8 FacCreds total (4 + 4)
+        expect(state.factions[0].facCreds).toBe(22); // 30 - 8 = 22
+      });
+
+      it('should reduce maintenance costs for factions with the Scavengers tag', () => {
+        const scavengerFaction: Faction = {
+          ...testFaction,
+          facCreds: 20,
+          tags: ['Scavengers'],
+          attributes: { ...testFaction.attributes, wealth: 3 },
+        };
+        let state = factionsReducer(initialState, addFaction(scavengerFaction));
+
+        state = factionsReducer(
+          state,
+          addAsset({
+            factionId: 'faction-1',
+            assetDefinitionId: 'wealth_3_mercenaries',
+            location: 'system-1',
+          })
+        );
+
+        expect(state.factions[0].facCreds).toBe(12);
+
+        state = factionsReducer(state, { type: 'factions/processMaintenancePhase' });
+
+        // Mercenaries maintenance would normally cost 2, Scavengers reduces it by 1
+        expect(state.factions[0].facCreds).toBe(11);
       });
     });
   });
@@ -697,6 +827,38 @@ describe('factionsSlice - Combat Damage', () => {
         expect(state.factions[0].xp).toBe(1); // Should award XP automatically
       });
 
+      it('applies Exchange Consulate bonus when Peaceable Kingdom auto-completes', () => {
+        const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.8);
+        const exchangeFaction: Faction = {
+          ...testFaction,
+          tags: ['Exchange Consulate'],
+        };
+
+        let state = factionsReducer(initialState, addFaction(exchangeFaction));
+
+        const goal: FactionGoal = {
+          id: 'goal-peace',
+          type: 'Peaceable Kingdom',
+          description: 'No attacks for four turns',
+          progress: { current: 0, target: 1 },
+          difficulty: 1,
+          isCompleted: false,
+        };
+
+        state = factionsReducer(state, setGoal({ factionId: 'faction-1', goal }));
+        state = factionsReducer(
+          state,
+          updateGoalProgress({
+            factionId: 'faction-1',
+            current: 1,
+          })
+        );
+
+        expect(state.factions[0].goal?.isCompleted).toBe(true);
+        expect(state.factions[0].xp).toBe(2);
+        randomSpy.mockRestore();
+      });
+
       it('should update metadata when provided', () => {
         let state = factionsReducer(initialState, addFaction(testFaction));
 
@@ -745,6 +907,31 @@ describe('factionsSlice - Combat Damage', () => {
 
         expect(state.factions[0].goal?.isCompleted).toBe(true);
         expect(state.factions[0].xp).toBe(2); // difficulty = 2
+      });
+
+      it('awards bonus XP to Exchange Consulate factions on Peaceable Kingdom completion', () => {
+        const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.9); // Ensures roll >= 4
+        const exchangeFaction: Faction = {
+          ...testFaction,
+          tags: ['Exchange Consulate'],
+        };
+
+        let state = factionsReducer(initialState, addFaction(exchangeFaction));
+
+        const peaceGoal: FactionGoal = {
+          id: 'goal-peace',
+          type: 'Peaceable Kingdom',
+          description: 'No attacks for four turns',
+          progress: { current: 4, target: 4 },
+          difficulty: 1,
+          isCompleted: false,
+        };
+
+        state = factionsReducer(state, setGoal({ factionId: 'faction-1', goal: peaceGoal }));
+        state = factionsReducer(state, completeGoal({ factionId: 'faction-1' }));
+
+        expect(state.factions[0].xp).toBe(2); // 1 base +1 bonus
+        randomSpy.mockRestore();
       });
 
       it('should do nothing if faction has no goal', () => {
@@ -1036,6 +1223,386 @@ describe('factionsSlice - Combat Damage', () => {
         // Should now be at max rating (8)
         expect(state.factions[0].attributes.force).toBe(8);
       });
+    });
+  });
+
+  // =========================================================================
+  // TAG MANAGEMENT TESTS
+  // =========================================================================
+  describe('Tag Management', () => {
+    describe('addFactionTag', () => {
+      it('should add a tag to a faction', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+        expect(state.factions[0].tags.length).toBe(0);
+
+        state = factionsReducer(
+          state,
+          addFactionTag({
+            factionId: 'faction-1',
+            tag: 'Warlike',
+          })
+        );
+
+        expect(state.factions[0].tags).toContain('Warlike');
+        expect(state.factions[0].tags.length).toBe(1);
+      });
+
+      it('should add multiple different tags', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+
+        state = factionsReducer(
+          state,
+          addFactionTag({ factionId: 'faction-1', tag: 'Warlike' })
+        );
+        state = factionsReducer(
+          state,
+          addFactionTag({ factionId: 'faction-1', tag: 'Imperialists' })
+        );
+
+        expect(state.factions[0].tags).toContain('Warlike');
+        expect(state.factions[0].tags).toContain('Imperialists');
+        expect(state.factions[0].tags.length).toBe(2);
+      });
+
+      it('should not add duplicate tags', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+
+        state = factionsReducer(
+          state,
+          addFactionTag({ factionId: 'faction-1', tag: 'Warlike' })
+        );
+        state = factionsReducer(
+          state,
+          addFactionTag({ factionId: 'faction-1', tag: 'Warlike' })
+        );
+
+        expect(state.factions[0].tags.filter((t) => t === 'Warlike').length).toBe(1);
+      });
+
+      it('should do nothing for non-existent faction', () => {
+        const state = factionsReducer(
+          initialState,
+          addFactionTag({ factionId: 'non-existent', tag: 'Warlike' })
+        );
+
+        expect(state.factions.length).toBe(0);
+      });
+    });
+
+    describe('removeFactionTag', () => {
+      it('should remove a tag from a faction', () => {
+        const factionWithTags: Faction = {
+          ...testFaction,
+          tags: ['Warlike', 'Imperialists'],
+        };
+        let state = factionsReducer(initialState, addFaction(factionWithTags));
+
+        state = factionsReducer(
+          state,
+          removeFactionTag({ factionId: 'faction-1', tag: 'Warlike' })
+        );
+
+        expect(state.factions[0].tags).not.toContain('Warlike');
+        expect(state.factions[0].tags).toContain('Imperialists');
+        expect(state.factions[0].tags.length).toBe(1);
+      });
+
+      it('should do nothing if tag is not present', () => {
+        const factionWithTags: Faction = {
+          ...testFaction,
+          tags: ['Warlike'],
+        };
+        let state = factionsReducer(initialState, addFaction(factionWithTags));
+
+        state = factionsReducer(
+          state,
+          removeFactionTag({ factionId: 'faction-1', tag: 'Imperialists' })
+        );
+
+        expect(state.factions[0].tags).toContain('Warlike');
+        expect(state.factions[0].tags.length).toBe(1);
+      });
+
+      it('should do nothing for non-existent faction', () => {
+        const state = factionsReducer(
+          initialState,
+          removeFactionTag({ factionId: 'non-existent', tag: 'Warlike' })
+        );
+
+        expect(state.factions.length).toBe(0);
+      });
+    });
+
+    describe('setPlanetaryGovernmentStatus', () => {
+      it('should add Planetary Government tag when gaining control', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+        expect(state.factions[0].tags).not.toContain('Planetary Government');
+
+        state = factionsReducer(
+          state,
+          setPlanetaryGovernmentStatus({
+            factionId: 'faction-1',
+            hasPlanetaryGovernment: true,
+          })
+        );
+
+        expect(state.factions[0].tags).toContain('Planetary Government');
+      });
+
+      it('should remove Planetary Government tag when losing control', () => {
+        const factionWithGovt: Faction = {
+          ...testFaction,
+          tags: ['Planetary Government', 'Warlike'],
+        };
+        let state = factionsReducer(initialState, addFaction(factionWithGovt));
+
+        state = factionsReducer(
+          state,
+          setPlanetaryGovernmentStatus({
+            factionId: 'faction-1',
+            hasPlanetaryGovernment: false,
+          })
+        );
+
+        expect(state.factions[0].tags).not.toContain('Planetary Government');
+        expect(state.factions[0].tags).toContain('Warlike');
+      });
+
+      it('should not add duplicate Planetary Government tag', () => {
+        const factionWithGovt: Faction = {
+          ...testFaction,
+          tags: ['Planetary Government'],
+        };
+        let state = factionsReducer(initialState, addFaction(factionWithGovt));
+
+        state = factionsReducer(
+          state,
+          setPlanetaryGovernmentStatus({
+            factionId: 'faction-1',
+            hasPlanetaryGovernment: true,
+          })
+        );
+
+        expect(
+          state.factions[0].tags.filter((t) => t === 'Planetary Government').length
+        ).toBe(1);
+      });
+
+      it('should do nothing when setting false if tag is not present', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+
+        state = factionsReducer(
+          state,
+          setPlanetaryGovernmentStatus({
+            factionId: 'faction-1',
+            hasPlanetaryGovernment: false,
+          })
+        );
+
+        expect(state.factions[0].tags.length).toBe(0);
+      });
+
+      it('should handle planetId parameter for tracking', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+
+        state = factionsReducer(
+          state,
+          setPlanetaryGovernmentStatus({
+            factionId: 'faction-1',
+            hasPlanetaryGovernment: true,
+            planetId: 'planet-alpha',
+          })
+        );
+
+        expect(state.factions[0].tags).toContain('Planetary Government');
+      });
+    });
+
+    describe('changeHomeworld', () => {
+      it('should update faction homeworld', () => {
+        let state = factionsReducer(initialState, addFaction(testFaction));
+        expect(state.factions[0].homeworld).toBe('system-1');
+
+        state = factionsReducer(
+          state,
+          changeHomeworld({
+            factionId: 'faction-1',
+            newHomeworldId: 'system-2',
+          })
+        );
+
+        expect(state.factions[0].homeworld).toBe('system-2');
+      });
+
+      it('should remove Deep Rooted tag when homeworld changes', () => {
+        const deepRootedFaction: Faction = {
+          ...testFaction,
+          tags: ['Deep Rooted', 'Warlike'],
+        };
+        let state = factionsReducer(initialState, addFaction(deepRootedFaction));
+
+        state = factionsReducer(
+          state,
+          changeHomeworld({
+            factionId: 'faction-1',
+            newHomeworldId: 'system-2',
+          })
+        );
+
+        expect(state.factions[0].homeworld).toBe('system-2');
+        expect(state.factions[0].tags).not.toContain('Deep Rooted');
+        expect(state.factions[0].tags).toContain('Warlike');
+      });
+
+      it('should not change anything if homeworld is the same', () => {
+        const deepRootedFaction: Faction = {
+          ...testFaction,
+          tags: ['Deep Rooted'],
+        };
+        let state = factionsReducer(initialState, addFaction(deepRootedFaction));
+
+        state = factionsReducer(
+          state,
+          changeHomeworld({
+            factionId: 'faction-1',
+            newHomeworldId: 'system-1', // Same as current
+          })
+        );
+
+        // Homeworld unchanged
+        expect(state.factions[0].homeworld).toBe('system-1');
+        // Deep Rooted should still be present because homeworld didn't actually change
+        expect(state.factions[0].tags).toContain('Deep Rooted');
+      });
+
+      it('should do nothing for non-existent faction', () => {
+        const state = factionsReducer(
+          initialState,
+          changeHomeworld({
+            factionId: 'non-existent',
+            newHomeworldId: 'system-2',
+          })
+        );
+
+        expect(state.factions.length).toBe(0);
+      });
+
+      it('should preserve other tags when Deep Rooted is removed', () => {
+        const multiFaction: Faction = {
+          ...testFaction,
+          tags: ['Deep Rooted', 'Warlike', 'Plutocratic'],
+        };
+        let state = factionsReducer(initialState, addFaction(multiFaction));
+
+        state = factionsReducer(
+          state,
+          changeHomeworld({
+            factionId: 'faction-1',
+            newHomeworldId: 'system-2',
+          })
+        );
+
+        expect(state.factions[0].tags).not.toContain('Deep Rooted');
+        expect(state.factions[0].tags).toContain('Warlike');
+        expect(state.factions[0].tags).toContain('Plutocratic');
+        expect(state.factions[0].tags.length).toBe(2);
+      });
+    });
+
+    describe('Tag integration with faction creation', () => {
+      it('should allow creating faction with initial tags', () => {
+        const factionWithTags: Faction = {
+          ...testFaction,
+          tags: ['Warlike', 'Deep Rooted'],
+        };
+        const state = factionsReducer(initialState, addFaction(factionWithTags));
+
+        expect(state.factions[0].tags).toContain('Warlike');
+        expect(state.factions[0].tags).toContain('Deep Rooted');
+        expect(state.factions[0].tags.length).toBe(2);
+      });
+
+      it('should support all 20 SWN faction tags', () => {
+        const allTags: FactionTag[] = [
+          'Colonists',
+          'Deep Rooted',
+          'Eugenics Cult',
+          'Exchange Consulate',
+          'Fanatical',
+          'Imperialists',
+          'Machiavellian',
+          'Mercenary Group',
+          'Perimeter Agency',
+          'Pirates',
+          'Planetary Government',
+          'Plutocratic',
+          'Preceptor Archive',
+          'Psychic Academy',
+          'Savage',
+          'Scavengers',
+          'Secretive',
+          'Technical Expertise',
+          'Theocratic',
+          'Warlike',
+        ];
+
+        // Verify all tags can be added
+        let state = factionsReducer(initialState, addFaction(testFaction));
+
+        for (const tag of allTags) {
+          state = factionsReducer(state, addFactionTag({ factionId: 'faction-1', tag }));
+        }
+
+        expect(state.factions[0].tags.length).toBe(20);
+        for (const tag of allTags) {
+          expect(state.factions[0].tags).toContain(tag);
+        }
+      });
+    });
+  });
+
+  describe('processIncomePhase', () => {
+    it('applies tag-based income modifiers', () => {
+      const incomeFaction: Faction = {
+        ...testFaction,
+        facCreds: 0,
+        tags: ['Plutocratic'],
+        attributes: {
+          hp: 20,
+          maxHp: 20,
+          force: 4,
+          cunning: 4,
+          wealth: 4,
+        },
+      };
+
+      let state = factionsReducer(initialState, addFaction(incomeFaction));
+      state = factionsReducer(state, processIncomePhase());
+
+      // Base income = ceil(4/2)=2 + floor((4+4)/4)=2 => 4.
+      // Plutocratic multiplier (+25%) -> 5 FacCreds.
+      expect(state.factions[0].facCreds).toBe(5);
+    });
+
+    it('applies standard income for Exchange Consulate factions', () => {
+      const exchangeFaction: Faction = {
+        ...testFaction,
+        facCreds: 0,
+        tags: ['Exchange Consulate'],
+        attributes: {
+          hp: 20,
+          maxHp: 20,
+          force: 4,
+          cunning: 4,
+          wealth: 4,
+        },
+      };
+
+      let state = factionsReducer(initialState, addFaction(exchangeFaction));
+      state = factionsReducer(state, processIncomePhase());
+
+      // Base income remains unchanged at 4
+      expect(state.factions[0].facCreds).toBe(4);
     });
   });
 });

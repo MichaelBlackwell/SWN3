@@ -18,6 +18,7 @@
   cursor: help;
   outline: none;
   transition: color 0.2s ease;
+  overflow: visible; /* Ensure tooltip content isn't clipped */
 }
 
 .keyword-tooltip__label {

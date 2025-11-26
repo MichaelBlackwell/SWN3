@@ -288,6 +288,13 @@ export default function CombatModal({
         attackerAttributeValue,
         defenderAttribute: attackPattern.defenderAttribute,
         defenderAttributeValue,
+        attackerFaction,
+        defenderFaction: targetFaction,
+        attackerAssetTechLevel: attackerAssetDef.techLevel,
+        defenderAssetTechLevel: targetAssetDef.techLevel,
+        defenderIsOnHomeworld: targetSystemId === targetFaction.homeworld,
+        attackerAssetDefinitionId: attackerAssetDef.id,
+        defenderAssetDefinitionId: targetAssetDef.id,
       },
       attackPattern,
       counterattackPattern
@@ -323,6 +330,7 @@ export default function CombatModal({
           factionId: selectedTargetFactionId,
           assetId: selectedTargetAssetId,
           damage: combatResult.attackDamage,
+          sourceFactionId: selectedAttackerFactionId,
         })
       );
     }
@@ -337,6 +345,7 @@ export default function CombatModal({
           factionId: selectedAttackerFactionId,
           assetId: selectedAttackerAssetId,
           damage: combatResult.counterattackDamage,
+          sourceFactionId: selectedTargetFactionId,
         })
       );
     }

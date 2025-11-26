@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { stageActionWithPayload, selectCanStageAction } from '../../store/slices/turnSlice';
+import { markActionUsed, selectCanStageAction } from '../../store/slices/turnSlice';
+import { addBaseOfInfluence } from '../../store/slices/factionsSlice';
 import { hasAssetsOnWorld, hasBaseOfInfluence } from '../../utils/expandInfluence';
 import ExpandInfluenceModal from './ExpandInfluenceModal';
 import { showNotification } from '../NotificationContainer';
 import { tutorialEventOccurred } from '../../store/slices/tutorialSlice';
+import { dispatchNarrativeEntry, createNarrativeContextFromFaction, createNarrativeContextFromSystem } from '../../utils/narrativeHelpers';
 
 interface ExpandInfluenceButtonProps {
   factionId: string;
@@ -23,6 +25,7 @@ export default function ExpandInfluenceButton({
   const faction = useSelector((state: RootState) =>
     state.factions.factions.find((f: { id: string }) => f.id === factionId)
   );
+  const sector = useSelector((state: RootState) => state.sector.currentSector);
   const canStageAction = useSelector(selectCanStageAction);
 
   if (!faction) {
@@ -60,23 +63,48 @@ export default function ExpandInfluenceButton({
     cost: number;
     rollResult: ReturnType<typeof import('../../utils/expandInfluence').resolveExpandInfluenceRoll>;
   }) => {
-    // Stage the expand influence action
-    dispatch(stageActionWithPayload({
-      type: 'EXPAND_INFLUENCE',
-      payload: {
-        factionId,
-        targetSystemId: expansion.targetSystemId,
-        hp: expansion.hp,
-        cost: expansion.cost,
-        rollResult: expansion.rollResult,
-      },
+    const targetSystem = sector?.systems.find((s) => s.id === expansion.targetSystemId);
+    
+    // Immediately execute the expand influence action
+    dispatch(addBaseOfInfluence({
+      factionId,
+      systemId: expansion.targetSystemId,
+      hp: expansion.hp,
+      cost: expansion.cost,
     }));
 
+    // Mark this action type as used this turn
+    dispatch(markActionUsed('EXPAND_INFLUENCE'));
+
+    // Generate narrative entry
+    if (faction && targetSystem && sector) {
+      const getSystemById = (id: string) => sector.systems.find((s) => s.id === id);
+      const getSystemNameById = (id: string) => {
+        const sys = getSystemById(id);
+        return sys ? sys.name : 'Unknown System';
+      };
+
+      const actorContext = createNarrativeContextFromFaction(faction, getSystemNameById, getSystemById);
+      const systemContext = createNarrativeContextFromSystem(targetSystem);
+      
+      dispatchNarrativeEntry(dispatch, 'Buy', {
+        ...actorContext,
+        ...systemContext,
+        assetName: 'Base of Influence',
+        credits: expansion.cost,
+        result: expansion.rollResult.success ? 'Success' : 'Partial',
+        relatedEntityIds: [factionId, expansion.targetSystemId].filter(Boolean),
+      });
+    }
+
     setShowModal(false);
-    showNotification(
-      `${expansion.rollResult.message} Action staged - commit to execute.`,
-      expansion.rollResult.success ? 'info' : 'error'
-    );
+    
+    const systemName = targetSystem?.name || 'Unknown System';
+    const message = expansion.rollResult.success
+      ? `Successfully expanded to ${systemName}! Established Base of Influence with ${expansion.hp} HP.`
+      : `Expanded to ${systemName} but contested! ${expansion.rollResult.opposingRolls.filter((r) => r.canAttack).map((r) => r.factionName).join(', ')} may attack the new base.`;
+    
+    showNotification(message, expansion.rollResult.success ? 'success' : 'warning');
   };
 
   return (

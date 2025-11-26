@@ -8,17 +8,19 @@ import FactionManager from './components/FactionManager/FactionManager';
 import TurnManager from './components/TurnManager/TurnManager';
 import NewsFeed from './components/NewsFeed/NewsFeed';
 import NotificationContainer from './components/NotificationContainer';
-import SaveMenu from './components/SaveMenu/SaveMenu';
 import TutorialManager from './components/Tutorial/TutorialManager';
+import SystemOptionsMenu from './components/SystemOptionsMenu/SystemOptionsMenu';
 import { AudioSettingsButton } from './components/AudioSettings';
 import { generateSector } from './services/sectorGenerator';
 import { generateSectorWithConfig } from './services/sectorGeneratorWithConfig';
 import { createFactionGoal } from './services/GoalRegistry';
 import { setSector } from './store/slices/sectorSlice';
-import { clearAllFactions, addFaction } from './store/slices/factionsSlice';
+import { clearAllFactions, addFaction, selectFaction } from './store/slices/factionsSlice';
 import { resetTurnState } from './store/slices/turnSlice';
-import { returnToMenu } from './store/slices/gameModeSlice';
+import { returnToMenu, setPlayerFaction } from './store/slices/gameModeSlice';
 import { startTutorialModule } from './store/slices/tutorialSlice';
+import FactionSelectionModal from './components/FactionSelectionModal/FactionSelectionModal';
+import { Encyclopedia } from './components/Encyclopedia';
 import { generateRandomFactionForSystem } from './services/factionGenerator';
 import { useGameMusic, useAudio } from './hooks/useAudio';
 import './App.css';
@@ -26,18 +28,61 @@ import './styles/layout.css';
 import './components/AppHeader.css';
 import './components/SectorMapView.css';
 
-type ViewMode = 'sector' | 'factions';
+type ViewMode = 'sector' | 'factions' | 'news' | 'encyclopedia';
 
 function App() {
   const dispatch = useDispatch();
   const gameMode = useSelector((state: RootState) => state.gameMode.mode);
   const currentScenario = useSelector((state: RootState) => state.gameMode.currentScenario);
+  const playerFactionId = useSelector((state: RootState) => state.gameMode.playerFactionId);
   const sector = useSelector((state: RootState) => state.sector);
+  const factions = useSelector((state: RootState) => state.factions.factions);
+  const turnNumber = useSelector((state: RootState) => state.turn.turn);
   const [viewMode, setViewMode] = useState<ViewMode>('sector');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState<'turn' | 'news'>('turn');
+  const [isSystemMenuOpen, setIsSystemMenuOpen] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
+  const [showFactionSelection, setShowFactionSelection] = useState(false);
+
+  const renderViewToggle = () => (
+    <nav className="app-view-toggle" aria-label="Primary workspace view">
+      <button
+        type="button"
+        onClick={() => setViewMode('sector')}
+        className={`app-view-toggle__button ${viewMode === 'sector' ? 'app-view-toggle__button--active' : ''}`}
+        aria-label="Switch to Sector Map view"
+        aria-pressed={viewMode === 'sector'}
+      >
+        Sector Map
+      </button>
+      <button
+        type="button"
+        onClick={() => setViewMode('factions')}
+        className={`app-view-toggle__button ${viewMode === 'factions' ? 'app-view-toggle__button--active' : ''}`}
+        aria-label="Switch to Factions view"
+        aria-pressed={viewMode === 'factions'}
+      >
+        Factions
+      </button>
+      <button
+        type="button"
+        onClick={() => setViewMode('news')}
+        className={`app-view-toggle__button ${viewMode === 'news' ? 'app-view-toggle__button--active' : ''}`}
+        aria-label="Switch to News Feed view"
+        aria-pressed={viewMode === 'news'}
+      >
+        News
+      </button>
+      <button
+        type="button"
+        onClick={() => setViewMode('encyclopedia')}
+        className={`app-view-toggle__button ${viewMode === 'encyclopedia' ? 'app-view-toggle__button--active' : ''}`}
+        aria-label="Switch to Encyclopedia view"
+        aria-pressed={viewMode === 'encyclopedia'}
+      >
+        Codex
+      </button>
+    </nav>
+  );
 
   // Initialize game music system (auto-plays based on game mode/scenario)
   useGameMusic();
@@ -79,21 +124,31 @@ function App() {
 
   // Initialize scenario when entering scenario mode
   useEffect(() => {
-    if (gameMode === 'scenario' && currentScenario) {
+    if (gameMode === 'scenario' && currentScenario && !playerFactionId) {
       // Clear existing data
       dispatch(clearAllFactions());
       dispatch(resetTurnState());
       
       // Generate new sector and factions with scenario config
-      const { sector, factions } = generateSectorWithConfig(currentScenario);
-      dispatch(setSector(sector));
+      const { sector: newSector, factions: newFactions } = generateSectorWithConfig(currentScenario);
+      dispatch(setSector(newSector));
       
       // Add all generated factions
-      factions.forEach(faction => {
+      newFactions.forEach(faction => {
         dispatch(addFaction(faction));
       });
+      
+      // Show faction selection modal after factions are generated
+      setShowFactionSelection(true);
     }
-  }, [gameMode, currentScenario, dispatch]);
+  }, [gameMode, currentScenario, playerFactionId, dispatch]);
+
+  // Handle faction selection in scenario mode
+  const handleFactionSelection = (factionId: string) => {
+    dispatch(setPlayerFaction(factionId));
+    dispatch(selectFaction(factionId));
+    setShowFactionSelection(false);
+  };
 
   const handleGenerateSector = () => {
     // Clear all factions when generating a new sector
@@ -108,6 +163,11 @@ function App() {
     if (newSector.systems.length > 0) {
       const firstSystem = newSector.systems[0];
       
+      // Ensure homeworld is TL4 - factions need advanced tech to operate
+      if (firstSystem.primaryWorld.techLevel < 4) {
+        firstSystem.primaryWorld.techLevel = 4;
+      }
+      
       // Generate first faction based on homeworld characteristics
       const faction1 = generateRandomFactionForSystem(firstSystem);
       faction1.name = 'Test Faction Alpha';
@@ -115,6 +175,12 @@ function App() {
       
       // Generate second faction on same system (if there are multiple systems, use second one)
       const secondSystem = newSector.systems.length > 1 ? newSector.systems[1] : firstSystem;
+      
+      // Ensure second homeworld is also TL4
+      if (secondSystem.primaryWorld.techLevel < 4) {
+        secondSystem.primaryWorld.techLevel = 4;
+      }
+      
       const faction2 = generateRandomFactionForSystem(secondSystem);
       faction2.name = 'Test Faction Beta';
       faction2.goal = createFactionGoal('Commercial Expansion', faction2);
@@ -146,149 +212,121 @@ function App() {
     <MainLayout>
       <NotificationContainer />
       <div className="app-container">
-        <header className="app-toolbar" role="banner">
-          <div className="app-toolbar__left">
-            <div className="app-brand">
-              <div className="app-brand__badge" aria-hidden="true">✦</div>
-              <div className="app-brand__meta">
-                <p className="app-brand__eyebrow">Campaign Console</p>
-                <h1 className="app-brand__title">Stars Without Number</h1>
-              </div>
-            </div>
-            <nav
-              className={`app-view-toggle ${isMobileMenuOpen ? 'app-view-toggle--expanded' : 'app-view-toggle--collapsed'}`}
-              aria-label="Primary workspace view"
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setViewMode('sector');
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`app-view-toggle__button ${viewMode === 'sector' ? 'app-view-toggle__button--active' : ''}`}
-                aria-label="Switch to Sector Map view"
-                aria-pressed={viewMode === 'sector'}
-              >
-                Sector Map
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setViewMode('factions');
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`app-view-toggle__button ${viewMode === 'factions' ? 'app-view-toggle__button--active' : ''}`}
-                aria-label="Switch to Factions view"
-                aria-pressed={viewMode === 'factions'}
-              >
-                Factions
-              </button>
-            </nav>
-          </div>
-          <div className="app-toolbar__right">
-            <AudioSettingsButton />
-            <button
-              type="button"
-              onClick={handleReturnToMenu}
-              className="btn btn-ghost btn-sm app-toolbar__button"
-            >
-              ← Main Menu
-            </button>
-            <button
-              type="button"
-              onClick={() => dispatch(startTutorialModule('mapNavigation'))}
-              className="btn btn-secondary btn-sm app-toolbar__button"
-              aria-label="Start map navigation tutorial"
-            >
-              Map Tutorial
-            </button>
-            <button
-              type="button"
-              onClick={() => dispatch(startTutorialModule('assetManagement'))}
-              className="btn btn-secondary btn-sm app-toolbar__button"
-              aria-label="Start asset management tutorial"
-            >
-              Asset Tutorial
-            </button>
-            <button
-              type="button"
-              onClick={() => dispatch(startTutorialModule('influence'))}
-              className="btn btn-secondary btn-sm app-toolbar__button"
-              aria-label="Start influence tutorial"
-            >
-              Influence Tutorial
-            </button>
-            <div className="app-toolbar__divider" aria-hidden="true" />
-            <SaveMenu />
-            {viewMode === 'sector' && gameMode === 'editor' && (
-              <button
-                type="button"
-                onClick={handleGenerateSector}
-                className="btn btn-primary btn-sm app-toolbar__button"
-              >
-                Generate New Sector
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`btn btn-ghost btn-sm app-toolbar__menu-toggle ${isMobileMenuOpen ? 'is-active' : ''}`}
-              aria-label="Toggle navigation menu"
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? '✕' : '☰'}
-            </button>
-          </div>
-        </header>
         <div className="app-main-content">
           {viewMode === 'sector' ? (
             <div className="sector-map-view">
-              <div className={`sector-map-view__map-container ${isSidebarCollapsed ? 'sector-map-view__map-container--sidebar-collapsed' : 'sector-map-view__map-container--sidebar-expanded'}`}>
+              <div className="sector-map-view__floating-controls" role="region" aria-label="Primary workspace view">
+                <button
+                  type="button"
+                  onClick={() => setIsSystemMenuOpen(true)}
+                  className="btn btn-ghost btn-sm sector-map-view__floating-button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isSystemMenuOpen}
+                >
+                  ⚙ System Options
+                </button>
+                {renderViewToggle()}
+                <div className="turn-indicator" aria-live="polite">
+                  Turn: {turnNumber}
+                </div>
+                <div id="end-turn-button-slot" className="end-turn-button-slot" aria-live="polite" />
+              </div>
+              <div id="factions-summary-slot" className="factions-summary-slot" aria-live="polite" />
+              <div className="sector-map-view__map-container">
                 <SectorMap />
               </div>
-              <div className={`sector-map-view__sidebar ${isSidebarCollapsed ? 'sector-map-view__sidebar--collapsed' : ''}`}>
-                <div className="sector-map-view__sidebar-content">
-                  <div className="sector-map-view__tabs">
-                    <button
-                      className={`sector-map-view__tab ${activeTab === 'turn' ? 'sector-map-view__tab--active' : ''}`}
-                      onClick={() => setActiveTab('turn')}
-                      aria-label="Turn Manager tab"
-                    >
-                      Turn Manager
-                    </button>
-                    <button
-                      className={`sector-map-view__tab ${activeTab === 'news' ? 'sector-map-view__tab--active' : ''}`}
-                      onClick={() => setActiveTab('news')}
-                      aria-label="News Feed tab"
-                    >
-                      News Feed
-                    </button>
-                  </div>
-                  <div className="sector-map-view__tab-content">
-                    <div className={`sector-map-view__tab-panel ${activeTab === 'turn' ? 'sector-map-view__tab-panel--active' : ''}`}>
-                      <TurnManager />
-                    </div>
-                    <div className={`sector-map-view__tab-panel ${activeTab === 'news' ? 'sector-map-view__tab-panel--active' : ''}`}>
-                      <NewsFeed />
-                    </div>
-                  </div>
+              <TurnManager />
+            </div>
+          ) : viewMode === 'factions' ? (
+            <div className="faction-view">
+              <div className="faction-view__controls" role="region" aria-label="Primary workspace view">
+                <button
+                  type="button"
+                  onClick={() => setIsSystemMenuOpen(true)}
+                  className="btn btn-ghost btn-sm faction-view__controls-button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isSystemMenuOpen}
+                >
+                  ⚙ System Options
+                </button>
+                {renderViewToggle()}
+                <div className="turn-indicator" aria-live="polite">
+                  Turn: {turnNumber}
                 </div>
               </div>
-              <button
-                className={`sector-map-view__sidebar-toggle ${isSidebarCollapsed ? 'sector-map-view__sidebar-toggle--collapsed' : 'sector-map-view__sidebar-toggle--expanded'}`}
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                aria-expanded={!isSidebarCollapsed}
-              >
-                {isSidebarCollapsed ? '◀' : '▶'}
-              </button>
+              <FactionManager />
+            </div>
+          ) : viewMode === 'news' ? (
+            <div className="news-view">
+              <div className="news-view__controls" role="region" aria-label="Primary workspace view">
+                <button
+                  type="button"
+                  onClick={() => setIsSystemMenuOpen(true)}
+                  className="btn btn-ghost btn-sm news-view__controls-button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isSystemMenuOpen}
+                >
+                  ⚙ System Options
+                </button>
+                {renderViewToggle()}
+                <div className="turn-indicator" aria-live="polite">
+                  Turn: {turnNumber}
+                </div>
+              </div>
+              <div className="news-view__content">
+                <NewsFeed />
+              </div>
             </div>
           ) : (
-            <FactionManager />
+            <div className="encyclopedia-view">
+              <div className="encyclopedia-view__controls" role="region" aria-label="Primary workspace view">
+                <button
+                  type="button"
+                  onClick={() => setIsSystemMenuOpen(true)}
+                  className="btn btn-ghost btn-sm encyclopedia-view__controls-button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isSystemMenuOpen}
+                >
+                  ⚙ System Options
+                </button>
+                {renderViewToggle()}
+                <div className="turn-indicator" aria-live="polite">
+                  Turn: {turnNumber}
+                </div>
+              </div>
+              <div className="encyclopedia-view__content">
+                <Encyclopedia />
+              </div>
+            </div>
           )}
         </div>
       </div>
       <TutorialManager />
+      <SystemOptionsMenu
+        isOpen={isSystemMenuOpen}
+        onClose={() => setIsSystemMenuOpen(false)}
+        onReturnToMenu={() => {
+          handleReturnToMenu();
+          setIsSystemMenuOpen(false);
+        }}
+        onStartTutorial={(module) => {
+          dispatch(startTutorialModule(module));
+          setIsSystemMenuOpen(false);
+        }}
+        canGenerateSector={viewMode === 'sector' && gameMode === 'editor'}
+        onGenerateSector={() => {
+          handleGenerateSector();
+          setIsSystemMenuOpen(false);
+        }}
+      />
+      {/* Faction Selection Modal for Scenario Mode */}
+      {showFactionSelection && gameMode === 'scenario' && factions.length > 0 && (
+        <FactionSelectionModal
+          factions={factions}
+          sector={sector.currentSector}
+          onSelectFaction={handleFactionSelection}
+        />
+      )}
     </MainLayout>
   );
 }

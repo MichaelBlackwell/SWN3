@@ -145,6 +145,12 @@ export default function FactionCreationForm() {
       return;
     }
 
+    // Ensure homeworld is TL4 - factions need advanced tech to operate
+    // This represents the infrastructure needed to support faction operations
+    if (selectedSystem.primaryWorld.techLevel < 4) {
+      selectedSystem.primaryWorld.techLevel = 4;
+    }
+
     let newFaction;
 
     if (formData.useAutoGenerate) {
@@ -300,6 +306,7 @@ export default function FactionCreationForm() {
                   label={tag}
                   tone="faction"
                   description={FACTION_TAG_METADATA[tag]?.description}
+                  effects={FACTION_TAG_METADATA[tag]?.effects}
                   interactive={false}
                 />
               </label>
@@ -315,6 +322,7 @@ export default function FactionCreationForm() {
                     label={tag}
                     tone="faction"
                     description={FACTION_TAG_METADATA[tag]?.description}
+                  effects={FACTION_TAG_METADATA[tag]?.effects}
                     interactive={false}
                   />
                 ))}

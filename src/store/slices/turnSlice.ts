@@ -18,6 +18,7 @@ export interface TurnState {
     active: boolean;
     assetId: string | null;
     factionId: string | null;
+    abilityRange?: number; // Custom range from movement ability
   };
   // Staged action payload (for actions that need additional data)
   stagedActionPayload: {
@@ -47,6 +48,7 @@ const initialState: TurnState = {
     active: false,
     assetId: null,
     factionId: null,
+    abilityRange: undefined,
   },
   stagedActionPayload: null,
   history: [],
@@ -90,6 +92,7 @@ const turnSlice = createSlice({
           active: false,
           assetId: null,
           factionId: null,
+          abilityRange: undefined,
         };
         // Clear history when leaving Action phase
         state.history = [];
@@ -112,6 +115,7 @@ const turnSlice = createSlice({
           active: false,
           assetId: null,
           factionId: null,
+          abilityRange: undefined,
         };
         state.history = [];
         state.historyIndex = -1;
@@ -225,22 +229,26 @@ const turnSlice = createSlice({
         active: false,
         assetId: null,
         factionId: null,
+        abilityRange: undefined,
       };
     },
 
-    // Start movement mode
-    startMovementMode: (state, action: PayloadAction<{ assetId: string; factionId: string }>) => {
+    // Start movement mode for asset abilities
+    startMovementMode: (state, action: PayloadAction<{ assetId: string; factionId: string; abilityRange?: number }>) => {
       if (state.phase !== 'Action') {
         return; // Can only start movement during Action phase
       }
-      if (state.actionStaged || state.actionCommitted) {
-        return; // Cannot start movement if action already staged/committed
+      // Allow movement mode to start even if action staged (for Transit Web which is free action)
+      // But check if the ability requires an action
+      if (state.actionCommitted) {
+        return; // Cannot start movement if action already committed
       }
       
       state.movementMode = {
         active: true,
         assetId: action.payload.assetId,
         factionId: action.payload.factionId,
+        abilityRange: action.payload.abilityRange,
       };
     },
 
@@ -250,6 +258,7 @@ const turnSlice = createSlice({
         active: false,
         assetId: null,
         factionId: null,
+        abilityRange: undefined,
       };
     },
 
@@ -324,6 +333,7 @@ const turnSlice = createSlice({
         active: false,
         assetId: null,
         factionId: null,
+        abilityRange: undefined,
       };
       state.history = [];
       state.historyIndex = -1;

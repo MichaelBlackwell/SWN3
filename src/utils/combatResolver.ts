@@ -2,6 +2,12 @@
 // Implements the 1d10 + Attribute vs 1d10 + Attribute combat system
 
 import type { AttackType, AttackPattern, CounterattackPattern } from '../types/asset';
+import type { Faction } from '../types/faction';
+import {
+  getCombatExtraDice,
+  shouldRerollOnes,
+  alwaysLosesTies,
+} from './tagModifiers';
 
 /**
  * Configuration for a combat roll
@@ -13,6 +19,14 @@ export interface CombatRollConfig {
   defenderAttributeValue: number; // The faction's attribute rating (1-8)
   attackerRoll?: number; // Optional: provide a fixed roll for testing
   defenderRoll?: number; // Optional: provide a fixed roll for testing
+  attackerFaction?: Faction;
+  defenderFaction?: Faction;
+  attackerAssetTechLevel?: number;
+  defenderAssetTechLevel?: number;
+  defenderIsOnHomeworld?: boolean;
+  isSeizePlanet?: boolean;
+  attackerAssetDefinitionId?: string;
+  defenderAssetDefinitionId?: string;
 }
 
 /**
@@ -45,6 +59,39 @@ export interface CombatResult {
  */
 export function rollD10(): number {
   return Math.floor(Math.random() * 10) + 1;
+}
+
+const MAX_REROLL_ATTEMPTS = 10;
+
+function rollWithModifiers(
+  providedRoll: number | undefined,
+  extraDice: number,
+  rerollOnes: boolean
+): number {
+  if (providedRoll !== undefined) {
+    return providedRoll;
+  }
+
+  const diceCount = Math.max(1, 1 + extraDice);
+  let best = 0;
+
+  for (let i = 0; i < diceCount; i++) {
+    let roll = rollD10();
+
+    if (rerollOnes) {
+      let attempts = 0;
+      while (roll === 1 && attempts < MAX_REROLL_ATTEMPTS) {
+        roll = rollD10();
+        attempts += 1;
+      }
+    }
+
+    if (roll > best) {
+      best = roll;
+    }
+  }
+
+  return best;
 }
 
 /**
@@ -118,15 +165,74 @@ export function calculateDiceAverage(expression: string): number {
  * Returns the roll results and comparison outcome
  */
 export function performCombatRoll(config: CombatRollConfig): CombatRollResult {
-  const attackerRoll = config.attackerRoll ?? rollD10();
-  const defenderRoll = config.defenderRoll ?? rollD10();
+  const attackerContext = {
+    isSeizePlanet: config.isSeizePlanet,
+    targetTechLevel: config.defenderAssetTechLevel,
+    assetTechLevel: config.attackerAssetTechLevel,
+    assetDefinitionId: config.attackerAssetDefinitionId,
+  };
+
+  const defenderContext = {
+    isOnHomeworld: config.defenderIsOnHomeworld,
+    isSeizePlanet: config.isSeizePlanet,
+    targetTechLevel: config.attackerAssetTechLevel,
+    assetTechLevel: config.defenderAssetTechLevel,
+    assetDefinitionId: config.defenderAssetDefinitionId,
+  };
+
+  const attackerExtraDice =
+    config.attackerFaction && config.attackerAttribute
+      ? getCombatExtraDice(
+          config.attackerFaction,
+          config.attackerAttribute,
+          false,
+          attackerContext
+        )
+      : 0;
+
+  const defenderExtraDice =
+    config.defenderFaction && config.defenderAttribute
+      ? getCombatExtraDice(
+          config.defenderFaction,
+          config.defenderAttribute,
+          true,
+          defenderContext
+        )
+      : 0;
+
+  const attackerRoll = rollWithModifiers(
+    config.attackerRoll,
+    attackerExtraDice,
+    config.attackerFaction ? shouldRerollOnes(config.attackerFaction) : false
+  );
+
+  const defenderRoll = rollWithModifiers(
+    config.defenderRoll,
+    defenderExtraDice,
+    config.defenderFaction ? shouldRerollOnes(config.defenderFaction) : false
+  );
 
   const attackerTotal = attackerRoll + config.attackerAttributeValue;
   const defenderTotal = defenderRoll + config.defenderAttributeValue;
 
   const margin = attackerTotal - defenderTotal;
-  const tie = margin === 0;
-  const success = margin > 0;
+  let tie = margin === 0;
+  let success = margin > 0;
+
+  if (tie) {
+    const attackerLosesTie =
+      config.attackerFaction && alwaysLosesTies(config.attackerFaction);
+    const defenderLosesTie =
+      config.defenderFaction && alwaysLosesTies(config.defenderFaction);
+
+    if (attackerLosesTie && !defenderLosesTie) {
+      tie = false;
+      success = false;
+    } else if (defenderLosesTie && !attackerLosesTie) {
+      tie = false;
+      success = true;
+    }
+  }
 
   return {
     attackerTotal,

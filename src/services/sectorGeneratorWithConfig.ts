@@ -11,6 +11,7 @@ import { generateTradeRoutes } from './tradeRouteGenerator';
 import type { ScenarioConfig } from '../store/slices/gameModeSlice';
 import { generateRandomFactionForSystem } from './factionGenerator';
 import { createFactionGoal } from './GoalRegistry';
+import { assignColorsToFactions } from '../utils/factionColors';
 
 const GRID_WIDTH = 8;
 const GRID_HEIGHT = 10;
@@ -241,6 +242,12 @@ export function generateSectorWithConfig(config: ScenarioConfig): { sector: Sect
       homeworldSystem = systems[Math.floor(Math.random() * systems.length)];
     }
     
+    // Ensure homeworld is TL4 - factions need advanced tech to operate
+    // This represents the infrastructure needed to support faction operations
+    if (homeworldSystem.primaryWorld.techLevel < 4) {
+      homeworldSystem.primaryWorld.techLevel = 4;
+    }
+    
     // Generate faction based on homeworld characteristics
     const faction = generateRandomFactionForSystem(homeworldSystem);
     
@@ -250,6 +257,8 @@ export function generateSectorWithConfig(config: ScenarioConfig): { sector: Sect
     factions.push(faction);
   }
   
-  return { sector, factions };
+  const coloredFactions = assignColorsToFactions(factions);
+  
+  return { sector, factions: coloredFactions };
 }
 

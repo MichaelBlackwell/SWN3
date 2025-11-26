@@ -46,3 +46,16 @@
   border-radius: 0.25rem;
 }
 
+.tag-badge__effects {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+  text-align: left;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.75rem;
+}
+
+.tag-badge__effects li {
+  margin-bottom: 0.15rem;
+}
+

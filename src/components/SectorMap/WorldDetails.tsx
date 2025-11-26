@@ -306,6 +306,13 @@ export default function WorldDetails() {
         attackerAttributeValue,
         defenderAttribute: attackPattern.defenderAttribute,
         defenderAttributeValue,
+        attackerFaction: selectedFaction,
+        defenderFaction: targetFaction,
+        attackerAssetTechLevel: attackerAssetDef.techLevel,
+        defenderAssetTechLevel: targetAssetDef.techLevel,
+        defenderIsOnHomeworld: system.id === targetFaction.homeworld,
+        attackerAssetDefinitionId: attackerAssetDef.id,
+        defenderAssetDefinitionId: targetAssetDef.id,
       },
       attackPattern,
       counterattackPattern
@@ -324,6 +331,7 @@ export default function WorldDetails() {
           factionId: targetFactionId,
           assetId: targetAssetId,
           damage: result.attackDamage,
+          sourceFactionId: selectedFactionId,
         })
       );
     }
@@ -334,6 +342,7 @@ export default function WorldDetails() {
           factionId: selectedFactionId,
           assetId: attackerAsset.id,
           damage: result.counterattackDamage,
+          sourceFactionId: targetFactionId,
         })
       );
     }
@@ -415,29 +424,8 @@ export default function WorldDetails() {
     dispatch(tutorialEventOccurred({ eventId: 'assetTutorial.assetAttackInitiated' }));
   };
 
-  const handleMove = (assetId: string, factionId: string) => {
-    if (!canStageAction) {
-      showNotification('Cannot start movement: not in Action phase or action already staged', 'error');
-      return;
-    }
-
-    const faction = factions.find((f: Faction) => f.id === factionId);
-    if (!faction) {
-      showNotification('Faction not found', 'error');
-      return;
-    }
-
-    // Validate faction has 1 FacCred for movement
-    if (faction.facCreds < 1) {
-      showNotification('Insufficient FacCreds: Movement costs 1 FacCred', 'error');
-      return;
-    }
-
-    // Activate movement mode via Redux
-    dispatch(startMovementMode({ assetId, factionId }));
-    showNotification('Movement mode active: Click a valid destination on the map', 'info');
-    dispatch(tutorialEventOccurred({ eventId: 'assetTutorial.moveButtonPressed' }));
-  };
+  // Movement is now handled exclusively through asset abilities
+  // No standalone Move action exists in SWN rules
 
   const handleRepair = (_assetId: string, _factionId: string) => {
     if (!canStageAction) {
@@ -480,13 +468,25 @@ export default function WorldDetails() {
     // Execute the ability
     const result = executeAbility(faction, asset, state);
 
-    if (!result.success && result.message.includes('handled through')) {
-      // Movement abilities are handled separately
+    if (!result.success && result.message.includes('not yet implemented')) {
       showNotification(result.message, 'info');
       return;
     }
 
-    if (!result.success && result.message.includes('not yet implemented')) {
+    // Check if this is a movement ability
+    if (result.isMovementAbility && result.movementConfig) {
+      // Check if faction can afford the base cost
+      if (result.movementConfig.costPerAsset > 0 && faction.facCreds < result.movementConfig.costPerAsset) {
+        showNotification(`Insufficient FacCreds: Movement costs at least ${result.movementConfig.costPerAsset} FacCred${result.movementConfig.costPerAsset > 1 ? 's' : ''}`, 'error');
+        return;
+      }
+
+      // Initiate movement mode with custom range
+      dispatch(startMovementMode({ 
+        assetId: asset.id, 
+        factionId: faction.id, 
+        abilityRange: result.movementConfig.range 
+      }));
       showNotification(result.message, 'info');
       return;
     }
@@ -540,7 +540,10 @@ export default function WorldDetails() {
       return;
     }
 
-    const validation = validateAssetPurchase(faction, assetDefinitionId);
+    const targetSystem = sector?.systems.find((s: StarSystem) => s.id === storeLocationId);
+    const validation = validateAssetPurchase(faction, assetDefinitionId, {
+      targetSystem,
+    });
     if (!validation.valid) {
       showNotification(validation.reason || 'Cannot purchase asset', 'error');
       return;
@@ -555,7 +558,6 @@ export default function WorldDetails() {
     );
 
     const assetDef = getAssetById(assetDefinitionId);
-    const targetSystem = sector?.systems.find((s: StarSystem) => s.id === storeLocationId);
     const getSystemHelper = (id: string) => sector?.systems.find((s: StarSystem) => s.id === id);
     const getSystemNameHelper = (id: string): string => {
       const sys = getSystemHelper(id);
@@ -594,7 +596,6 @@ export default function WorldDetails() {
   
   // Specific disabled flags for each action type
   const isAttackDisabled = !canUseActionType('Attack');
-  const isMoveDisabled = !canUseActionType('MOVE_ASSET');
   const isRepairDisabled = !canUseActionType('REPAIR');
   const isUseAbilityDisabled = !canUseActionType('USE_ABILITY');
   const isExpandInfluenceDisabled = !canUseActionType('EXPAND_INFLUENCE');
@@ -765,6 +766,7 @@ export default function WorldDetails() {
                               key={tag}
                               label={tag}
                               description={FACTION_TAG_METADATA[tag]?.description}
+                              effects={FACTION_TAG_METADATA[tag]?.effects}
                               style={{ fontSize: '10px' }}
                             />
                           ))}
@@ -786,7 +788,6 @@ export default function WorldDetails() {
                                 assetDef?.category === 'Wealth' ? '#ffe66d' : '#646cff';
                               
                               const isSelectedFactionAsset = selectedFactionId === faction.id;
-                              const canMove = isSelectedFactionAsset && faction.facCreds >= 1;
                               const needsRepair = asset.hp < asset.maxHp;
                               const hasAbility = assetDef ? assetHasAbility(asset.definitionId) : false;
                               const hasSpecialFeatures = assetHasSpecialFeatures(asset.definitionId);
@@ -884,26 +885,6 @@ export default function WorldDetails() {
                                               Open Store
                                             </button>
                                           )}
-                                          <button
-                                            onClick={() => handleMove(asset.id, faction.id)}
-                                            disabled={isMoveDisabled || !canMove}
-                                            className="world-details-action-btn world-details-action-btn--move"
-                                            style={{
-                                              padding: '4px 8px',
-                                              background: isMoveDisabled || !canMove ? '#555' : factionTheme.gradient,
-                                              color: '#fff',
-                                              border: 'none',
-                                              borderRadius: '4px',
-                                              fontSize: '11px',
-                                              fontWeight: '500',
-                                              cursor: isMoveDisabled || !canMove ? 'not-allowed' : 'pointer',
-                                              opacity: isMoveDisabled || !canMove ? 0.5 : 1,
-                                              whiteSpace: 'nowrap',
-                                            }}
-                                            title="Move this asset (costs 1 FacCred)"
-                                          >
-                                            Move
-                                          </button>
                                           {needsRepair && (
                                             <button
                                               onClick={() => handleRepair(asset.id, faction.id)}
@@ -1015,8 +996,6 @@ export default function WorldDetails() {
                         assetDef?.category === 'Wealth' ? '#ffe66d' : '#646cff';
                       
                       const isSelectedFactionAsset = selectedFactionId === asset.factionId;
-                      const assetFaction = factions.find((f: Faction) => f.id === asset.factionId);
-                      const canMove = isSelectedFactionAsset && assetFaction && assetFaction.facCreds >= 1;
                       const needsRepair = asset.hp < asset.maxHp;
                       const hasAbility = assetDef ? assetHasAbility(asset.definitionId) : false;
                       const hasSpecialFeatures = assetHasSpecialFeatures(asset.definitionId);
@@ -1117,25 +1096,6 @@ export default function WorldDetails() {
                                       Open Store
                                     </button>
                                   )}
-                                  <button
-                                    onClick={() => handleMove(asset.id, asset.factionId)}
-                                    disabled={isMoveDisabled || !canMove}
-                                    style={{
-                                      padding: '4px 8px',
-                                      background: isMoveDisabled || !canMove ? '#555' : owningTheme.gradient,
-                                      color: '#fff',
-                                      border: 'none',
-                                      borderRadius: '4px',
-                                      fontSize: '11px',
-                                      fontWeight: '500',
-                                      cursor: isMoveDisabled || !canMove ? 'not-allowed' : 'pointer',
-                                      opacity: isMoveDisabled || !canMove ? 0.5 : 1,
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                    title="Move this asset (costs 1 FacCred)"
-                                  >
-                                    Move
-                                  </button>
                                   {needsRepair && (
                                     <button
                                       onClick={() => handleRepair(asset.id, asset.factionId)}
@@ -1248,7 +1208,7 @@ export default function WorldDetails() {
           transition: 'transform 0.3s ease-in-out',
         }}
       >
-        <div style={{ padding: '20px' }}>
+        <div className="world-details-panel__scroll">
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h2 style={{ margin: 0, color: '#fff', fontSize: '24px' }}>{systemDisplayName}</h2>

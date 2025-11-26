@@ -1,59 +1,90 @@
 import type { StarSystem } from '../types/sector';
 
+interface QueueNode {
+  id: string;
+  distance: number;
+}
+
+const ADJACENT_OFFSETS = [
+  { x: 0, y: -1 },
+  { x: 1, y: -1 },
+  { x: 1, y: 0 },
+  { x: 0, y: 1 },
+  { x: -1, y: 1 },
+  { x: -1, y: 0 },
+];
+
 /**
  * Get valid movement destinations for an asset at a given location.
- * Valid destinations include:
- * 1. Systems connected via routes from the current location
- * 2. Systems that are adjacent (one hex coordinate away)
- * 
+ * Valid destinations include any systems reachable within the specified range
+ * by traversing route connections or adjacent hexes.
+ *
  * @param currentLocationId - The ID of the system where the asset is currently located
  * @param systems - Array of all systems in the sector
+ * @param range - Number of steps the asset can travel (default: 1)
  * @returns Array of system IDs that are valid movement destinations
  */
 export function getValidMovementDestinations(
   currentLocationId: string,
-  systems: StarSystem[]
+  systems: StarSystem[],
+  range = 1
 ): string[] {
-  const currentSystem = systems.find((s) => s.id === currentLocationId);
-  if (!currentSystem) {
+  if (range < 1) range = 1;
+
+  const systemMap = new Map<string, StarSystem>();
+  systems.forEach((system) => {
+    systemMap.set(system.id, system);
+  });
+
+  const startSystem = systemMap.get(currentLocationId);
+  if (!startSystem) {
     return [];
   }
 
-  const validDestinations = new Set<string>();
+  const visited = new Set<string>([currentLocationId]);
+  const results = new Set<string>();
+  const queue: QueueNode[] = [{ id: currentLocationId, distance: 0 }];
 
-  // 1. Add systems connected via routes
-  currentSystem.routes.forEach((route) => {
-    validDestinations.add(route.systemId);
-  });
+  while (queue.length > 0) {
+    const { id, distance } = queue.shift() as QueueNode;
+    if (distance === range) continue;
 
-  // 2. Add adjacent systems (one hex coordinate away)
-  // In a hex grid, adjacent hexes can be at these offsets:
-  // For pointy-top hexes: (0, -1), (1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0)
-  const adjacentOffsets = [
-    { x: 0, y: -1 },
-    { x: 1, y: -1 },
-    { x: 1, y: 0 },
-    { x: 0, y: 1 },
-    { x: -1, y: 1 },
-    { x: -1, y: 0 },
-  ];
+    const system = systemMap.get(id);
+    if (!system) continue;
 
-  adjacentOffsets.forEach((offset) => {
-    const adjacentX = currentSystem.coordinates.x + offset.x;
-    const adjacentY = currentSystem.coordinates.y + offset.y;
+    const neighbors = new Set<string>();
 
-    const adjacentSystem = systems.find(
-      (s) =>
-        s.coordinates.x === adjacentX && s.coordinates.y === adjacentY
-    );
+    // Route-connected systems
+    system.routes.forEach((route) => {
+      neighbors.add(route.systemId);
+    });
 
-    if (adjacentSystem) {
-      validDestinations.add(adjacentSystem.id);
-    }
-  });
+    // Adjacent hexes
+    ADJACENT_OFFSETS.forEach((offset) => {
+      const adjacentX = system.coordinates.x + offset.x;
+      const adjacentY = system.coordinates.y + offset.y;
+      const adjacentSystem = systems.find(
+        (s) => s.coordinates.x === adjacentX && s.coordinates.y === adjacentY
+      );
+      if (adjacentSystem) {
+        neighbors.add(adjacentSystem.id);
+      }
+    });
 
-  return Array.from(validDestinations);
+    neighbors.forEach((neighborId) => {
+      if (visited.has(neighborId)) return;
+
+      visited.add(neighborId);
+      results.add(neighborId);
+      queue.push({ id: neighborId, distance: distance + 1 });
+    });
+  }
+
+  results.delete(currentLocationId);
+  return Array.from(results);
 }
+
+
 
 
 
